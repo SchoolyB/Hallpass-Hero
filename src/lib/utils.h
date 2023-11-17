@@ -1,8 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <time.h>
 #include <string.h>
+
+// conditional compilation for windows and linux
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
+
 /*The plan is to keep this file clean.*/
 #ifndef UTILS_H
 #define UTILS_H
