@@ -1,0 +1,39 @@
+name: Bump build version
+
+on:
+  push:
+    branches:
+      - development
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v4
+
+    - name: Install jq
+      run: sudo apt-get update -q && sudo apt-get install jq -y
+
+    - name: Run Version Update Script
+      run: |
+        # Go to the root directory of the repository
+        cd $GITHUB_WORKSPACE
+
+        # Run your version update script from the root directory
+        ./scripts/bump_version.sh
+
+        # Set the user name
+        git config --global user.name "SchoolyB"
+
+        # Set the user email from the secret
+        git config --global user.email ${{ secrets.GIT_USER_EMAIL }}
+
+        # Add and commit the changes to version.json in the root directory
+        git add version.json
+        git commit -m "Bump build version"
+        git push
+      env:
+        GITHUB_WORKSPACE: ${{ github.workspace }}
+        GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
