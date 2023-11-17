@@ -11,5 +11,5 @@ Makefile
 *.exe
 *.out
 
-
+/logs/
 .vscode/
