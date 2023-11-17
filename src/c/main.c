@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../lib/utils.h"
+#include "../lib/headers/main.h"
 
 int isRunning = FALSE;
 
