@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "../lib/utils.h"
 #include "../lib/headers/main.h"
+#include "../lib/headers/db.h"
 
 int mainMenuProccess = FALSE;
 
@@ -85,28 +86,13 @@ int main()
     {
       puts("Sorry, I didn't understand that.");
       puts("Please try again");
-      refresh_main_menu();
+      system("clear");
     }
 
     /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-END OF MAIN MENU+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
   }
 
   return 0;
-}
-
-// this refreshes the ui
-void refresh_main_menu()
-{
-  // windowHeight = 20;
-  // windowWidth = 90;
-  // system("resize -s 20 90");
-  system("clear");
-  puts("|===========================================================================================|");
-  for (int i = 0; i < 7; ++i)
-  {
-    printf("| %s %-90s\n", MainMenuOptions[i], "");
-  }
-  puts("|===========================================================================================|");
 }
 
 void handle_main_menu_decision(int num)
@@ -138,10 +124,10 @@ void handle_main_menu_decision(int num)
   default:
     puts("Sorry, I didn't understand that.");
     puts("Please try again");
-    refresh_main_menu();
+    system("clear");
     break;
   }
-  puts("Is that correct?");
+  puts("Is that correct?(yes/no)");
 
   FGETS(buffer);
   REMOVE_NEWLINE_CHAR(buffer);
@@ -153,7 +139,7 @@ void handle_main_menu_decision(int num)
   else if (INPUT_IS_YES(buffer) && num == 2)
   {
     puts("Ok then, let's manage an existing roster.");
-    // manage_roster();
+    manage_roster();
   }
   else if (INPUT_IS_YES(buffer) && num == 3)
   {
@@ -179,30 +165,35 @@ void handle_main_menu_decision(int num)
   else if (INPUT_IS_NO(buffer))
   {
     puts("No problem. Let's try again.");
-    refresh_main_menu();
+    system("clear");
   }
   else
   {
     puts("Sorry, I didn't understand that.");
     puts("Please try again");
-    refresh_main_menu();
+    system("clear");
   }
 }
 
+void show_current_menu(char *str)
+{
+  printf("Current Menu: %s \n", str);
+}
 void create_new_roster()
 {
   system("clear");
 
-  int newROsterMenuIsRunning = TRUE;
+  int newRosterMenuIsRunning = TRUE;
   int menuWidth = 70;
   int menuHeight = 10;
 
-  while (newROsterMenuIsRunning == TRUE)
+  while (newRosterMenuIsRunning == TRUE)
   {
     mainMenuProccess = FALSE;
     char newRosterOptions[2][50] = {
         "1. Create a new roster",
         "2. Back to main menu"};
+    show_current_menu("Create New Roster");
     puts("What would you like to do?");
     puts("|===========================================================================================");
     for (int i = 0; i < 2; ++i)
@@ -220,15 +211,16 @@ void create_new_roster()
     if (menuInput == 1 || strcmp(buffer, "new roster") == 0)
     {
       puts("You selected to create a new roster.");
-      newROsterMenuIsRunning = FALSE;
+      newRosterMenuIsRunning = FALSE;
       system("clear");
-      puts("What would you like to name your roster?");
+      // todo need to do more work on db stuff
+      // init_db();
     }
     else if (menuInput == 2 || strcmp(buffer, "back") == 0 || strcmp(buffer, "exit") == 0)
     {
       puts("You selected to go back to the main menu.");
-      refresh_main_menu();
-      newROsterMenuIsRunning = FALSE;
+      system("clear");
+      newRosterMenuIsRunning = FALSE;
     }
     else
     {
@@ -236,7 +228,111 @@ void create_new_roster()
       puts("Please try again");
       create_new_roster();
     }
-
-    ;
   }
 }
+//======================================================================================================================================================================
+void manage_roster()
+{
+  system("clear");
+  int manageRosterMenuIsOpen = TRUE;
+  int menuWidth = 70;
+  int menuHeight = 10;
+  while (manageRosterMenuIsOpen == TRUE)
+  {
+    mainMenuProccess = FALSE;
+    char manageRosterOptions[5][50] = {
+        "1. View roster",
+        "2: Rename roster",
+        "3. Add student to roster",
+        "4. Remove student from roster",
+        "5. Back to main menu"};
+
+    show_current_menu("Manage Roster");
+    puts("What would you like to do?");
+    puts("|===========================================================================================");
+    for (int i = 0; i < 5; ++i)
+    {
+      printf("| %s %-90s\n", manageRosterOptions[i], "");
+    }
+    for (int i = 0; i < menuHeight; ++i)
+    {
+      printf("| %-90s\n", "");
+    }
+    puts("|===========================================================================================");
+
+    FGETS(buffer);
+    REMOVE_NEWLINE_CHAR(buffer);
+
+    int menuInput = atoi(buffer);
+    if (menuInput == 1 || strcmp(buffer, "view roster") == 0)
+    {
+      puts("You selected to view the roster.");
+      manageRosterMenuIsOpen = FALSE;
+      system("clear");
+      puts("viewing roster");
+    }
+    else if (menuInput == 2 || strcmp(buffer, "rename roster") == 0)
+    {
+      puts("You selected to rename the roster.");
+      manageRosterMenuIsOpen = FALSE;
+      system("clear");
+      puts("renaming roster");
+    }
+    else if (menuInput == 3 || strcmp(buffer, "add student to roster") == 0)
+    {
+      puts("You selected to add a student to the roster.");
+      manageRosterMenuIsOpen = FALSE;
+      system("clear");
+      puts("adding student to roster");
+    }
+    else if (menuInput == 4 || strcmp(buffer, "remove student from roster") == 0)
+    {
+      puts("You selected to remove a student from the roster.");
+      manageRosterMenuIsOpen = FALSE;
+      system("clear");
+      puts("removing student from roster");
+    }
+    else if (menuInput == 5 || strcmp(buffer, "back") == 0 || strcmp(buffer, "exit") == 0)
+    {
+      puts("You selected to go back to the main menu.");
+      system("clear");
+      manageRosterMenuIsOpen = FALSE;
+    }
+    else
+    {
+      puts("Sorry, I didn't understand that.");
+      puts("Please try again");
+      manage_roster();
+    }
+  }
+}
+
+void add_student_to_db()
+{
+  system("clear");
+  int addStudentToDBMenuIsOpen = TRUE;
+  int menuWidth = 70;
+  int menuHeight = 10;
+  while (addStudentToDBMenuIsOpen == TRUE)
+  {
+    mainMenuProccess = FALSE;
+    char addStudentToDBOptions[5][50] = {
+        "1. View roster",
+        "2: Rename roster",
+        "3. Add student to roster",
+        "4. Remove student from roster",
+        "5. Back to main menu"};
+
+    show_current_menu("Manage Roster");
+    puts("What would you like to do?");
+    puts("|===========================================================================================");
+    for (int i = 0; i < 5; ++i)
+    {
+      printf("| %s %-90s\n", addStudentToDBOptions[i], "");
+    }
+    for (int i = 0; i < menuHeight; ++i)
+    {
+      printf("| %-90s\n", "");
+    }
+    puts("|===========================================================================================");
+  }
