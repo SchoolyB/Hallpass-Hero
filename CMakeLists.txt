@@ -23,14 +23,12 @@ set(SOURCES_C
 
 set(SOURCES_CPP)
 
-
-# Link against SQLite3 library
+find_package(SQLite3 REQUIRED)
 # Create an executable from the C and C++ sources
+
 add_executable(HallpassHero.exe ${SOURCES_C} ${SOURCES_CPP})
 target_include_directories(HallpassHero.exe PRIVATE ${CMAKE_SOURCE_DIR}src/lib/headers)
-
-target_link_libraries(HallpassHero.exe ${SQLite3_LIBRARIES})
-
+target_link_libraries(HallpassHero.exe PRIVATE ${SQLite3_LIBRARIES})
 set(CPACK_PACKAGE_NAME "HallpassHero")
 set(CPACK_GENERATOR "ZIP")  # or other generators like DEB, RPM
 include(CPack)
