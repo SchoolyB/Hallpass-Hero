@@ -9,7 +9,7 @@ find_package(SQLite3 REQUIRED)
 # Include SQLite3 headers
 include_directories(${SQLite3_INCLUDE_DIRS})
 
-
+# Source files
 set(SOURCES_C
     src/c/main.c
     src/c/_add_student.c
@@ -21,16 +21,19 @@ set(SOURCES_C
     src/lib/utils.c
 )
 
-set(SOURCES_CPP)
+# Define the executable
+add_executable(HallpassHero.exe ${SOURCES_C})
 
-find_package(SQLite3 REQUIRED)
-# Create an executable from the C and C++ sources
+# Specify include directories for the executable
+target_include_directories(HallpassHero.exe PRIVATE ${CMAKE_SOURCE_DIR}/src/lib/headers)
 
-add_executable(HallpassHero.exe ${SOURCES_C} ${SOURCES_CPP})
-target_include_directories(HallpassHero.exe PRIVATE ${CMAKE_SOURCE_DIR}src/lib/headers)
+# Link against SQLite library
 target_link_libraries(HallpassHero.exe PRIVATE ${SQLite3_LIBRARIES})
+
+# Set up CPack for packaging
 set(CPACK_PACKAGE_NAME "HallpassHero")
 set(CPACK_GENERATOR "ZIP")  # or other generators like DEB, RPM
 include(CPack)
 
+# Install the executable
 install(TARGETS HallpassHero.exe DESTINATION ~/Downloads/HallpassHero)
