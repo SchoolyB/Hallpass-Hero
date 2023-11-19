@@ -1,3 +1,4 @@
+
 #ifndef UTILS_H
 #define UTILS_H
 
@@ -13,6 +14,10 @@
 #include <unistd.h>
 #endif
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-START MACROS+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 // Booleans
 #define FALSE 0
@@ -43,13 +48,14 @@
 // Standard fgets() and removing the newline character at the end of the user's string input
 #define FGETS(param) (fgets(param, sizeof(param), stdin))
 
-//--------------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------------//
 
-/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-END OF MACROS+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
+  // Declaration of utility functions
 
-/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-START OF UTIL FUNCTION PROTOTYPES+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-int UTILS_ERROR_LOGGER();
-void UTILS_REMOVE_NEWLINE_CHAR(char *param);
-/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-END OF UTIL FUNCTION PROTOTYPES+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
+  int UTILS_ERROR_LOGGER(char *error_message, char *func, char *action);
+  void UTILS_REMOVE_NEWLINE_CHAR(char *param);
 
+#ifdef __cplusplus
+} // extern "C"
+#endif
 #endif /* UTILS_H */

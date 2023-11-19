@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "../lib/utils.h"
 #include "../lib/headers/main.h"
-#include "../lib/headers/db.h"
+#include "../lib/headers/db.hh"
 
 int mainMenuProccess = FALSE;
 
@@ -25,6 +25,7 @@ char MainMenuOptions[7][50] = {
 int main()
 {
 
+  UTILS_ERROR_LOGGER("test", "test", "test");
   int mainMenuProccess = TRUE;
   // system("clear");
 

@@ -17,12 +17,22 @@ set(SOURCES_C
     src/c/_manage_roster.c
     src/c/_manage_student_db.c
     src/c/_search.c
-    src/db/db.c
     src/lib/utils.c
 )
 
+set(SOURCES_CPP
+    src/db/db.cpp
+)
+
+
+# C++ source file library
+add_library(cppLib OBJECT ${SOURCES_CPP})
+
+# C source file executable
+add_executable(HallpassHero.exe ${SOURCES_C} $<TARGET_OBJECTS:cppLib>)
+
 # Define the executable
-add_executable(HallpassHero.exe ${SOURCES_C})
+# add_executable(HallpassHero.exe ${SOURCES_C})
 
 # Specify include directories for the executable
 target_include_directories(HallpassHero.exe PRIVATE ${CMAKE_SOURCE_DIR}/src/lib/headers)

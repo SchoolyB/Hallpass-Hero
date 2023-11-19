@@ -10,6 +10,20 @@ void show_current_menu(char *str)
 int UTILS_ERROR_LOGGER(char *errorMessage, char *function, char *action)
 {
 
+  /*Making sure to create the logs dir if
+  it does not exist. For Win, Linux, Unix respectively*/
+#ifdef _WIN32
+  // Windows
+  if (_mkdir("../logs") != 0)
+#else
+  // Linux/Unix
+  if (mkdir("../logs", 0777) != 0)
+#endif
+  {
+    perror("Error creating the log directory");
+    return 1;
+  }
+
   FILE *errorLog;
   errorLog = fopen("../logs/errors.log", "a");
 

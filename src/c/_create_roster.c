@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../lib/utils.h"
+#include "../lib/headers/db.hh"
 
 void create_new_roster()
 {
@@ -39,7 +40,8 @@ void create_new_roster()
       newRosterMenuIsRunning = FALSE;
       system("clear");
       // todo need to do more work on db stuff
-      init_db();
+
+      create_new_roster_table();
     }
     else if (menuInput == 2 || strcmp(buffer, "back") == 0 || strcmp(buffer, "exit") == 0)
     {
