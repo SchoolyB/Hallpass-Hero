@@ -1,19 +1,23 @@
+
+#ifndef UTILS_H
+#define UTILS_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
 
-// conditional compilation for windows and linux
+// Conditional compilation for Windows and Linux
 #ifdef _WIN32
 #include <Windows.h>
 #else
 #include <unistd.h>
 #endif
 
-/*The plan is to keep this file clean.*/
-#ifndef UTILS_H
-#define UTILS_H
-
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-START MACROS+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 // Booleans
 #define FALSE 0
@@ -27,9 +31,13 @@
 #define GREEN "\x1B[32m"
 #define PURPLE "\x1B[35m"
 #define YELLOW "\x1B[33m"
+// fonts
+#define BOLD "\x1B[1m"
+#define UNDERLINE "\x1B[4m"
+
 //--------------------------------------------------------------------------------//
 
-// handling user confirmation for yes and no
+// Handling user confirmation for yes and no
 #define INPUT_IS_YES(param) (strcmp(param, "y") == 0 || strcmp(param, "Y") == 0 || \
                              strcmp(param, "yes") == 0 || strcmp(param, "Yes") == 0)
 
@@ -37,76 +45,17 @@
                             strcmp(param, "no") == 0 || strcmp(param, "No") == 0)
 //--------------------------------------------------------------------------------//
 
-// standard fgets() and removing the newline character at the end of the users string input
+// Standard fgets() and removing the newline character at the end of the user's string input
 #define FGETS(param) (fgets(param, sizeof(param), stdin))
 
-#define REMOVE_NEWLINE_CHAR(param)         \
-  do                                       \
-  {                                        \
-    size_t len = strlen(param);            \
-    if (len > 0 && param[len - 1] == '\n') \
-    {                                      \
-      param[len - 1] = '\0';               \
-    }                                      \
-  } while (0)
-//--------------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------------//
 
-/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-END OF MACROS+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
+  // Declaration of utility functions
 
-/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-START FUNCTIONS+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-int error_logger(char *errorMessage, char *function, char *action)
-{
+  int UTILS_ERROR_LOGGER(char *error_message, char *func, char *action);
+  void UTILS_REMOVE_NEWLINE_CHAR(char *param);
 
-  FILE *errorLog;
-  errorLog = fopen("../logs/errors.log", "a");
-
-  if (errorLog == NULL)
-  {
-    perror("Error opening the error log file");
-    error_logger("Error opening the error log file", "error_logger", "ret1");
-  }
-
-  time_t currentTime;
-  time(&currentTime);
-
-  // Handles critical errors
-  if (strcmp(action, "exit") == 0)
-  {
-    fprintf(errorLog, "Logged @ %s", ctime(&currentTime));
-    fprintf(errorLog, "Critical Error: %s in function: %s()\n", errorMessage, function);
-    fprintf(errorLog, "Exited program\n");
-    fflush(errorLog);
-    fclose(errorLog);
-    exit(1);
-  }
-  // Handles moderate errors
-  else if (strcmp(action, "ret1") == 0)
-  {
-
-    fprintf(errorLog, "Logged @ %s", ctime(&currentTime));
-    fprintf(errorLog, "Moderate Error: %s in function: %s()\n", errorMessage, function);
-    fflush(errorLog);
-    fclose(errorLog);
-    return 1;
-  }
-  // Handles minor errors
-  else if (strcmp(action, "ret0") == 0)
-  {
-    fprintf(errorLog, "Logged @ %s", ctime(&currentTime));
-    fprintf(errorLog, "Minor Error: %s in function: %s()\n", errorMessage, function);
-    fflush(errorLog);
-    fclose(errorLog);
-    return 0;
-  }
-
-  else
-  {
-    error_logger("Incorrect action passed as argument", function, "ret1");
-  }
-}
-/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-END OF FUNCTIONS+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-
-/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-START OF UTIL FUNCTION PROTOTYPES+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-int error_logger();
-/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-END OF UTIL FUNCTION PROTOTYPES+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
+#ifdef __cplusplus
+} // extern "C"
 #endif
+#endif /* UTILS_H */

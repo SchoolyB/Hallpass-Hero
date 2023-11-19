@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "../lib/utils.h"
 #include "../lib/headers/main.h"
+#include "../lib/headers/db.hh"
 
 int mainMenuProccess = FALSE;
 
@@ -24,6 +25,7 @@ char MainMenuOptions[7][50] = {
 int main()
 {
 
+  UTILS_ERROR_LOGGER("test", "test", "test");
   int mainMenuProccess = TRUE;
   // system("clear");
 
@@ -42,7 +44,7 @@ int main()
     puts("===========================================================================================");
     /*Here we are handling the input that the user makes on the main menu*/
     FGETS(buffer);
-    REMOVE_NEWLINE_CHAR(buffer);
+    UTILS_REMOVE_NEWLINE_CHAR(buffer);
     int menuInput = atoi(buffer);
 
     // to create a new roster
@@ -85,28 +87,13 @@ int main()
     {
       puts("Sorry, I didn't understand that.");
       puts("Please try again");
-      refresh_main_menu();
+      system("clear");
     }
 
     /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-END OF MAIN MENU+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
   }
 
   return 0;
-}
-
-// this refreshes the ui
-void refresh_main_menu()
-{
-  // windowHeight = 20;
-  // windowWidth = 90;
-  // system("resize -s 20 90");
-  system("clear");
-  puts("|===========================================================================================|");
-  for (int i = 0; i < 7; ++i)
-  {
-    printf("| %s %-90s\n", MainMenuOptions[i], "");
-  }
-  puts("|===========================================================================================|");
 }
 
 void handle_main_menu_decision(int num)
@@ -138,13 +125,13 @@ void handle_main_menu_decision(int num)
   default:
     puts("Sorry, I didn't understand that.");
     puts("Please try again");
-    refresh_main_menu();
+    system("clear");
     break;
   }
-  puts("Is that correct?");
+  puts("Is that correct?(yes/no)");
 
   FGETS(buffer);
-  REMOVE_NEWLINE_CHAR(buffer);
+  UTILS_REMOVE_NEWLINE_CHAR(buffer);
   if (INPUT_IS_YES(buffer) && num == 1)
   {
     puts("Ok then, let's create a new roster.");
@@ -153,7 +140,7 @@ void handle_main_menu_decision(int num)
   else if (INPUT_IS_YES(buffer) && num == 2)
   {
     puts("Ok then, let's manage an existing roster.");
-    // manage_roster();
+    manage_roster();
   }
   else if (INPUT_IS_YES(buffer) && num == 3)
   {
@@ -179,64 +166,16 @@ void handle_main_menu_decision(int num)
   else if (INPUT_IS_NO(buffer))
   {
     puts("No problem. Let's try again.");
-    refresh_main_menu();
+    system("clear");
   }
   else
   {
     puts("Sorry, I didn't understand that.");
     puts("Please try again");
-    refresh_main_menu();
+    system("clear");
   }
 }
 
-void create_new_roster()
-{
-  system("clear");
+//======================================================================================================================================================================
 
-  int newROsterMenuIsRunning = TRUE;
-  int menuWidth = 70;
-  int menuHeight = 10;
-
-  while (newROsterMenuIsRunning == TRUE)
-  {
-    mainMenuProccess = FALSE;
-    char newRosterOptions[2][50] = {
-        "1. Create a new roster",
-        "2. Back to main menu"};
-    puts("What would you like to do?");
-    puts("|===========================================================================================");
-    for (int i = 0; i < 2; ++i)
-    {
-      printf("| %s %-90s\n", newRosterOptions[i], "");
-    }
-    for (int i = 0; i < menuHeight; ++i)
-    {
-      printf("| %-90s\n", "");
-    }
-    puts("|===========================================================================================");
-    FGETS(buffer);
-    REMOVE_NEWLINE_CHAR(buffer);
-    int menuInput = atoi(buffer);
-    if (menuInput == 1 || strcmp(buffer, "new roster") == 0)
-    {
-      puts("You selected to create a new roster.");
-      newROsterMenuIsRunning = FALSE;
-      system("clear");
-      puts("What would you like to name your roster?");
-    }
-    else if (menuInput == 2 || strcmp(buffer, "back") == 0 || strcmp(buffer, "exit") == 0)
-    {
-      puts("You selected to go back to the main menu.");
-      refresh_main_menu();
-      newROsterMenuIsRunning = FALSE;
-    }
-    else
-    {
-      puts("Sorry, I didn't understand that.");
-      puts("Please try again");
-      create_new_roster();
-    }
-
-    ;
-  }
-}
+//======================================================================================================================================================================
