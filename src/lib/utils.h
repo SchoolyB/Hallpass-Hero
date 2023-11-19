@@ -35,8 +35,14 @@ extern "C"
 #define BOLD "\x1B[1m"
 #define UNDERLINE "\x1B[4m"
 
-//--------------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------------//
 
+  enum ErrorLevel
+  {
+    MINOR,    // 0
+    MODERATE, // 1
+    CRITICAL  // 2
+  };
 // Handling user confirmation for yes and no
 #define INPUT_IS_YES(param) (strcmp(param, "y") == 0 || strcmp(param, "Y") == 0 || \
                              strcmp(param, "yes") == 0 || strcmp(param, "Yes") == 0)
@@ -52,10 +58,13 @@ extern "C"
 
   // Declaration of utility functions
 
-  int UTILS_ERROR_LOGGER(char *error_message, char *func, char *action);
+  int UTILS_ERROR_LOGGER(char *error_message, char *function, enum ErrorLevel level);
+
   void UTILS_REMOVE_NEWLINE_CHAR(char *param);
+  void show_current_menu(char *str);
 
 #ifdef __cplusplus
 } // extern "C"
 #endif
+
 #endif /* UTILS_H */
