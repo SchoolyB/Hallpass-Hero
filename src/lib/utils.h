@@ -74,7 +74,9 @@ extern "C"
   int UTILS_ERROR_LOGGER(char *error_message, char *function, enum ErrorLevel level);
 
   void UTILS_REMOVE_NEWLINE_CHAR(char *param);
+  void UTILS_CLEAR_INPUT_BUFFER();
   void show_current_menu(char *str);
+  void show_current_step(char *str, int currentStep, int totalSteps);
 
 #ifdef __cplusplus
 } // extern "C"

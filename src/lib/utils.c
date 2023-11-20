@@ -57,6 +57,11 @@ void show_current_menu(char *str)
   printf("Current Menu: " BOLD "%s" RESET "\n", str);
 }
 
+void show_current_step(char *str, int currentStep, int totalSteps)
+{
+  printf(BOLD "%s" RESET " Step: %d/%d\n", str, currentStep, totalSteps);
+}
+
 void UTILS_REMOVE_NEWLINE_CHAR(char *param)
 {
   size_t len = strlen(param);
@@ -66,6 +71,14 @@ void UTILS_REMOVE_NEWLINE_CHAR(char *param)
   }
 }
 
+void UTILS_CLEAR_INPUT_BUFFER()
+{
+  int c;
+  while ((c = getchar()) != '\n' && c != EOF)
+  {
+    // Keep reading until a newline or EOF is encountered
+  }
+}
 // Typedefs
 
 /* programs are like courses/degrees/certs/diplomas

@@ -15,6 +15,7 @@ Helper function from db.hh:
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <time.h>
 #include "../lib/utils.h"
 #include "../lib/headers/db.hh"
 #include "../lib/headers/c_files.h"
@@ -76,15 +77,36 @@ void create_new_roster()
 
 void get_and_confirm_roster_name()
 {
-
+  show_current_step("Name your new roster", 1, 2);
   char rosterNameInput[30];
   char newRosterName[30];
   // getting initial input
   puts("What would you like to name your new roster?");
+  puts("Roster names can be no less the 1 character and no more then 30 characters.");
   FGETS(buffer);
   UTILS_REMOVE_NEWLINE_CHAR(buffer);
-  printf("You have decided to name your new roster:" BOLD "%s " RESET ".\nIs that correct?(y/n)\n", buffer);
   strcpy(rosterNameInput, buffer);
+  if (strlen(rosterNameInput) > 30)
+  {
+    printf(YELLOW "Sorry that name is too long please try again.\n" RESET);
+    sleep(2);
+    system("clear");
+    UTILS_ERROR_LOGGER("Entered roster name is too long", "get_and_confirm_roster_name", MINOR);
+    UTILS_CLEAR_INPUT_BUFFER();
+    get_and_confirm_roster_name();
+  }
+  else if (strlen(rosterNameInput) < 1 || strcmp(rosterNameInput, "") == 0)
+  {
+    printf(YELLOW "Sorry that name is too short please try again.\n" RESET);
+    sleep(2);
+    system("clear");
+    UTILS_ERROR_LOGGER("Entered roster name is too short", "get_and_confirm_roster_name", MINOR);
+    // No need to clear input buffer here because the user didn't enter anything
+    get_and_confirm_roster_name();
+  }
+  show_current_step("Confirm new roster name", 2, 2);
+  printf("You have decided to name your new roster:" BOLD "%s " RESET ".\nIs that correct?(y/n)\n", rosterNameInput);
+
   // confirming input
   FGETS(buffer);
   UTILS_REMOVE_NEWLINE_CHAR(buffer);
