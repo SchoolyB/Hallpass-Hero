@@ -12,6 +12,7 @@ Description : This source file contains the main function for the Hallpass Hero 
 #include <stdlib.h>
 #include "../lib/utils.h"
 #include "../lib/headers/main.h"
+#include "../lib/headers/c_files.h"
 
 int mainMenuProccess = FALSE;
 

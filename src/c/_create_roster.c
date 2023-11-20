@@ -17,6 +17,7 @@ Helper function from db.hh:
 #include <stdint.h>
 #include "../lib/utils.h"
 #include "../lib/headers/db.hh"
+#include "../lib/headers/c_files.h"
 
 char buffer[50];
 int menuInput;
