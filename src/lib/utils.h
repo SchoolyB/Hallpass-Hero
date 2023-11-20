@@ -1,3 +1,16 @@
+/*
+===============================================================================
+File Name   : utils.h
+-------------------------------------------------------------------------------
+Author      : Marshall Burns a.k.a. Schooly
+-------------------------------------------------------------------------------
+Description : This header file contains all the declarations for the utility
+              functions, their declarations, macros and enums.
+-------------------------------------------------------------------------------
+Notes       : This uses extern "C" linkage to allow the C++ functions to be
+              called from C code.
+===============================================================================
+*/
 
 #ifndef UTILS_H
 #define UTILS_H

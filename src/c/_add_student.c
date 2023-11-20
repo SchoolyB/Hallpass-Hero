@@ -1,5 +1,20 @@
+/*
+===============================================================================
+File Name   : _add_student.c
+-------------------------------------------------------------------------------
+Author      : Marshall Burns a.k.a. Schooly
+-------------------------------------------------------------------------------
+Description : This source file contains the function used
+              to add a student to the student database.
+-------------------------------------------------------------------------------
+Helper functions from db.hh:
+  s
+===============================================================================
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include "../lib/utils.h"
 
 void add_student_to_db()
@@ -8,8 +23,8 @@ void add_student_to_db()
   int mainMenuProccess;
   system("clear");
   int addStudentToDBMenuIsOpen = TRUE;
-  int menuWidth = 70;
-  int menuHeight = 10;
+  uint8_t menuWidth = 70;
+  uint8_t menuHeight = 10;
   while (addStudentToDBMenuIsOpen == TRUE)
   {
     mainMenuProccess = FALSE;
@@ -36,7 +51,7 @@ void add_student_to_db()
 
   FGETS(buffer);
   UTILS_REMOVE_NEWLINE_CHAR(buffer);
-  int menuInput = atoi(buffer);
+  uint8_t menuInput = atoi(buffer);
 
   if (menuInput == 1 || strcmp(buffer, "view roster") == 0)
   {

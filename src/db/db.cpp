@@ -1,3 +1,15 @@
+/*
+===============================================================================
+File Name   : db.cpp
+-------------------------------------------------------------------------------
+Author      : Marshall Burns a.k.a. Schooly
+-------------------------------------------------------------------------------
+Description : This source file contains all functions that interact with the database.
+              This includes creating new tables, renaming tables, and showing
+              all tables in the database.
+===============================================================================
+*/
+
 #include <iostream>
 #include <sqlite3.h>
 #include "../lib/utils.h"
@@ -77,8 +89,12 @@ extern "C"
     return 0;
   }
 
-  //==================================================================================================
+  /*
+  =======================================================
 
+
+  */
+  /*logic for renaming roster tables in the db*/
   int rename_roster()
   {
     sqlite3 *db;

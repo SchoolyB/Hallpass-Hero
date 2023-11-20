@@ -1,5 +1,20 @@
+/*
+===============================================================================
+File Name   : _create_roster.c
+-------------------------------------------------------------------------------
+Author      : Marshall Burns a.k.a. Schooly
+-------------------------------------------------------------------------------
+Description : This source file contains the function used
+              for creating a new roster.
+-------------------------------------------------------------------------------
+Helper function from db.hh:
+  - create_new_roster_table() - creates a new roster table
+===============================================================================
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include "../lib/utils.h"
 #include "../lib/headers/db.hh"
 
@@ -12,8 +27,8 @@ void create_new_roster()
   system("clear");
 
   int newRosterMenuIsRunning = TRUE;
-  int menuWidth = 70;
-  int menuHeight = 10;
+  uint8_t menuWidth = 70;
+  uint8_t menuHeight = 10;
 
   while (newRosterMenuIsRunning == TRUE)
   {
