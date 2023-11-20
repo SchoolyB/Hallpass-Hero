@@ -14,17 +14,20 @@ int UTILS_ERROR_LOGGER(char *errorMessage, char *function, enum ErrorLevel level
   case MINOR:
     fprintf(errorLog, "Logged @ %s", ctime(&currentTime));
     fprintf(errorLog, "Minor Error: %s in function: %s()\n", errorMessage, function);
+    fprintf(errorLog, "=============================================================\n");
     fflush(errorLog);
     return 0;
     break;
   case MODERATE:
     fprintf(errorLog, "Logged @ %s", ctime(&currentTime));
     fprintf(errorLog, "Moderate Error: %s in function: %s()\n", errorMessage, function);
+    fprintf(errorLog, "=============================================================\n");
     fflush(errorLog);
     return 1;
   case CRITICAL:
     fprintf(errorLog, "Logged @ %s", ctime(&currentTime));
     fprintf(errorLog, "CRITICAL Error: %s in function: %s()\n", errorMessage, function);
+    fprintf(errorLog, "=============================================================\n");
     printf(RED "Critical Error Occurred @ %s: For more information see logs/errors.log \n" RESET, ctime(&currentTime));
     fflush(errorLog);
     exit(1);

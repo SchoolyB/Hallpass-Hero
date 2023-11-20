@@ -31,7 +31,7 @@ int main()
   if (errorLogFile == NULL)
   {
     perror("Error creating errorLog file");
-    return 1; // Return an error code
+    return 1;
   }
   fclose(errorLogFile);
 
