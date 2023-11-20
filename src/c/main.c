@@ -9,8 +9,6 @@ int mainMenuProccess = FALSE;
 int windowHeight;
 int windowWidth;
 
-char buffer[50];
-
 char MainMenuOptions[7][50] = {
     // creating a roster is like creating a new class as a collection of students
     "1. Create a new roster",
@@ -24,10 +22,21 @@ char MainMenuOptions[7][50] = {
 
 int main()
 {
+  if (mkdir("../logs", 0777) != 0)
+  {
+    UTILS_ERROR_LOGGER("Could not create logs directory as it already exists", "main", MINOR);
+  }
 
-  UTILS_ERROR_LOGGER("test", "test", "test");
+  FILE *errorLogFile = fopen("../logs/errors.log", "a");
+  if (errorLogFile == NULL)
+  {
+    perror("Error creating errorLog file");
+    return 1;
+  }
+  fclose(errorLogFile);
+
+  char buffer[50];
   int mainMenuProccess = TRUE;
-  // system("clear");
 
   while (mainMenuProccess == TRUE)
   {
@@ -85,6 +94,7 @@ int main()
     }
     else
     {
+      UTILS_ERROR_LOGGER("Invalid decision made on while on main menu", "main", MINOR);
       puts("Sorry, I didn't understand that.");
       puts("Please try again");
       system("clear");
@@ -98,6 +108,7 @@ int main()
 
 void handle_main_menu_decision(int num)
 {
+  char buffer[50];
   system("clear");
   switch (num)
   {

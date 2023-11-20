@@ -50,6 +50,9 @@ void manage_roster()
       manageRosterMenuIsOpen = FALSE;
       system("clear");
       puts("renaming roster");
+      puts("Which roster would you like to rename?");
+      show_tables();
+      rename_roster();
     }
     else if (menuInput == 3 || strcmp(buffer, "add student to roster") == 0)
     {

@@ -11,7 +11,7 @@ extern "C"
 
   // C++ function declarations
   int init_db();
-  int create_new_roster_table();
+  int create_new_roster_table(const char *rosterName);
 
 #ifdef __cplusplus
 } // extern "C"
