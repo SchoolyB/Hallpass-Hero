@@ -29,6 +29,7 @@ int create_new_roster()
   system("clear");
 
   int newRosterMenuIsRunning = TRUE;
+  int showingFoundRosters = FALSE;
   uint8_t menuWidth = 70;
   uint8_t menuHeight = 10;
 
@@ -64,39 +65,71 @@ int create_new_roster()
     }
     else if (menuInput == 2 || strcmp(buffer, "show rosters") == 0 || strcmp(buffer, "show created rosters") == 0)
     {
-      int result = show_tables();
       puts("You selected to show created rosters.");
       newRosterMenuIsRunning = FALSE;
       system("clear");
-      if (result == 0)
+
+      int tablesExists = get_table_count();
+
+      if (tablesExists == TRUE)
       {
-        // check if there are no rosters created
-        int result = get_table_count();
-        if (get_table_count() == 0)
+        showingFoundRosters = TRUE;
+        while (showingFoundRosters == TRUE)
         {
-          printf(YELLOW "No rosters have been created yet.\n" RESET);
-          puts("Please create a roster first.");
-          sleep(3);
           system("clear");
-          newRosterMenuIsRunning = TRUE;
-        }
-        else
-        {
-          sleep(3);
-          system("clear");
-          printf(GREEN "Successfully retrieved created rosters.\n" RESET);
-          puts("Here are the rosters you have created:");
+          printf(GREEN "Successfully found created roster(s)\n" RESET);
+          printf("==========================================================================================\n");
+          printf(BOLD "Created rosters:\n" RESET);
+          puts("------------------------------------------------------------------------------------------");
           show_tables();
-          newRosterMenuIsRunning = TRUE;
+          printf("==========================================================================================\n");
+          showingFoundRosters = FALSE;
+          puts("What would you like to do?");
+          puts("1: Back");
+          puts("2: Main Menu");
+
+          FGETS(buffer);
+          UTILS_REMOVE_NEWLINE_CHAR(buffer);
+          menuInput = atoi(buffer);
+          if (menuInput == 1 || strcmp(buffer, "back") == 0)
+          {
+            showingFoundRosters = FALSE;
+            puts("Going back to create roster menu");
+            create_new_roster();
+          }
+          else if (menuInput == 2 || strcmp(buffer, "main") == 0 || strcmp(buffer, "main menu") == 0)
+          {
+            showingFoundRosters = FALSE;
+            system("clear");
+            puts("Returning to the main menu");
+            sleep(1);
+            system("clear");
+
+            return 0;
+          }
+          else
+          {
+            system("clear");
+            puts("Please make a valid decision");
+            sleep(1);
+            system("clear");
+            showingFoundRosters = TRUE;
+          }
         }
       }
-
+      else if (tablesExists == FALSE)
+      {
+        system("clear");
+        printf(YELLOW "No rosters found\n" RESET);
+        puts("Please create a new roster");
+        sleep(1);
+        system("clear");
+        newRosterMenuIsRunning = TRUE;
+      }
       else
       {
-        printf(RED "Error: Failed to show created rosters.\n" RESET);
-        puts("Please try again");
-        sleep(3);
-        create_new_roster();
+        UTILS_ERROR_LOGGER("Failed to get table count", "create_new_roster", MINOR);
+        printf(RED "Error: Failed to get table count\n" RESET);
       }
     }
 
@@ -157,6 +190,7 @@ int get_and_confirm_roster_name()
   }
   else if (strcmp(rosterNameInput, "cancel") == 0)
   {
+    system("clear");
     printf(YELLOW "Canceling roster creation\n" RESET);
     sleep(1);
     system("clear");
