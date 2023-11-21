@@ -25,7 +25,7 @@ extern "C"
 
   // C++ function declarations
   static int callback(void *NotUsed, int argc, char **argv, char **azColName);
-  void create_new_roster_table(const char *rosterName);
+  int create_new_roster_table(const char *rosterName);
   int show_tables();
   int rename_roster();
 

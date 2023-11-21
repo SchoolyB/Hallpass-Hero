@@ -56,6 +56,7 @@ extern "C"
     {
       UTILS_ERROR_LOGGER("Failed to open SQLite3 database", "create_new_roster_table", MODERATE);
       sqlite3_close(db);
+      return 1;
     }
 
     char createTableSQL[200];
@@ -67,7 +68,7 @@ extern "C"
     rc = sqlite3_exec(db, createTableSQL, nullptr, nullptr, nullptr);
 
     sqlite3_close(db);
-    return 0; // Indicate success
+    return 0;
   }
   //==================================================================================================
   int show_tables()
@@ -79,6 +80,7 @@ extern "C"
     {
       UTILS_ERROR_LOGGER("Failed to open SQLite3 database", "show_tables", MODERATE);
       sqlite3_close(db);
+      return 1;
     }
 
     const char *selectTables = "SELECT name FROM sqlite_master WHERE type='table'";
