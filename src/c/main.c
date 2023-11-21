@@ -1,13 +1,20 @@
+/*
+===============================================================================
+File Name   : main.c
+-------------------------------------------------------------------------------
+Author      : Marshall Burns a.k.a. Schooly
+-------------------------------------------------------------------------------
+Description : This source file contains the main function for the Hallpass Hero CLI tool
+===============================================================================
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "../lib/utils.h"
 #include "../lib/headers/main.h"
-#include "../lib/headers/db.hh"
+#include "../lib/headers/c_files.h"
 
 int mainMenuProccess = FALSE;
-
-int windowHeight;
-int windowWidth;
 
 char MainMenuOptions[7][50] = {
     // creating a roster is like creating a new class as a collection of students

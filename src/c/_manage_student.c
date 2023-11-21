@@ -1,11 +1,11 @@
 // /*
 // ===============================================================================
-// File Name   : _search.c
+// File Name   : _manage_student.c
 // -------------------------------------------------------------------------------
 // Author      : Marshall Burns a.k.a. Schooly
 // -------------------------------------------------------------------------------
 // Description : This source file contains the function used
-//               to search for a student in the database.
+//               to manage a student.
 // ===============================================================================
 // */
 
@@ -16,6 +16,6 @@
 // #include "../lib/headers/db.hh"
 // #include "../lib/headers/c_files.h"
 
-// void search_for_student()
+// void manage_student_db()
 // {
 // }

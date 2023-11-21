@@ -15,13 +15,14 @@ set(SOURCES_C
     src/c/_add_student.c
     src/c/_create_roster.c
     src/c/_manage_roster.c
-    src/c/_manage_student_db.c
+    src/c/_manage_student.c
     src/c/_search.c
     src/lib/utils.c
 )
 
 set(SOURCES_CPP
     src/db/db.cpp
+    src/lib/utils.cpp
 )
 
 

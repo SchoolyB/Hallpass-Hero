@@ -1,15 +1,34 @@
+/*
+===============================================================================
+File Name   : _manage_roster.c
+-------------------------------------------------------------------------------
+Author      : Marshall Burns a.k.a. Schooly
+-------------------------------------------------------------------------------
+Description : This source file contains the function used
+              to manage a roster.
+-------------------------------------------------------------------------------
+Helper functions from db.hh:
+  - show_tables() - shows all tables in the database
+  - rename_roster() - renames a roster
+===============================================================================
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include "../lib/utils.h"
+#include "../lib/headers/db.hpp"
+#include "../lib/headers/c_files.h"
 
 void manage_roster()
 {
   char buffer[50];
   int mainMenuProccess;
-  system("clear");
   int manageRosterMenuIsOpen = TRUE;
-  int menuWidth = 70;
-  int menuHeight = 10;
+  uint8_t menuWidth = 70;
+  uint8_t menuHeight = 10;
+
+  system("clear");
   while (manageRosterMenuIsOpen == TRUE)
   {
     mainMenuProccess = FALSE;
