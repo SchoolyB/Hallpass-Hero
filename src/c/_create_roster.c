@@ -17,12 +17,12 @@ Helper function from db.hh:
 #include <stdint.h>
 #include <time.h>
 #include "../lib/utils.h"
-#include "../lib/headers/db.hh"
+#include "../lib/headers/db.hpp"
 #include "../lib/headers/c_files.h"
 
 char buffer[50];
 int menuInput;
-void create_new_roster()
+int create_new_roster()
 {
 
   int mainMenuProccess;
@@ -70,12 +70,25 @@ void create_new_roster()
       system("clear");
       if (result == 0)
       {
-        printf(GREEN "Successfully retrieved created rosters.\n" RESET);
-        sleep(3);
-        system("clear");
-        puts("Here are the rosters you have created:");
-        show_tables();
-        newRosterMenuIsRunning = TRUE;
+        // check if there are no rosters created
+        int result = get_table_count();
+        if (get_table_count() == 0)
+        {
+          printf(YELLOW "No rosters have been created yet.\n" RESET);
+          puts("Please create a roster first.");
+          sleep(3);
+          system("clear");
+          newRosterMenuIsRunning = TRUE;
+        }
+        else
+        {
+          sleep(3);
+          system("clear");
+          printf(GREEN "Successfully retrieved created rosters.\n" RESET);
+          puts("Here are the rosters you have created:");
+          show_tables();
+          newRosterMenuIsRunning = TRUE;
+        }
       }
 
       else
@@ -111,7 +124,7 @@ void create_new_roster()
   }
 }
 
-void get_and_confirm_roster_name()
+int get_and_confirm_roster_name()
 {
   show_current_step("Name your new roster", 1, 2);
   char rosterNameInput[30];

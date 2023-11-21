@@ -5,8 +5,8 @@ File Name   : utils.c
 Author      : Marshall Burns a.k.a. Schooly
 -------------------------------------------------------------------------------
 Description : This source file contains several utility functions that are used
-              throughout the program. This file also contains the typedefs for
-              the structs used in the program.
+              throughout the 'C' portion of the source code. This file also
+              contains the typedefs for the structs used in the program.
               TODO might move the funcs and typedefs to the header file
 ===============================================================================
 */
@@ -39,7 +39,7 @@ int UTILS_ERROR_LOGGER(char *errorMessage, char *function, enum ErrorLevel level
     return 1;
   case CRITICAL:
     fprintf(errorLog, "Logged @ %s", ctime(&currentTime));
-    fprintf(errorLog, "CRITICAL Error: %s in function: %s()\n", errorMessage, function);
+    fprintf(errorLog, "CRITICAL ERROR: %s in function: %s()\n", errorMessage, function);
     fprintf(errorLog, "=============================================================\n");
     printf(RED "Critical Error Occurred @ %s: For more information see logs/errors.log \n" RESET, ctime(&currentTime));
     fflush(errorLog);

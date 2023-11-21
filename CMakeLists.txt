@@ -22,6 +22,7 @@ set(SOURCES_C
 
 set(SOURCES_CPP
     src/db/db.cpp
+    src/lib/utils.cpp
 )
 
 
