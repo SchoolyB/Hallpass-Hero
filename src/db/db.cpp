@@ -38,13 +38,14 @@ int print_table_names_callback(void *data, int argc, char **argv, char **azColNa
 {
   for (int i = 0; i < argc; i++)
   {
-    // prints all tables in sqlite_master except sqlite_sequence
+    // Exclude sqlite_sequence from the printed tables
     if (strcmp(argv[i], "sqlite_sequence") != 0)
     {
-      cout << BOLD << (argv[i]) << RESET << "\n";
+      cout << BOLD << (argv[i] ? argv[i] : "NULL") << RESET << "\n";
       has_tables = true; // Set the flag to true when a table (other than sqlite_sequence) is found
     }
   }
+
   return 0;
 }
 extern "C"
@@ -74,6 +75,7 @@ extern "C"
                             "id INTEGER PRIMARY KEY AUTOINCREMENT)",
             rosterName);
 
+    // nullptr takes the place of a callback function
     rc = sqlite3_exec(db, createTableSQL, nullptr, nullptr, nullptr);
 
     sqlite3_close(db);
@@ -95,7 +97,8 @@ extern "C"
 
     const char *selectTables = "SELECT name FROM sqlite_master WHERE type='table'";
 
-    rc = sqlite3_exec(db, selectTables, print_table_names_callback, nullptr, nullptr);
+    // nullptr takes the place of a callback function
+    rc = sqlite3_exec(db, selectTables, nullptr, nullptr, nullptr);
 
     sqlite3_close(db);
     int tableCountResult = get_table_count();
