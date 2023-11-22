@@ -1,7 +1,7 @@
 #ifndef C_FILE_HEADER_h
 #define C_FILE_HEADER_h
 int create_new_roster();
-void manage_roster();
+int manage_roster();
 void add_student_to_db();
 void manage_student_db();
 void search_for_student();

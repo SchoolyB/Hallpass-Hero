@@ -23,6 +23,7 @@ prefixing them all with ''
 */
 using namespace std;
 
+bool has_tables = false;
 static int callback(void *NotUsed, int argc, char **argv, char **azColName)
 {
   int i;
@@ -37,10 +38,11 @@ int print_table_names_callback(void *data, int argc, char **argv, char **azColNa
 {
   for (int i = 0; i < argc; i++)
   {
-    // prints all tables in sqlite_master except sqlite_sequence
+    // Exclude sqlite_sequence from the printed tables
     if (strcmp(argv[i], "sqlite_sequence") != 0)
     {
       cout << BOLD << (argv[i] ? argv[i] : "NULL") << RESET << "\n";
+      has_tables = true; // Set the flag to true when a table (other than sqlite_sequence) is found
     }
   }
 
@@ -73,6 +75,7 @@ extern "C"
                             "id INTEGER PRIMARY KEY AUTOINCREMENT)",
             rosterName);
 
+    // nullptr takes the place of a callback function
     rc = sqlite3_exec(db, createTableSQL, nullptr, nullptr, nullptr);
 
     sqlite3_close(db);
@@ -94,18 +97,16 @@ extern "C"
 
     const char *selectTables = "SELECT name FROM sqlite_master WHERE type='table'";
 
-    rc = sqlite3_exec(db, selectTables, print_table_names_callback, nullptr, nullptr);
+    // nullptr takes the place of a callback function
+    rc = sqlite3_exec(db, selectTables, nullptr, nullptr, nullptr);
 
     sqlite3_close(db);
-    return 0;
+    int tableCountResult = get_table_count();
+    return tableCountResult;
   }
 
-  /*
-  =======================================================
-
-
-  */
-  /*logic for renaming roster tables in the db*/
+  //==================================================================================================
+  // logic for renaming roster tables in the db*/
   int rename_roster()
   {
     sqlite3 *db;
@@ -163,7 +164,7 @@ extern "C"
     return 0;
   }
 }
-
+//==================================================================================================
 int get_table_count()
 {
   sqlite3 *db;
@@ -172,15 +173,25 @@ int get_table_count()
   if (rc != SQLITE_OK)
   {
     sqlite3_close(db);
-    CPP_UTILS_ERROR_LOGGER("Failed to open SQLite3 database when trying to get tables from database: ", "get_table_count", CppErrorLevel::MODERATE);
-    cerr << RED "Failed to open SQLite3 database" RESET << endl;
-    return 1;
+    CPP_UTILS_ERROR_LOGGER("Failed to open SQLite3 database. ", "get_table_count", CppErrorLevel::CRITICAL);
+    cerr << RED "CRITICAL ERROR: Failed to find/open database" RESET << endl;
+    cout << "Exiting program" << endl;
+    sleep(1);
+    exit(1);
   }
 
   const char *selectTables = "SELECT name FROM sqlite_master WHERE type='table'";
 
   rc = sqlite3_exec(db, selectTables, print_table_names_callback, nullptr, nullptr);
-
   sqlite3_close(db);
-  return 0;
+
+  // Checking if any tables were found
+  if (has_tables)
+  {
+    return TRUE; // Tables found
+  }
+  else
+  {
+    return FALSE; // No tables found
+  }
 }
