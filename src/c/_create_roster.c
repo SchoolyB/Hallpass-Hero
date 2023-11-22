@@ -22,23 +22,23 @@ Helper function from db.hh:
 
 char buffer[50];
 int menuInput;
+
 int create_new_roster()
 {
 
   int mainMenuProccess;
-  system("clear");
-
   int newRosterMenuIsRunning = TRUE;
   int showingFoundRosters = FALSE;
   uint8_t menuWidth = 70;
   uint8_t menuHeight = 10;
 
+  system("clear");
   while (newRosterMenuIsRunning == TRUE)
   {
     mainMenuProccess = FALSE;
     char newRosterOptions[4][50] = {
         "1. Create a new roster",
-        "2. Show created rosters",
+        "2. View created rosters",
         "3. Help",
         "4. Main Menu"};
     show_current_menu("Create New Roster");
@@ -56,16 +56,16 @@ int create_new_roster()
     FGETS(buffer);
     UTILS_REMOVE_NEWLINE_CHAR(buffer);
     int menuInput = atoi(buffer);
-    if (menuInput == 1 || strcmp(buffer, "new roster") == 0)
+    if (menuInput == 1 || strcmp(buffer, "new roster") == 0 || strcmp(buffer, "new") == 0)
     {
       puts("You selected to create a new roster.");
       newRosterMenuIsRunning = FALSE;
       system("clear");
       get_and_confirm_roster_name();
     }
-    else if (menuInput == 2 || strcmp(buffer, "show rosters") == 0 || strcmp(buffer, "show created rosters") == 0)
+    else if (menuInput == 2 || strcmp(buffer, "view rosters") == 0 || strcmp(buffer, "view") == 0)
     {
-      puts("You selected to show created rosters.");
+      puts("You selected to view created rosters.");
       newRosterMenuIsRunning = FALSE;
       system("clear");
 
@@ -142,6 +142,7 @@ int create_new_roster()
     }
     else if (menuInput == 4 || strcmp(buffer, "main") == 0 || strcmp(buffer, "main menu") == 0)
     {
+
       system("clear");
       puts("Returning to main menu.");
       sleep(1);
