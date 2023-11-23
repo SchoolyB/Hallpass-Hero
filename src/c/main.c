@@ -48,7 +48,7 @@ int main()
   while (mainMenuProccess == TRUE)
   {
     /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-START OF MAIN MENU+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-    puts("Welcome to the Hallpass Hero CLI tool!");
+    puts("Welcome to the Hallpass Hero main menu!");
     puts("Please select one of the options below:");
 
     // showing main menu options
