@@ -92,7 +92,7 @@ int manage_roster()
           {
             showingFoundRosters = FALSE;
             manageRosterMenuIsOpen = TRUE;
-                    }
+          }
           else if (menuInput == 2 || strcmp(buffer, "main") == 0 || strcmp(buffer, "main menu") == 0)
           {
             showingFoundRosters = FALSE;
@@ -130,7 +130,6 @@ int manage_roster()
     }
     else if (menuInput == 2 || strcmp(buffer, "rename roster") == 0 || strcmp(buffer, "rename") == 0)
     {
-      puts("You selected to rename the roster.");
       manageRosterMenuIsOpen = FALSE;
       showingFoundRosters = TRUE;
       while (showingFoundRosters == TRUE)
@@ -143,9 +142,19 @@ int manage_roster()
         show_tables();
         printf("==========================================================================================\n");
         int renameRosterReturnValue = rename_roster();
-        if (renameRosterReturnValue == 0)
+        if (renameRosterReturnValue == 2)
         {
-          showingFoundRosters = TRUE;
+          showingFoundRosters = FALSE;
+          sleep(1);
+          system("clear");
+          manageRosterMenuIsOpen = TRUE;
+        }
+        else if (renameRosterReturnValue == 1)
+        {
+          showingFoundRosters = FALSE;
+          sleep(1);
+          system("clear");
+          manageRosterMenuIsOpen = TRUE;
         }
         else
         {

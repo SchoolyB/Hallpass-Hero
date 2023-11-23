@@ -141,7 +141,7 @@ extern "C"
 
     string currentTableName;
     cout << "What roster would you like to rename?" << endl;
-    cout << YELLOW "To cancel this operation, type 'cancel' and press enter" RESET << endl;
+    cout << YELLOW "To cancel this operation, type 'cancel'." RESET << endl;
     getline(cin, currentTableName);
     if (currentTableName == "cancel")
     {
@@ -152,9 +152,9 @@ extern "C"
     }
     else
     {
-
+      system("clear");
       cout << "You want to rename: " << currentTableName << ". Is that correct? (y/n): " << endl;
-
+      cout << YELLOW "To cancel this operation, type 'cancel'." RESET << endl;
       string answer;
       string oldName;
       string newName;
@@ -162,16 +162,28 @@ extern "C"
 
       if (answer == "y" || answer == "Y" || answer == "yes" || answer == "Yes" || answer == "YES")
       {
-        cout << YELLOW "Renaming table..." RESET << endl;
-        cout << "What would you like to rename it to?" << endl;
+        system("clear");
+        cout << YELLOW "Renaming " << currentTableName << RESET << endl;
+        cout << "What would you like to rename this roster to?" << endl;
         cout << "To cancel this operation, type 'cancel'." << endl;
         getline(cin, newName);
 
+        if (newName == "cancel")
+        {
+          system("clear");
+          cout << YELLOW "Canceling roster renaming" RESET << endl;
+          sqlite3_close(db);
+          return 1;
+        }
         string renameSQLTable = "ALTER TABLE " + currentTableName + " RENAME TO " + newName;
 
         rc = sqlite3_exec(db, renameSQLTable.c_str(), nullptr, nullptr, nullptr);
         oldName = currentTableName;
         currentTableName = newName;
+        system("clear");
+        cout << GREEN << "The " BOLD GREEN << oldName + RESET GREEN " roster has successfully been renamed to " BOLD << newName << RESET << endl;
+        sqlite3_close(db);
+        return 2;
       }
       else if (answer == "n" || answer == "N" || answer == "no" || answer == "No" || answer == "NO")
       {
@@ -194,10 +206,10 @@ extern "C"
         cerr << RED "Failed to open SQLite3 database" RESET << endl;
         exit(1);
       }
-      system("clear");
+      // system("clear");
 
-      cout << GREEN << "The " BOLD GREEN << oldName + RESET GREEN " roster has successfully been renamed to " BOLD << newName << RESET << endl;
-      sqlite3_close(db);
+      // cout << GREEN << "The " BOLD GREEN << oldName + RESET GREEN " roster has successfully been renamed to " BOLD << newName << RESET << endl;
+      // sqlite3_close(db);
       return 0;
     }
   }
