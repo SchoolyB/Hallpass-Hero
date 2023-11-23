@@ -21,7 +21,7 @@ Helper functions from db.hh:
 #include "../lib/headers/db.hpp"
 #include "../lib/headers/c_files.h"
 
-int manage_roster()
+int manage_roster(void)
 {
 
   char buffer[50];
@@ -124,52 +124,121 @@ int manage_roster()
       }
       else
       {
-        UTILS_ERROR_LOGGER("Failed to get table count", "create_new_roster", MINOR);
-        printf(RED "Error: Failed to get table count\n" RESET);
+        UTILS_ERROR_LOGGER("Failed to get roster table count.", "create_new_roster", MINOR);
+        printf(RED "Error: Failed to get roster table count.\n" RESET);
       }
     }
     else if (menuInput == 2 || strcmp(buffer, "rename roster") == 0 || strcmp(buffer, "rename") == 0)
     {
       manageRosterMenuIsOpen = FALSE;
-      showingFoundRosters = TRUE;
-      while (showingFoundRosters == TRUE)
+      system("clear");
+      int tableExists = get_table_count();
+      if (tableExists == TRUE)
+      {
+        showingFoundRosters = TRUE;
+        while (showingFoundRosters == TRUE)
+        {
+          system("clear");
+          printf(GREEN "Successfully found created roster(s)\n" RESET);
+          printf("==========================================================================================\n");
+          printf(BOLD "Created rosters:\n" RESET);
+          puts("------------------------------------------------------------------------------------------");
+          show_tables();
+          printf("==========================================================================================\n");
+          int renameRosterReturnValue = rename_roster();
+          if (renameRosterReturnValue == 2)
+          {
+            showingFoundRosters = FALSE;
+            sleep(1);
+            system("clear");
+            manageRosterMenuIsOpen = TRUE;
+          }
+          else if (renameRosterReturnValue == 1)
+          {
+            showingFoundRosters = FALSE;
+            sleep(1);
+            system("clear");
+            manageRosterMenuIsOpen = TRUE;
+          }
+          else
+          {
+            sleep(1);
+            system("clear");
+            showingFoundRosters = FALSE;
+          }
+        }
+      }
+      else if (tableExists == FALSE)
       {
         system("clear");
-        printf(GREEN "Successfully found created roster(s)\n" RESET);
-        printf("==========================================================================================\n");
-        printf(BOLD "Created rosters:\n" RESET);
-        puts("------------------------------------------------------------------------------------------");
-        show_tables();
-        printf("==========================================================================================\n");
-        int renameRosterReturnValue = rename_roster();
-        if (renameRosterReturnValue == 2)
-        {
-          showingFoundRosters = FALSE;
-          sleep(1);
-          system("clear");
-          manageRosterMenuIsOpen = TRUE;
-        }
-        else if (renameRosterReturnValue == 1)
-        {
-          showingFoundRosters = FALSE;
-          sleep(1);
-          system("clear");
-          manageRosterMenuIsOpen = TRUE;
-        }
-        else
-        {
-          sleep(1);
-          system("clear");
-          showingFoundRosters = FALSE;
-        }
+        printf(YELLOW "No rosters found\n" RESET);
+        puts("Please create a new roster");
+        sleep(1);
+        system("clear");
+        manageRosterMenuIsOpen = TRUE;
+      }
+      else
+      {
+        UTILS_ERROR_LOGGER("Failed to get roster table count.", "create_new_roster", MINOR);
+        printf(RED "Error: Failed to get roster table count.\n" RESET);
       }
     }
     else if (menuInput == 3 || strcmp(buffer, "delete roster") == 0 || strcmp(buffer, "delete") == 0)
     {
       manageRosterMenuIsOpen = FALSE;
       system("clear");
-      puts("Which roster would you like to delete?");
-      show_tables();
+      int tableExists = get_table_count();
+      if (tableExists == TRUE)
+      {
+        showingFoundRosters = TRUE;
+        while (showingFoundRosters == TRUE)
+        {
+          system("clear");
+          printf(GREEN "Successfully found created roster(s)\n" RESET);
+          printf("==========================================================================================\n");
+          printf(BOLD "Created rosters:\n" RESET);
+          puts("------------------------------------------------------------------------------------------");
+          show_tables();
+          printf("==========================================================================================\n");
+
+          int deleteRosterReturnValue = drop_table();
+
+          if (deleteRosterReturnValue == 2)
+          {
+            showingFoundRosters = FALSE;
+            sleep(1);
+            system("clear");
+            manageRosterMenuIsOpen = TRUE;
+          }
+          else if (deleteRosterReturnValue == 1)
+          {
+            showingFoundRosters = FALSE;
+            sleep(1);
+            system("clear");
+            manageRosterMenuIsOpen = TRUE;
+          }
+          else
+          {
+            sleep(1);
+            system("clear");
+            showingFoundRosters = FALSE;
+          }
+        }
+      }
+      else if (tableExists == FALSE)
+      {
+        system("clear");
+        printf(YELLOW "No rosters found\n" RESET);
+        puts("Please create a new roster");
+        sleep(1);
+        system("clear");
+        manageRosterMenuIsOpen = TRUE;
+      }
+      else
+      {
+        UTILS_ERROR_LOGGER("Failed to get roster table count.", "create_new_roster", MINOR);
+        printf(RED "Error: Failed to get roster table count.\n" RESET);
+      }
     }
     else if (menuInput == 4 || strcmp(buffer, "add student") == 0 || strcmp(buffer, "add") == 0)
     {
@@ -192,7 +261,6 @@ int manage_roster()
       system("clear");
       puts("showing help");
     }
-
     else if (menuInput == 7 || strcmp(buffer, "main menu") == 0 || strcmp(buffer, "main") == 0)
     {
       system("clear");

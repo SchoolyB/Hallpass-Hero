@@ -23,7 +23,7 @@ Helper function from db.hh:
 char buffer[50];
 int menuInput;
 
-int create_new_roster()
+int create_new_roster(void)
 {
 
   int mainMenuProccess;
@@ -158,7 +158,7 @@ int create_new_roster()
   }
 }
 
-int get_and_confirm_roster_name()
+int get_and_confirm_roster_name(void)
 {
   show_current_step("Name your new roster", 1, 2);
   char rosterNameInput[30];
