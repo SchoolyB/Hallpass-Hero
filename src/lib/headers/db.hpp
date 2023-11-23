@@ -25,12 +25,12 @@ extern "C"
 
   // C++ function declarations
   static int callback(void *NotUsed, int argc, char **argv, char **azColName);
-  int pruint_table_names_callback(void *data, int argc, char **argv, char **azColName);
+  int print_table_names_callback(void *data, int argc, char **argv, char **azColName);
   int create_new_roster_table(const char *rosterName);
-  int show_tables();
-  int rename_roster();
-  int get_table_count();
-  int drop_table();
+  int show_tables(void);
+  int rename_roster(void);
+  int get_table_count(void);
+  int drop_table(void);
 
 #ifdef __cplusplus
 } // extern "C"
