@@ -64,7 +64,6 @@ int manage_roster()
     int menuInput = atoi(buffer);
     if (menuInput == 1 || strcmp(buffer, "view roster") == 0 || strcmp(buffer, "view") == 0)
     {
-      puts("You selected to view the roster.");
       manageRosterMenuIsOpen = FALSE;
       system("clear");
 
@@ -92,9 +91,8 @@ int manage_roster()
           if (menuInput == 1 || strcmp(buffer, "back") == 0)
           {
             showingFoundRosters = FALSE;
-            puts("Going back to create roster menu");
-            create_new_roster();
-          }
+            manageRosterMenuIsOpen = TRUE;
+                    }
           else if (menuInput == 2 || strcmp(buffer, "main") == 0 || strcmp(buffer, "main menu") == 0)
           {
             showingFoundRosters = FALSE;
@@ -134,18 +132,35 @@ int manage_roster()
     {
       puts("You selected to rename the roster.");
       manageRosterMenuIsOpen = FALSE;
-      system("clear");
-      puts("renaming roster");
-      puts("Which roster would you like to rename?");
-      show_tables();
-      rename_roster();
+      showingFoundRosters = TRUE;
+      while (showingFoundRosters == TRUE)
+      {
+        system("clear");
+        printf(GREEN "Successfully found created roster(s)\n" RESET);
+        printf("==========================================================================================\n");
+        printf(BOLD "Created rosters:\n" RESET);
+        puts("------------------------------------------------------------------------------------------");
+        show_tables();
+        printf("==========================================================================================\n");
+        int renameRosterReturnValue = rename_roster();
+        if (renameRosterReturnValue == 0)
+        {
+          showingFoundRosters = TRUE;
+        }
+        else
+        {
+          sleep(1);
+          system("clear");
+          showingFoundRosters = FALSE;
+        }
+      }
     }
     else if (menuInput == 3 || strcmp(buffer, "delete roster") == 0 || strcmp(buffer, "delete") == 0)
     {
-      puts("You selected to add a student to the roster.");
       manageRosterMenuIsOpen = FALSE;
       system("clear");
-      puts("adding student to roster");
+      puts("Which roster would you like to delete?");
+      show_tables();
     }
     else if (menuInput == 4 || strcmp(buffer, "add student") == 0 || strcmp(buffer, "add") == 0)
     {
