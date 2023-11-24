@@ -7,8 +7,11 @@ Author      : Marshall Burns a.k.a. Schooly
 Description : This source file contains the function used
               for creating a new roster.
 -------------------------------------------------------------------------------
-Helper function from db.hh:
+Helper function from db.hpp:
   - create_new_roster_table() - creates a new roster table
+  - show_tables() - shows all tables in the database
+  - get_table_count() - the return value is used to determine if there are any
+                      rosters in the database
 ===============================================================================
 */
 
@@ -78,6 +81,8 @@ int create_new_roster(void)
         {
           system("clear");
           printf(GREEN "Successfully found created roster(s)\n" RESET);
+          sleep(1);
+          system("clear");
           printf("==========================================================================================\n");
           printf(BOLD "Created rosters:\n" RESET);
           puts("------------------------------------------------------------------------------------------");

@@ -22,4 +22,5 @@ enum class CppErrorLevel
 };
 
 int CPP_UTILS_ERROR_LOGGER(const char *message, const char *function, const CppErrorLevel level);
+void CPP_UTILS_SLEEP(int seconds);
 #endif

@@ -13,6 +13,8 @@ Description : This source file contains several utility functions that are used
 
 #include <iostream>
 #include <fstream>
+#include <chrono>
+#include <thread>
 #include "utils.hpp"
 /*
 Allows using elements from
@@ -21,6 +23,10 @@ prefixing them all with 'std::'
 */
 using namespace std;
 
+/************************************************************************************
+ * CPP_UTILS_ERROR_LOGGER(): Logs errors errors that occur specifically in 'C++' files
+ * Note: For 'C' code error logging see UTILS_ERROR_LOGGER in utils.c
+ ************************************************************************************/
 int CPP_UTILS_ERROR_LOGGER(const char *message, const char *function, const CppErrorLevel level)
 {
   fstream errorLog;
@@ -44,4 +50,11 @@ int CPP_UTILS_ERROR_LOGGER(const char *message, const char *function, const CppE
     break;
   }
   return 0;
+}
+/************************************************************************************
+ * CPP_UTILS_SLEEP(): Can you believe I hade to make a sleep function? C++ is lame.
+ ************************************************************************************/
+void CPP_UTILS_SLEEP(int seconds)
+{
+  std::this_thread::sleep_for(std::chrono::seconds(seconds));
 }

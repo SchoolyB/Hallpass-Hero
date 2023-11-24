@@ -15,6 +15,10 @@ Description : This source file contains several utility functions that are used
 #include <stdlib.h>
 #include "utils.h"
 
+/************************************************************************************
+ * UTILS_ERROR_LOGGER(): Logs errors errors that occur specifically in 'C' files
+ * Note: For 'C++' code error logging see CPP_UTILS_ERROR_LOGGER in utils.cpp
+ ************************************************************************************/
 int UTILS_ERROR_LOGGER(char *errorMessage, char *function, enum ErrorLevel level)
 {
 
@@ -51,12 +55,18 @@ int UTILS_ERROR_LOGGER(char *errorMessage, char *function, enum ErrorLevel level
     break;
   }
 }
-
+/************************************************************************************
+ * show_current_menu(): Simply shows the current menu the user is in to prevent confusion
+ ************************************************************************************/
 void show_current_menu(char *str)
 {
   printf("Current Menu: " BOLD "%s" RESET "\n", str);
 }
 
+/************************************************************************************
+ * show_current_step(): When a feature requires multiple steps use this.
+ *  Example: Step 1 of 2 name roster. Step 2 of 2 confirm name of roster.
+ ************************************************************************************/
 void show_current_step(char *str, int currentStep, int totalSteps)
 {
   printf(BOLD "%s" RESET " Step: %d/%d\n", str, currentStep, totalSteps);
@@ -71,6 +81,9 @@ void UTILS_REMOVE_NEWLINE_CHAR(char *param)
   }
 }
 
+/************************************************************************************
+ * UTILS_CLEAR_INPUT_BUFFER(): Clears the input buffer to prevent unwanted behavior
+ ************************************************************************************/
 void UTILS_CLEAR_INPUT_BUFFER()
 {
   int c;
