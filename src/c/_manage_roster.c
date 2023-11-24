@@ -7,9 +7,12 @@ Author      : Marshall Burns a.k.a. Schooly
 Description : This source file contains the function used
               to manage a roster.
 -------------------------------------------------------------------------------
-Helper functions from db.hh:
+Helper functions from db.hpp:
   - show_tables() - shows all tables in the database
   - rename_roster() - renames a roster
+  - drop_table() - deletes a roster
+  - get_table_count() - the return value is used to determine if there are any
+                        rosters in the database
 ===============================================================================
 */
 
@@ -75,6 +78,8 @@ int manage_roster(void)
         {
           system("clear");
           printf(GREEN "Successfully found created roster(s)\n" RESET);
+          sleep(1);
+          system("clear");
           printf("==========================================================================================\n");
           printf(BOLD "Created rosters:\n" RESET);
           puts("------------------------------------------------------------------------------------------");
@@ -90,6 +95,7 @@ int manage_roster(void)
           menuInput = atoi(buffer);
           if (menuInput == 1 || strcmp(buffer, "back") == 0)
           {
+            system("clear");
             showingFoundRosters = FALSE;
             manageRosterMenuIsOpen = TRUE;
           }
@@ -140,6 +146,8 @@ int manage_roster(void)
         {
           system("clear");
           printf(GREEN "Successfully found created roster(s)\n" RESET);
+          sleep(1);
+          system("clear");
           printf("==========================================================================================\n");
           printf(BOLD "Created rosters:\n" RESET);
           puts("------------------------------------------------------------------------------------------");
@@ -195,6 +203,8 @@ int manage_roster(void)
         {
           system("clear");
           printf(GREEN "Successfully found created roster(s)\n" RESET);
+          sleep(1);
+          system("clear");
           printf("==========================================================================================\n");
           printf(BOLD "Created rosters:\n" RESET);
           puts("------------------------------------------------------------------------------------------");

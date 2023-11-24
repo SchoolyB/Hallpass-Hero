@@ -85,45 +85,41 @@ extern "C"
     {
       sqlite3_close(db);
       CPP_UTILS_ERROR_LOGGER("Failed to open SQLite3 database", "create_new_roster_table", CppErrorLevel::CRITICAL);
-      return rc;
+      return 1;
     }
 
-    // the ? is a placeholder for the rosterName variable
-    const char *createSQLTable = "CREATE TABLE IF NOT EXISTS ? (id INTEGER PRIMARY KEY AUTOINCREMENT)";
+    // Manually concatenate the table name into the SQL string
+    std::string createSQLTable = "CREATE TABLE IF NOT EXISTS " + cppString + " (id INTEGER PRIMARY KEY AUTOINCREMENT)";
+    const char *createSQLTableChar = createSQLTable.c_str();
+
     sqlite3_stmt *statement;
 
-    // this compiles the SQL statement into byte-code
-    rc = sqlite3_prepare_v2(db, createSQLTable, -1, &statement, nullptr);
+    // Compile the SQL statement into byte-code
+    rc = sqlite3_prepare_v2(db, createSQLTableChar, -1, &statement, nullptr);
     if (rc != SQLITE_OK)
     {
       CPP_UTILS_ERROR_LOGGER("Can't prepare SQL statement", "create_new_roster_table", CppErrorLevel::CRITICAL);
       sqlite3_close(db);
-      return rc;
+      return 1;
     }
 
-    // this binds the rosterName variable to the ? placeholder
-    rc = sqlite3_bind_text(statement, 1, rosterName, -1, SQLITE_STATIC);
-    if (rc != SQLITE_OK)
-    {
-      CPP_UTILS_ERROR_LOGGER("Can't bind SQL parameter", "create_new_roster_table", CppErrorLevel::CRITICAL);
-      sqlite3_finalize(statement);
-      sqlite3_close(db);
-      return rc;
-    }
-
-    // this executes the statement
+    // Execute the statement
     rc = sqlite3_step(statement);
     if (rc != SQLITE_DONE)
     {
       CPP_UTILS_ERROR_LOGGER("Error executing SQL statement", "create_new_roster_table", CppErrorLevel::CRITICAL);
+      sqlite3_finalize(statement);
+      sqlite3_close(db);
+      return 1;
     }
 
-    // this finalizes the statement
+    // Finalize the statement
     sqlite3_finalize(statement);
     sqlite3_close(db);
 
     return 0;
   }
+
   /************************************************************************************
    * show_tables(): Prints all rosters currently in the db.sqlite database
    * Note: See function usage in ../src/_create_roster.c & ../src/manage_roster.c
@@ -155,7 +151,7 @@ extern "C"
    * rename_roster(): Renames a roster in the db.sqlite database
    * Note: See function usage in ../src/manage_roster.c
    ************************************************************************************/
-  int rename_roster(void)
+  int rename_roster()
   {
     sqlite3 *db;
     int rc = sqlite3_open("../build/db.sqlite", &db);
@@ -163,102 +159,92 @@ extern "C"
     if (rc != SQLITE_OK)
     {
       sqlite3_close(db);
-      CPP_UTILS_ERROR_LOGGER("Failed to open SQLite3 database", "rename_roster", CppErrorLevel::CRITICAL);
-      std::cerr << "Failed to open SQLite3 database" << std::endl;
+      CPP_UTILS_ERROR_LOGGER("Failed to open SQLite3 database: ", "rename_roster", CppErrorLevel::CRITICAL);
+      cerr << RED "Failed to open SQLite3 database" RESET << endl;
       exit(1);
     }
 
-    std::string currentTableName;
-    std::cout << "What roster would you like to rename?" << std::endl;
-    std::cout << "To cancel this operation, type 'cancel'." << std::endl;
-    getline(std::cin, currentTableName);
-
+    string currentTableName;
+    cout << "Which roster would you like to rename?" << endl;
+    cout << YELLOW "To cancel this operation, type 'cancel'." RESET << endl;
+    getline(cin, currentTableName);
     if (currentTableName == "cancel")
     {
-      std::cout << "Canceling roster renaming" << std::endl;
+      system("clear");
+      cout << YELLOW "Canceling roster renaming" RESET << endl;
       sqlite3_close(db);
+      CPP_UTILS_SLEEP(1);
       return 1;
     }
     else
     {
-      std::cout << "You want to rename: " << currentTableName << ". Is that correct? (y/n): " << std::endl;
-      std::cout << "To cancel this operation, type 'cancel'." << std::endl;
-      std::string answer, newName;
+      system("clear");
 
-      getline(std::cin, answer);
+      string checkSQLTableName = "SELECT name FROM sqlite_master WHERE type ='table' AND name ='" + currentTableName + "'";
+      sqlite3_exec(db, checkSQLTableName.c_str(), nullptr, nullptr, nullptr);
+
+      if (rc != SQLITE_ROW)
+      {
+        system("clear");
+        cout << YELLOW << "There is no roster that matches the name " BOLD << currentTableName << RESET << endl;
+        cout << "Please try again" << endl;
+        CPP_UTILS_SLEEP(1);
+        return 1;
+      }
+      cout << "You want to rename: " << currentTableName << ". Is that correct? (y/n): " << endl;
+      cout << YELLOW "To cancel this operation, type 'cancel'." RESET << endl;
+      string answer;
+      string oldName;
+      string newName;
+      getline(cin, answer); // Get user's input for the answer
 
       if (answer == "y" || answer == "Y" || answer == "yes" || answer == "Yes" || answer == "YES")
       {
-        std::cout << "Renaming " << currentTableName << std::endl;
-        std::cout << "What would you like to rename this roster to?" << std::endl;
-        std::cout << "To cancel this operation, type 'cancel'." << std::endl;
-        getline(std::cin, newName);
+        system("clear");
+        cout << YELLOW "Renaming " << currentTableName << RESET << endl;
+        cout << "What would you like to rename this roster to?" << endl;
+        cout << "To cancel this operation, type 'cancel'." << endl;
+        getline(cin, newName);
 
         if (newName == "cancel")
         {
-          std::cout << "Canceling roster renaming" << std::endl;
+          system("clear");
+          cout << YELLOW "Canceling roster renaming" RESET << endl;
           sqlite3_close(db);
+          CPP_UTILS_SLEEP(1);
           return 1;
         }
+        string renameSQLTable = "ALTER TABLE " + currentTableName + " RENAME TO " + newName;
 
-        const char *renameSQLTable = "ALTER TABLE ? RENAME TO ?";
-        sqlite3_stmt *stmt;
-
-        rc = sqlite3_prepare_v2(db, renameSQLTable, -1, &stmt, nullptr);
-        if (rc != SQLITE_OK)
-        {
-          CPP_UTILS_ERROR_LOGGER("Can't prepare SQL statement", "rename_roster", CppErrorLevel::CRITICAL);
-          sqlite3_close(db);
-          return rc;
-        }
-
-        rc = sqlite3_bind_text(stmt, 1, currentTableName.c_str(), -1, SQLITE_STATIC);
-        if (rc != SQLITE_OK)
-        {
-          CPP_UTILS_ERROR_LOGGER("Can't bind SQL parameter 1", "rename_roster", CppErrorLevel::CRITICAL);
-          sqlite3_finalize(stmt);
-          sqlite3_close(db);
-          return rc;
-        }
-
-        rc = sqlite3_bind_text(stmt, 2, newName.c_str(), -1, SQLITE_STATIC);
-        if (rc != SQLITE_OK)
-        {
-          CPP_UTILS_ERROR_LOGGER("Can't bind SQL parameter 2", "rename_roster", CppErrorLevel::CRITICAL);
-          sqlite3_finalize(stmt);
-          sqlite3_close(db);
-          return rc;
-        }
-
-        rc = sqlite3_step(stmt);
-        if (rc != SQLITE_DONE)
-        {
-          CPP_UTILS_ERROR_LOGGER("Error executing SQL statement", "rename_roster", CppErrorLevel::CRITICAL);
-        }
-
-        sqlite3_finalize(stmt);
+        rc = sqlite3_exec(db, renameSQLTable.c_str(), nullptr, nullptr, nullptr);
+        oldName = currentTableName;
+        currentTableName = newName;
+        system("clear");
+        cout << GREEN << "The " BOLD GREEN << oldName + RESET GREEN " roster has successfully been renamed to " BOLD << newName << RESET << endl;
         sqlite3_close(db);
-
-        std::cout << "The roster has successfully been renamed to " << newName << std::endl;
         return 2;
       }
       else if (answer == "n" || answer == "N" || answer == "no" || answer == "No" || answer == "NO")
       {
-        std::cout << "Exiting..." << std::endl;
+        system("clear");
+        cout << "Exiting..." << endl;
         sqlite3_close(db);
         return 1;
       }
       else if (answer == "cancel")
       {
-        std::cout << "Canceling roster renaming" << std::endl;
+        system("clear");
+        cout << YELLOW "Canceling roster renaming" RESET << endl;
         sqlite3_close(db);
+        CPP_UTILS_SLEEP(1);
         return 1;
       }
 
       if (rc != SQLITE_OK)
       {
-        CPP_UTILS_ERROR_LOGGER("Failed to rename table", "rename_roster", CppErrorLevel::CRITICAL);
-        std::cerr << "Failed to rename table" << std::endl;
+        sqlite3_close(db);
+        CPP_UTILS_ERROR_LOGGER("Failed to rename table: ", "rename_roster", CppErrorLevel::CRITICAL);
+        cerr << RED "Failed to open SQLite3 database" RESET << endl;
         exit(1);
       }
       return 0;
@@ -292,6 +278,7 @@ extern "C"
       system("clear");
       cout << YELLOW "Canceling roster deletion" RESET << endl;
       sqlite3_close(db);
+      CPP_UTILS_SLEEP(1);
       return 1;
     }
     else
@@ -306,12 +293,12 @@ extern "C"
       if (answer == "delete" || answer == "DELETE")
       {
         system("clear");
-        cout << YELLOW "Deleting" << currentTableName << RESET << endl;
+        cout << YELLOW "Deleting " << currentTableName << RESET << endl;
         string deleteSQLTable = "DROP TABLE " + currentTableName;
 
         rc = sqlite3_exec(db, deleteSQLTable.c_str(), nullptr, nullptr, nullptr);
         system("clear");
-        cout << GREEN << "The roster" BOLD GREEN << currentTableName + RESET GREEN " roster has successfully been deleted" RESET << endl;
+        cout << GREEN << "The " BOLD GREEN << currentTableName + RESET GREEN " roster has successfully been deleted" RESET << endl;
         sqlite3_close(db);
         refresh_table_count();
         return 2;
@@ -321,6 +308,7 @@ extern "C"
         system("clear");
         cout << YELLOW "Canceling roster deletion" RESET << endl;
         sqlite3_close(db);
+        CPP_UTILS_SLEEP(1);
         return 1;
       }
       else
@@ -340,10 +328,10 @@ extern "C"
     }
   }
   /************************************************************************************
- * get_table_count(): This helper function returns 1 or 0 depending on if any tables
+  * get_table_count(): This helper function returns 1 or 0 depending on if any tables
                        were found in the db.sqlite database
- * Note: See function usage in  ../src/_create_roster & ../src/manage_roster.c
- ************************************************************************************/
+  * Note: See function usage in  ../src/_create_roster & ../src/manage_roster.c
+  ************************************************************************************/
   int get_table_count(void)
   {
     sqlite3 *db;
@@ -373,5 +361,23 @@ extern "C"
     {
       return FALSE; // No tables found
     }
+  }
+}
+/************************************************************************************
+ * add_student_to_student_db():
+ * Note:
+ ************************************************************************************/
+int add_student_to_student_db()
+{
+
+  sqlite3 *db;
+  int rc = sqlite3_open("../build/students.sqlite", &db);
+
+  if (rc != SQLITE_OK)
+  {
+    sqlite3_close(db);
+    CPP_UTILS_ERROR_LOGGER("Failed to open SQLite3 database: ", "add_student_to_student_db", CppErrorLevel::CRITICAL);
+    cerr << RED "Failed to open SQLite3 database" RESET << endl;
+    return 1;
   }
 }

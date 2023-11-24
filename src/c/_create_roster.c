@@ -7,8 +7,11 @@ Author      : Marshall Burns a.k.a. Schooly
 Description : This source file contains the function used
               for creating a new roster.
 -------------------------------------------------------------------------------
-Helper function from db.hh:
+Helper function from db.hpp:
   - create_new_roster_table() - creates a new roster table
+  - show_tables() - shows all tables in the database
+  - get_table_count() - the return value is used to determine if there are any
+                      rosters in the database
 ===============================================================================
 */
 
@@ -20,12 +23,11 @@ Helper function from db.hh:
 #include "../lib/headers/db.hpp"
 #include "../lib/headers/c_files.h"
 
-char buffer[50];
-int menuInput;
-
 int create_new_roster(void)
 {
 
+  char buffer[50];
+  int menuInput;
   int mainMenuProccess;
   int newRosterMenuIsRunning = TRUE;
   int showingFoundRosters = FALSE;
@@ -78,6 +80,8 @@ int create_new_roster(void)
         {
           system("clear");
           printf(GREEN "Successfully found created roster(s)\n" RESET);
+          sleep(1);
+          system("clear");
           printf("==========================================================================================\n");
           printf(BOLD "Created rosters:\n" RESET);
           puts("------------------------------------------------------------------------------------------");
@@ -161,6 +165,8 @@ int create_new_roster(void)
 int get_and_confirm_roster_name(void)
 {
   show_current_step("Name your new roster", 1, 2);
+  char buffer[50];
+
   char rosterNameInput[30];
   char newRosterName[30];
   // getting initial input
@@ -273,6 +279,7 @@ int get_and_confirm_roster_name(void)
         system("clear");
         puts("Returning to main menu.");
         sleep(1);
+        system("clear");
         return 0;
       }
       else
