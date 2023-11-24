@@ -364,5 +364,20 @@ extern "C"
   }
 }
 /************************************************************************************
-
+ * add_student_to_student_db():
+ * Note:
  ************************************************************************************/
+int add_student_to_student_db()
+{
+
+  sqlite3 *db;
+  int rc = sqlite3_open("../build/students.sqlite", &db);
+
+  if (rc != SQLITE_OK)
+  {
+    sqlite3_close(db);
+    CPP_UTILS_ERROR_LOGGER("Failed to open SQLite3 database: ", "add_student_to_student_db", CppErrorLevel::CRITICAL);
+    cerr << RED "Failed to open SQLite3 database" RESET << endl;
+    return 1;
+  }
+}

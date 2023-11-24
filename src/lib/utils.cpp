@@ -15,6 +15,7 @@ Description : This source file contains several utility functions that are used
 #include <fstream>
 #include <chrono>
 #include <thread>
+#include <ctime>
 #include "utils.hpp"
 /*
 Allows using elements from
@@ -30,19 +31,32 @@ using namespace std;
 int CPP_UTILS_ERROR_LOGGER(const char *message, const char *function, const CppErrorLevel level)
 {
   fstream errorLog;
-  errorLog.open("../logs/errors.log", fstream::app);
 
+  // Get the current time
+  time_t currentTime = time(nullptr);
+
+  // Convert the time to local time
+  tm *localTime = localtime(&currentTime);
+
+  // Format and print the local time
+  char timeString[100]; // Buffer to hold the formatted time string
+  strftime(timeString, sizeof(timeString), "%m-%d-%Y %H:%M:%S", localTime);
+
+  errorLog.open("../logs/errors.log", fstream::app);
   switch (level)
   {
   case CppErrorLevel::MINOR:
+    errorLog << "Logged @ " << timeString << endl;
     errorLog << "Minor Error: " << message << " in function " << function << endl;
     errorLog << "=============================================================" << endl;
     break;
   case CppErrorLevel::MODERATE:
+    errorLog << "Logged @ " << timeString << endl;
     errorLog << "Moderate Error: " << message << " in function " << function << endl;
     errorLog << "=============================================================" << endl;
     break;
   case CppErrorLevel::CRITICAL:
+    errorLog << "Logged @ " << timeString << endl;
     errorLog << "=============================================================" << endl;
     errorLog << "CRITICAL ERROR: " << message << " in function " << function << endl;
     break;

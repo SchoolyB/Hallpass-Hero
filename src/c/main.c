@@ -163,7 +163,7 @@ void handle_main_menu_decision(int num)
   else if (INPUT_IS_YES(buffer) && num == 3)
   {
     puts("Ok then, let's add a student to the student database.");
-    // add_student_to_database();
+    add_student_to_db();
   }
   else if (INPUT_IS_YES(buffer) && num == 4)
   {
@@ -193,7 +193,5 @@ void handle_main_menu_decision(int num)
     system("clear");
   }
 }
-
-//======================================================================================================================================================================
 
 //======================================================================================================================================================================

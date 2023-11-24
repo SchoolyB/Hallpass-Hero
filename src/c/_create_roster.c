@@ -23,12 +23,11 @@ Helper function from db.hpp:
 #include "../lib/headers/db.hpp"
 #include "../lib/headers/c_files.h"
 
-char buffer[50];
-int menuInput;
-
 int create_new_roster(void)
 {
 
+  char buffer[50];
+  int menuInput;
   int mainMenuProccess;
   int newRosterMenuIsRunning = TRUE;
   int showingFoundRosters = FALSE;
@@ -166,6 +165,8 @@ int create_new_roster(void)
 int get_and_confirm_roster_name(void)
 {
   show_current_step("Name your new roster", 1, 2);
+  char buffer[50];
+
   char rosterNameInput[30];
   char newRosterName[30];
   // getting initial input
@@ -278,6 +279,7 @@ int get_and_confirm_roster_name(void)
         system("clear");
         puts("Returning to main menu.");
         sleep(1);
+        system("clear");
         return 0;
       }
       else
