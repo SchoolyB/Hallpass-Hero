@@ -5,13 +5,7 @@ File Name   : _create_roster.c
 Author      : Marshall Burns a.k.a. Schooly
 -------------------------------------------------------------------------------
 Description : This source file contains the function used
-              for creating a new roster.
--------------------------------------------------------------------------------
-Helper function from db.hpp:
-  - create_new_roster_table() - creates a new roster table
-  - show_tables() - shows all tables in the database
-  - get_table_count() - the return value is used to determine if there are any
-                      rosters in the database
+              for adding rosters in the database
 ===============================================================================
 */
 
@@ -22,19 +16,25 @@ Helper function from db.hpp:
 #include "../lib/utils.h"
 #include "../lib/headers/db.hpp"
 #include "../lib/headers/c_files.h"
+#include "../lib/Cuazar/lib/Cuazar.h"
 
+/************************************************************************************
+ * create_new_roster() This is the main function for creating new rosters.
+ * Note: See usage in ./main.c
+ * Note: Uses the following helper functions from db.hpp:
+ *  - show_tables() - shows all tables in the database
+ *  - get_table_count() - the return value is used to determine if there are any
+ ************************************************************************************/
 int create_new_roster(void)
 {
-
   char buffer[50];
-  int menuInput;
-  int mainMenuProccess;
-  int newRosterMenuIsRunning = TRUE;
-  int showingFoundRosters = FALSE;
+  uint8_t menuInput;
+  uint8_t mainMenuProccess;
+  uint8_t newRosterMenuIsRunning = TRUE;
+  uint8_t showingFoundRosters = FALSE;
   uint8_t menuWidth = 70;
   uint8_t menuHeight = 10;
 
-  system("clear");
   while (newRosterMenuIsRunning == TRUE)
   {
     mainMenuProccess = FALSE;
@@ -57,7 +57,7 @@ int create_new_roster(void)
     puts("|===========================================================================================");
     FGETS(buffer);
     UTILS_REMOVE_NEWLINE_CHAR(buffer);
-    int menuInput = atoi(buffer);
+    menuInput = atoi(buffer);
     if (menuInput == 1 || strcmp(buffer, "new roster") == 0 || strcmp(buffer, "new") == 0)
     {
       puts("You selected to create a new roster.");
@@ -162,6 +162,10 @@ int create_new_roster(void)
   }
 }
 
+/************************************************************************************
+ * add_student_to_db(): Self explanitory. Gets and confirms the roster name.
+ * Note: see usage in create_new_roster()
+ ************************************************************************************/
 int get_and_confirm_roster_name(void)
 {
   show_current_step("Name your new roster", 1, 2);

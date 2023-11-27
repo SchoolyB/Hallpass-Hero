@@ -10,16 +10,17 @@ Description : This source file contains the main function for the Hallpass Hero 
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include "../lib/utils.h"
 #include "../lib/headers/main.h"
 #include "../lib/headers/c_files.h"
+#include "../lib/Cuazar/lib/Cuazar.c"
+#include "../lib/Cuazar/lib/Cuazar.h"
 
-int mainMenuProccess = FALSE;
-
+uint8_t mainMenuProccess = FALSE;
+int testModeIsOn;
 char MainMenuOptions[7][50] = {
-    // creating a roster is like creating a new class as a collection of students
     "1. Create a new roster",
-    // managing a roster is like managing a class
     "2. View and manage an existing roster",
     "3. Add a student to the student database",
     "4. View and manage the student database",
@@ -29,6 +30,8 @@ char MainMenuOptions[7][50] = {
 
 int main()
 {
+
+  Init_Cuazar();
   if (mkdir("../logs", 0777) != 0)
   {
     UTILS_ERROR_LOGGER("Could not create logs directory as it already exists", "main", MINOR);
@@ -61,11 +64,12 @@ int main()
     /*Here we are handling the input that the user makes on the main menu*/
     FGETS(buffer);
     UTILS_REMOVE_NEWLINE_CHAR(buffer);
-    int menuInput = atoi(buffer);
+    uint8_t menuInput = atoi(buffer);
 
     // to create a new roster
     if (menuInput == 1 || strcmp(buffer, "new roster") == 0)
     {
+
       handle_main_menu_decision(1);
     }
     // to manage an existing roster
@@ -96,6 +100,7 @@ int main()
     }
     else if (menuInput == 7 || strcmp(buffer, "exit") == 0)
     {
+      system("clear");
       puts("See you soon!");
       mainMenuProccess = FALSE;
     }
@@ -193,5 +198,3 @@ void handle_main_menu_decision(int num)
     system("clear");
   }
 }
-
-//======================================================================================================================================================================
