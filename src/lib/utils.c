@@ -97,40 +97,40 @@ void UTILS_CLEAR_INPUT_BUFFER()
 /* programs are like courses/degrees/certs/diplomas
 basically any over arching program that a student is
 a part of that has a goal or achievement at the end*/
-typedef struct
-{
-  char Name[20];
-  char Description[100];
-  char Start_date[20];
-  char End_date[20];
-  int Max_students;
-  int Current_students;
-} Program;
+// typedef struct
+// {
+//   char Name[20];
+//   char Description[100];
+//   char Start_date[20];
+//   char End_date[20];
+//   int Max_students;
+//   int Current_students;
+// } Program;
 
-typedef struct
-{
-  char FirstName[20];
-  char LastName[20];
-  int StudentID;
-  /*
-  TODO add members for attendance, grades/performance
-   */
-  Program CurrentProgram;
+// typedef struct
+// {
+//   char FirstName[20];
+//   char LastName[20];
+//   int StudentID;
+//   /*
+//   TODO add members for attendance, grades/performance
+//    */
+//   // Program CurrentProgram;
 
-} Student;
+// } Student;
 
-typedef struct
-{
-  char firstName[20];
-  char lastName[20];
-  char title[20];
-} Instructor;
+// typedef struct
+// {
+//   char firstName[20];
+//   char lastName[20];
+//   char title[20];
+// } Instructor;
 
 /*Rosters a individual classes
 i.e 1st period History, Physiology 342,
-June Fullstack Cohort, etc. */
-typedef struct
-{
-  Instructor LeadInstructor;
-  Student Students[100];
-} Roster;
+// June Fullstack Cohort, etc. */
+// typedef struct
+// {
+//   Instructor LeadInstructor;
+//   Student Students[100];
+// } Roster;

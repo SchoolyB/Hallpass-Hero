@@ -31,6 +31,7 @@ extern "C"
   int rename_roster(void);
   int get_table_count(void);
   int drop_table(void);
+  int create_student_db_and_table(void);
 
 #ifdef __cplusplus
 } // extern "C"

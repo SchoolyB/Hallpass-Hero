@@ -6,13 +6,6 @@ Author      : Marshall Burns a.k.a. Schooly
 -------------------------------------------------------------------------------
 Description : This source file contains the function used
               to manage a roster.
--------------------------------------------------------------------------------
-Helper functions from db.hpp:
-  - show_tables() - shows all tables in the database
-  - rename_roster() - renames a roster
-  - drop_table() - deletes a roster
-  - get_table_count() - the return value is used to determine if there are any
-                        rosters in the database
 ===============================================================================
 */
 
@@ -24,14 +17,24 @@ Helper functions from db.hpp:
 #include "../lib/headers/db.hpp"
 #include "../lib/headers/c_files.h"
 
+/************************************************************************************
+ * manage_roster(): This is the main function for managing a roster.
+ * Note: see usage in ./main.c
+ * Note: Uses the following helper functions from db.hpp:
+ * - show_tables() - shows all tables in the database
+ * - rename_roster() - renames a roster
+ * - drop_table() - deletes a roster
+ * - get_table_count() - the return value is used to determine if there are any
+ *                      rosters in the database
+ ************************************************************************************/
 int manage_roster(void)
 {
 
   char buffer[50];
-  int menuInput;
-  int mainMenuProccess;
-  int manageRosterMenuIsOpen = TRUE;
-  int showingFoundRosters = FALSE;
+  uint8_t menuInput;
+  uint8_t mainMenuProccess;
+  uint8_t manageRosterMenuIsOpen = TRUE;
+  uint8_t showingFoundRosters = FALSE;
   uint8_t menuWidth = 70;
   uint8_t menuHeight = 10;
 
@@ -64,7 +67,7 @@ int manage_roster(void)
     FGETS(buffer);
     UTILS_REMOVE_NEWLINE_CHAR(buffer);
 
-    int menuInput = atoi(buffer);
+    menuInput = atoi(buffer);
     if (menuInput == 1 || strcmp(buffer, "view roster") == 0 || strcmp(buffer, "view") == 0)
     {
       manageRosterMenuIsOpen = FALSE;

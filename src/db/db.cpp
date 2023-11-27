@@ -76,7 +76,7 @@ extern "C"
   int create_new_roster_table(const char *rosterName)
   {
     // Convert the C string to a C++ string
-    std::string cppString(rosterName);
+    string cppString(rosterName);
 
     sqlite3 *db;
     int rc = sqlite3_open("../build/db.sqlite", &db);
@@ -89,7 +89,7 @@ extern "C"
     }
 
     // Manually concatenate the table name into the SQL string
-    std::string createSQLTable = "CREATE TABLE IF NOT EXISTS " + cppString + " (id INTEGER PRIMARY KEY AUTOINCREMENT)";
+    string createSQLTable = "CREATE TABLE IF NOT EXISTS " + cppString + " (id INTEGER PRIMARY KEY AUTOINCREMENT)";
     const char *createSQLTableChar = createSQLTable.c_str();
 
     sqlite3_stmt *statement;
@@ -122,7 +122,7 @@ extern "C"
 
   /************************************************************************************
    * show_tables(): Prints all rosters currently in the db.sqlite database
-   * Note: See function usage in ../src/_create_roster.c & ../src/manage_roster.c
+   * Note: See function usage in ../src/_create_roster.c & ../src/_manage_roster.c
    ************************************************************************************/
   int show_tables(void)
   {
@@ -149,7 +149,7 @@ extern "C"
 
   /************************************************************************************
    * rename_roster(): Renames a roster in the db.sqlite database
-   * Note: See function usage in ../src/manage_roster.c
+   * Note: See function usage in ../src/_manage_roster.c
    ************************************************************************************/
   int rename_roster()
   {
@@ -181,9 +181,9 @@ extern "C"
       system("clear");
 
       string checkSQLTableName = "SELECT name FROM sqlite_master WHERE type ='table' AND name ='" + currentTableName + "'";
-      sqlite3_exec(db, checkSQLTableName.c_str(), nullptr, nullptr, nullptr);
+      rc = sqlite3_exec(db, checkSQLTableName.c_str(), nullptr, nullptr, nullptr);
 
-      if (rc != SQLITE_ROW)
+      if (rc != SQLITE_OK)
       {
         system("clear");
         cout << YELLOW << "There is no roster that matches the name " BOLD << currentTableName << RESET << endl;
@@ -191,7 +191,7 @@ extern "C"
         CPP_UTILS_SLEEP(1);
         return 1;
       }
-      cout << "You want to rename: " << currentTableName << ". Is that correct? (y/n): " << endl;
+      cout << "You want to rename: " << BOLD << currentTableName << RESET << ". Is that correct? (y/n): " << endl;
       cout << YELLOW "To cancel this operation, type 'cancel'." RESET << endl;
       string answer;
       string oldName;
@@ -201,7 +201,7 @@ extern "C"
       if (answer == "y" || answer == "Y" || answer == "yes" || answer == "Yes" || answer == "YES")
       {
         system("clear");
-        cout << YELLOW "Renaming " << currentTableName << RESET << endl;
+        cout << YELLOW "Currently Renaming" << BOLD << currentTableName << RESET << endl;
         cout << "What would you like to rename this roster to?" << endl;
         cout << "To cancel this operation, type 'cancel'." << endl;
         getline(cin, newName);
@@ -252,8 +252,8 @@ extern "C"
   }
 
   /************************************************************************************
-   * drop_table(): This helper function drops a roster table from the db.sqlite database
-   * Note: See function usage in  ../src/manage_roster.c
+   * drop_table(): Drops a roster table from the db.sqlite database
+   * Note: See function usage in  ../src/_manage_roster.c
    ************************************************************************************/
   int drop_table(void)
   {
@@ -330,7 +330,7 @@ extern "C"
   /************************************************************************************
   * get_table_count(): This helper function returns 1 or 0 depending on if any tables
                        were found in the db.sqlite database
-  * Note: See function usage in  ../src/_create_roster & ../src/manage_roster.c
+  * Note: See function usage in  ../src/_create_roster & ../src/_manage_roster.c
   ************************************************************************************/
   int get_table_count(void)
   {
@@ -364,10 +364,11 @@ extern "C"
   }
 }
 /************************************************************************************
- * add_student_to_student_db():
- * Note:
+ *  create_student_db_and_table();: Begins the process of adding a student to the students.sqlite database
+ * Note: See function usage in  ../src/_add_student.c
+ * Note: THis function relies on the following helper functions:
  ************************************************************************************/
-int add_student_to_student_db()
+int create_student_db_and_table()
 {
 
   sqlite3 *db;
@@ -380,4 +381,17 @@ int add_student_to_student_db()
     cerr << RED "Failed to open SQLite3 database" RESET << endl;
     return 1;
   }
+  const char *addStudentToSQLTable = "CREATE TABLE IF NOT EXISTS students (id INTEGER PRIMARY KEY AUTOINCREMENT, FirstName, LastName,StudentID INTEGER)";
+
+  sqlite3_exec(db, addStudentToSQLTable, nullptr, nullptr, nullptr);
+
+  if (rc != SQLITE_OK)
+  {
+    sqlite3_close(db);
+    CPP_UTILS_ERROR_LOGGER("Failed to add student to database: ", "add_student_to_student_db", CppErrorLevel::CRITICAL);
+    cerr << RED "Failed to add student to database" RESET << endl;
+    return 1;
+  }
+
+  sqlite3_close(db);
 }

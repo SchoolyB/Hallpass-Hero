@@ -10,13 +10,14 @@ Description : This source file contains the main function for the Hallpass Hero 
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include "../lib/utils.h"
 #include "../lib/headers/main.h"
 #include "../lib/headers/c_files.h"
 #include "../lib/Cuazar/lib/Cuazar.c"
 #include "../lib/Cuazar/lib/Cuazar.h"
 
-int mainMenuProccess = FALSE;
+uint8_t mainMenuProccess = FALSE;
 int testModeIsOn;
 char MainMenuOptions[7][50] = {
     "1. Create a new roster",
@@ -63,7 +64,7 @@ int main()
     /*Here we are handling the input that the user makes on the main menu*/
     FGETS(buffer);
     UTILS_REMOVE_NEWLINE_CHAR(buffer);
-    int menuInput = atoi(buffer);
+    uint8_t menuInput = atoi(buffer);
 
     // to create a new roster
     if (menuInput == 1 || strcmp(buffer, "new roster") == 0)
@@ -99,6 +100,7 @@ int main()
     }
     else if (menuInput == 7 || strcmp(buffer, "exit") == 0)
     {
+      system("clear");
       puts("See you soon!");
       mainMenuProccess = FALSE;
     }

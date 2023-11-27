@@ -78,6 +78,20 @@ extern "C"
   void show_current_menu(char *str);
   void show_current_step(char *str, int currentStep, int totalSteps);
 
+  typedef struct
+  {
+    char FirstName[30];
+    char LastName[30];
+    /*
+    Made the StudentID a string instead
+     of an integer to allow stuff
+    like 'CoolName1234', or CName1234
+    */
+    char StudentID[20];
+    // Program CurrentProgram;
+
+  } Student;
+
 #ifdef __cplusplus
 } // extern "C"
 #endif
