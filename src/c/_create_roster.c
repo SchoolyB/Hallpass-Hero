@@ -214,7 +214,7 @@ int get_and_confirm_roster_name(void)
   {
     system("clear");
     show_current_step("Confirm new roster name", 2, 2);
-    printf("You have decided to name your new roster:" BOLD "%s " RESET ".\nIs that correct?(y/n)\n", rosterNameInput);
+    printf("You have decided to name your new roster:" BOLD "%s " RESET ".\nIs that correct?[y/n]\n", rosterNameInput);
 
     // confirming input
     FGETS(buffer);

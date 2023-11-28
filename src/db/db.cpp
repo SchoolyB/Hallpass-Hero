@@ -191,7 +191,7 @@ extern "C"
         CPP_UTILS_SLEEP(1);
         return 1;
       }
-      cout << "You want to rename: " << BOLD << currentTableName << RESET << ". Is that correct? (y/n): " << endl;
+      cout << "You want to rename: " << BOLD << currentTableName << RESET << ". Is that correct? [y/n]: " << endl;
       cout << YELLOW "To cancel this operation, type 'cancel'." RESET << endl;
       string answer;
       string oldName;
@@ -362,36 +362,77 @@ extern "C"
       return FALSE; // No tables found
     }
   }
-}
-/************************************************************************************
- *  create_student_db_and_table();: Begins the process of adding a student to the students.sqlite database
- * Note: See function usage in  ../src/_add_student.c
- * Note: THis function relies on the following helper functions:
- ************************************************************************************/
-int create_student_db_and_table()
-{
-
-  sqlite3 *db;
-  int rc = sqlite3_open("../build/students.sqlite", &db);
-
-  if (rc != SQLITE_OK)
+  /************************************************************************************
+   *  create_student_db_and_table();: Begins the process of adding a student to the students.sqlite database
+   * Note: See function usage in  ../src/_add_student.c
+   * Note: THis function relies on the following helper functions:
+   ************************************************************************************/
+  int create_student_db_and_table()
   {
+
+    sqlite3 *db;
+    int rc = sqlite3_open("../build/students.sqlite", &db);
+
+    if (rc != SQLITE_OK)
+    {
+      sqlite3_close(db);
+      CPP_UTILS_ERROR_LOGGER("Failed to open SQLite3 database: ", "add_student_to_student_db", CppErrorLevel::CRITICAL);
+      cerr << RED "Failed to open SQLite3 database" RESET << endl;
+      return 1;
+    }
+    const char *addStudentToSQLTable = "CREATE TABLE IF NOT EXISTS students (id INTEGER PRIMARY KEY AUTOINCREMENT, FirstName, LastName,StudentID INTEGER)";
+
+    sqlite3_exec(db, addStudentToSQLTable, nullptr, nullptr, nullptr);
+
+    if (rc != SQLITE_OK)
+    {
+      sqlite3_close(db);
+      CPP_UTILS_ERROR_LOGGER("Failed to add student to database: ", "add_student_to_student_db", CppErrorLevel::CRITICAL);
+      cerr << RED "Failed to add student to database" RESET << endl;
+      return 1;
+    }
+
     sqlite3_close(db);
-    CPP_UTILS_ERROR_LOGGER("Failed to open SQLite3 database: ", "add_student_to_student_db", CppErrorLevel::CRITICAL);
-    cerr << RED "Failed to open SQLite3 database" RESET << endl;
-    return 1;
   }
-  const char *addStudentToSQLTable = "CREATE TABLE IF NOT EXISTS students (id INTEGER PRIMARY KEY AUTOINCREMENT, FirstName, LastName,StudentID INTEGER)";
 
-  sqlite3_exec(db, addStudentToSQLTable, nullptr, nullptr, nullptr);
+  /************************************************************************************
+   *  insert_student_into_db();: Inserts a student into the students.sqlite database using the data from the student struct
+   * Note: See function usage in  ../src/_add_student.c
+   ************************************************************************************/
 
-  if (rc != SQLITE_OK)
+  int insert_student_into_db(const char *FirsName, const char *LastName, const char *StudentID)
   {
-    sqlite3_close(db);
-    CPP_UTILS_ERROR_LOGGER("Failed to add student to database: ", "add_student_to_student_db", CppErrorLevel::CRITICAL);
-    cerr << RED "Failed to add student to database" RESET << endl;
-    return 1;
-  }
+    sqlite3 *db;
+    int rc = sqlite3_open("../build/students.sqlite", &db);
 
-  sqlite3_close(db);
+    if (rc != SQLITE_OK)
+    {
+      sqlite3_close(db);
+      CPP_UTILS_ERROR_LOGGER("Failed to open SQLite3 database: ", "insert_student_into_db", CppErrorLevel::CRITICAL);
+      cerr << RED "Failed to open SQLite3 database" RESET << endl;
+      return 1;
+    }
+
+    const char *insertStudentToSQLTable = "INSERT INTO students (FirstName, LastName, StudentID) VALUES (?, ?, ?)";
+
+    sqlite3_stmt *statement;
+
+    rc = sqlite3_prepare_v2(db, insertStudentToSQLTable, -1, &statement, nullptr);
+    if (rc != SQLITE_OK)
+    {
+      CPP_UTILS_ERROR_LOGGER("Can't prepare SQL statement", "insert_student_into_db", CppErrorLevel::CRITICAL);
+      sqlite3_close(db);
+      return 1;
+    }
+
+    // Bind the value
+    sqlite3_bind_text(statement, 1, FirsName, -1, SQLITE_STATIC);
+    sqlite3_bind_text(statement, 2, LastName, -1, SQLITE_STATIC);
+    sqlite3_bind_text(statement, 3, StudentID, -1, SQLITE_STATIC);
+
+    rc = sqlite3_step(statement);
+
+    puts("Student added successfully");
+    return 0;
+  }
 }

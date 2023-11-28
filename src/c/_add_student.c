@@ -115,7 +115,7 @@ int get_student_first_name(void)
   {
     system("clear");
     show_current_step("Confirm Student First Name", 2, 6);
-    printf("You entered: " BOLD "%s" RESET " is that correct(y/n)\n", buffer);
+    printf("You entered: " BOLD "%s" RESET " is that correct[y/n]\n", buffer);
 
     /*Taking the entered value and
     assigning it to a variable.*/
@@ -182,7 +182,7 @@ int get_student_last_name(void)
   {
     system("clear");
     show_current_step("Confirm Student Last Name", 4, 6);
-    puts(YELLOW "This student does not have a last name. is that correct?(y/n)" RESET);
+    puts(YELLOW "This student does not have a last name. is that correct?[y/n]" RESET);
 
     /*Taking the entered value and
     assigning it to a variable.*/
@@ -198,7 +198,7 @@ int get_student_last_name(void)
       setting the struct members value to it */
       strcpy(NewStudent.LastName, setLastName);
       system("clear");
-      return 0;
+      ask_about_student_id();
     }
     else if (INPUT_IS_NO(buffer))
     {
@@ -221,12 +221,13 @@ int get_student_last_name(void)
   {
     system("clear");
     show_current_step("Confirm Student Last Name", 4, 6);
-    printf("You entered: " BOLD "%s" RESET " is that correct?(y/n)\n", buffer);
+    printf("You entered: " BOLD "%s" RESET " is that correct?[y/n]\n", buffer);
     FGETS(buffer);
     UTILS_REMOVE_NEWLINE_CHAR(buffer);
     if (INPUT_IS_YES(buffer))
     {
       system("clear");
+      ask_about_student_id();
       // TODO add student to db
     }
     else if (INPUT_IS_NO(buffer))
@@ -254,45 +255,53 @@ int get_student_last_name(void)
 // TODO might make an option in the future to enable or disable the need to do this
 int ask_about_student_id()
 {
-  char buffer[50];
-  printf("Would you like to assign an id to " BOLD "%s  %s" RESET " ?(y/n) \n", NewStudent.FirstName, NewStudent.LastName);
-  puts(YELLOW "You can assign an id later by choosing option #4 from the main menu." RESET);
-  FGETS(buffer);
-  UTILS_REMOVE_NEWLINE_CHAR(buffer);
-
-  if (INPUT_IS_YES(buffer))
+  int askingAboutStudentId = TRUE;
+  while (askingAboutStudentId == TRUE)
   {
-    puts("How would you like to assign the id?");
-    puts("Please enter either '1' or '2'.");
-    puts("1. Automatically generate and ID ");
-    puts("2. Enter your own");
-
+    printf("Would you like to assign an id to " BOLD "%s  %s" RESET " ?[y/n] \n", NewStudent.FirstName, NewStudent.LastName);
+    puts(YELLOW "You can assign an id later by choosing option #4 from the main menu." RESET);
     FGETS(buffer);
     UTILS_REMOVE_NEWLINE_CHAR(buffer);
-    menuInput = atoi(buffer);
 
-    if (menuInput == 1)
+    if (INPUT_IS_YES(buffer))
     {
+      askingAboutStudentId = FALSE;
       system("clear");
-      puts("Okay I will generate an id for this student");
-      // TODO  generate_student_id();
+      puts("How would you like to assign the id?");
+      puts("Please enter either '1' or '2'.");
+      puts("1. Automatically generate and ID ");
+      puts("2. Enter your own");
+
+      FGETS(buffer);
+      UTILS_REMOVE_NEWLINE_CHAR(buffer);
+      menuInput = atoi(buffer);
+
+      if (menuInput == 1)
+      {
+        askingAboutStudentId = FALSE;
+        system("clear");
+        puts("Okay I will generate an id for this student");
+        // TODO  generate_student_id();
+      }
+      else if (menuInput == 2)
+      {
+        askingAboutStudentId = FALSE;
+        system("clear");
+        manually_set_student_id();
+      }
+      else
+      {
+        askingAboutStudentId = FALSE;
+        system("clear");
+        puts("Please make a valid decision.");
+        ask_about_student_id();
+      }
     }
-    else if (menuInput == 2)
+    else if (INPUT_IS_NO(buffer))
     {
-      system("clear");
-      // TODO manually_set_student_id()
+      printf("You've decided not to assign an id to " BOLD "%s  %s" RESET ".\n This can be done later on if you change your mind", NewStudent.FirstName, NewStudent.LastName);
+      return 0;
     }
-    else
-    {
-      system("clear");
-      puts("Please make a valid decision.");
-      ask_about_student_id();
-    }
-  }
-  else if (INPUT_IS_NO(buffer))
-  {
-    printf("You've decided not to assign an id to " BOLD "%s  %s" RESET ".\n This can be done later on if you change your mind", NewStudent.FirstName, NewStudent.LastName);
-    return 0;
   }
 }
 
@@ -302,6 +311,53 @@ int ask_about_student_id()
  ************************************************************************************/
 void manually_set_student_id()
 {
+  int gettingStudentId = TRUE;
+
+  while (gettingStudentId == TRUE)
+  {
+
+    show_current_step("Set Student Id", 5, 6);
+    puts("Please enter the students id.");
+    puts(YELLOW "NOTE: The id can be no MORE than 15 characters and LESS than 2." RESET);
+    puts(YELLOW "You can cancel this operation by entering 'cancel." RESET);
+    gettingStudentId = FALSE;
+  }
+  FGETS(buffer);
+  UTILS_REMOVE_NEWLINE_CHAR(buffer);
+
+  if (strcmp(buffer, "cancel") == 0)
+  {
+    system("clear");
+    puts(YELLOW "Canceling operation." RESET);
+    sleep(1);
+    system("clear");
+    gettingStudentId == FALSE;
+    addStudentMenuIsRunning = TRUE;
+  }
+  else if (strlen(buffer) < 2)
+  {
+    gettingStudentId == FALSE;
+    puts(YELLOW "The id you entered is too short. Please try again." RESET);
+    sleep(1);
+    system("clear");
+    manually_set_student_id();
+  }
+  else if (strlen(buffer) > 15)
+  {
+    gettingStudentId == FALSE;
+    puts(YELLOW "The id you entered is too long. Please try again." RESET);
+    sleep(1);
+    system("clear");
+    manually_set_student_id();
+  }
+  else
+  {
+    gettingStudentId == FALSE;
+    system("clear");
+    char studentID[15];
+    strcpy(studentID, buffer);
+    confirm_student_id(studentID);
+  }
 }
 
 /************************************************************************************
@@ -312,3 +368,68 @@ void manually_set_student_id()
 // int generate_student_id()
 // {
 // }
+
+/************************************************************************************
+ * confirm_student_id(): Confirms the students id.
+ * Note: see usage in add_student_to_db()
+ ************************************************************************************/
+int confirm_student_id(char *studentID)
+{
+  int confirmingStudentId = TRUE;
+  while (confirmingStudentId == TRUE)
+  {
+    show_current_step("Confirm Student Id", 6, 6);
+    printf("You entered: " BOLD "%s" RESET " is that correct?[y/n]\n", studentID);
+    FGETS(buffer);
+    UTILS_REMOVE_NEWLINE_CHAR(buffer);
+    char setStudentID[15];
+    strcpy(setStudentID, studentID);
+
+    if (INPUT_IS_YES(buffer))
+    {
+      confirmingStudentId = FALSE;
+      show_current_step("Confirm Student Id", 6, 6);
+      strcpy(NewStudent.StudentID, setStudentID);
+      system("clear");
+      puts(GREEN "Adding new student to database..." RESET);
+      sleep(2);
+      system("clear");
+      int result = insert_student_into_db(NewStudent.FirstName, NewStudent.LastName, NewStudent.StudentID);
+
+      if (result == 0)
+      {
+        puts(GREEN "Student successfully added to database." RESET);
+        sleep(1);
+        system("clear");
+        addStudentMenuIsRunning = TRUE;
+        return 0;
+      }
+      else if (result == 1)
+      {
+        puts(RED "Please try again." RESET);
+        sleep(1);
+        system("clear");
+        addStudentMenuIsRunning = TRUE;
+        return 0;
+      }
+    }
+
+    else if (INPUT_IS_NO(buffer))
+    {
+      confirmingStudentId = FALSE;
+      system("clear");
+      puts("Ok lets try again.");
+      sleep(1);
+      system("clear");
+      manually_set_student_id();
+    }
+    else
+    {
+      confirmingStudentId = FALSE;
+      puts("Im sorry I didn't understand that please try again.");
+      sleep(1);
+      system("clear");
+      confirm_student_id(studentID);
+    }
+  }
+}
