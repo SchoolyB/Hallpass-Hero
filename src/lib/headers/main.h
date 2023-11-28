@@ -13,6 +13,6 @@ Description : This header file contains all the declarations for the functions
 #define MAIN_H
 
 // PROTOTYPES
-void handle_main_menu_decision();
+static void handle_main_menu_decision();
 
 #endif

@@ -17,6 +17,9 @@ Description : This source file contains the function used
 #include "../lib/headers/c_files.h"
 #include "../lib/Cuazar/lib/Cuazar.h"
 
+static char buffer[50];
+static uint8_t menuInput;
+static uint8_t mainMenuProccess;
 int addStudentMenuIsRunning;
 Student NewStudent;
 /************************************************************************************
@@ -26,11 +29,7 @@ Student NewStudent;
  ************************************************************************************/
 int add_student_to_db(void)
 {
-  char buffer[50];
-  uint8_t menuInput;
-  int mainMenuProccess;
   addStudentMenuIsRunning = TRUE;
-
   while (addStudentMenuIsRunning == TRUE)
   {
     mainMenuProccess = FALSE;
@@ -256,7 +255,6 @@ int get_student_last_name(void)
 int ask_about_student_id()
 {
   char buffer[50];
-  uint8_t menuInput;
   printf("Would you like to assign an id to " BOLD "%s  %s" RESET " ?(y/n) \n", NewStudent.FirstName, NewStudent.LastName);
   puts(YELLOW "You can assign an id later by choosing option #4 from the main menu." RESET);
   FGETS(buffer);
