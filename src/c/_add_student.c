@@ -131,6 +131,7 @@ int get_student_first_name(void)
       setting the struct members value to it */
       strcpy(NewStudent.FirstName, setFirstName);
       get_student_last_name();
+      return 0;
     }
     else if (INPUT_IS_NO(buffer))
     {
@@ -139,6 +140,7 @@ int get_student_first_name(void)
       sleep(1);
       system("clear");
       get_student_first_name();
+      return 0;
     }
     else
     {
@@ -147,6 +149,7 @@ int get_student_first_name(void)
       sleep(1);
       system("clear");
       get_student_first_name();
+      return 0;
     }
   }
 }
@@ -155,7 +158,7 @@ int get_student_first_name(void)
  * get_student_last_name(): Self explanitory. Gets and confirms the students last name.
  * Note: In the event that the student does not have a last name an empty string will be
                                                                   added to the database.
- * Note: see usage in add_student_to_db()
+ * Note: see usage in get_student_first_name()
  ************************************************************************************/
 int get_student_last_name(void)
 {
@@ -250,7 +253,7 @@ int get_student_last_name(void)
 }
 /************************************************************************************
  * ask_about_student_id: Asks if the user wants to give a student an id.
- * Note: see usage in add_student_to_db()
+ * Note: see usage in get_student_last_name()
  ************************************************************************************/
 // TODO might make an option in the future to enable or disable the need to do this
 int ask_about_student_id()
@@ -307,7 +310,7 @@ int ask_about_student_id()
 
 /************************************************************************************
  * manually_set_student_id(): Allows the user to manually set a students id.
- * Note: see usage in add_student_to_db()
+ * Note: see usage in ask_about_student_id()
  ************************************************************************************/
 void manually_set_student_id()
 {
@@ -363,7 +366,7 @@ void manually_set_student_id()
 /************************************************************************************
  * generate_student_id(): This takes the proposed students first and last name and
  *                        and generates a unique id
- * Note: see usage in add_student_to_db()
+ * Note: see usage in ask_about_student_id()
  ************************************************************************************/
 // int generate_student_id()
 // {
@@ -371,7 +374,7 @@ void manually_set_student_id()
 
 /************************************************************************************
  * confirm_student_id(): Confirms the students id.
- * Note: see usage in add_student_to_db()
+ * Note: see usage in manually_set_student_id()
  ************************************************************************************/
 int confirm_student_id(char *studentID)
 {
