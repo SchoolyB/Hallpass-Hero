@@ -235,7 +235,6 @@ int get_student_last_name(void)
       strcpy(NewStudent.LastName, setLastName);
       system("clear");
       ask_about_student_id();
-      // TODO add student to db
     }
     else if (INPUT_IS_NO(buffer))
     {
@@ -265,7 +264,7 @@ int ask_about_student_id()
   int askingAboutStudentId = TRUE;
   while (askingAboutStudentId == TRUE)
   {
-    printf("Would you like to assign an id to " BOLD "%s %s" RESET " ?[y/n] \n", NewStudent.FirstName, NewStudent.LastName);
+    printf("Would you like to assign a student ID to " BOLD "%s %s" RESET " ?[y/n] \n", NewStudent.FirstName, NewStudent.LastName);
     puts(YELLOW "You can assign an id later by choosing option #4 from the main menu." RESET);
     FGETS(buffer);
     UTILS_REMOVE_NEWLINE_CHAR(buffer);
@@ -274,20 +273,30 @@ int ask_about_student_id()
     {
       askingAboutStudentId = FALSE;
       system("clear");
-      puts("How would you like to assign the id?");
+      puts("How would you like to assign the student ID?");
       puts("Please enter either '1' or '2'.");
-      puts("1. Automatically generate and ID ");
-      puts("2. Enter your own");
+      puts(YELLOW "To cancel this operation enter 'cancel'" RESET);
+      puts("1. Automatically generate an ID ");
+      puts("2. Create your own");
 
       FGETS(buffer);
       UTILS_REMOVE_NEWLINE_CHAR(buffer);
       menuInput = atoi(buffer);
 
+      if (strcmp(buffer, "cancel") == 0)
+      {
+        system("clear");
+        puts(YELLOW "Canceling operation." RESET);
+        sleep(1);
+        system("clear");
+        addStudentMenuIsRunning = TRUE;
+        return 0;
+      }
+
       if (menuInput == 1)
       {
         askingAboutStudentId = FALSE;
         system("clear");
-        puts("Okay I will generate an id for this student");
         generate_student_id(NewStudent.FirstName, NewStudent.LastName);
       }
       else if (menuInput == 2)
@@ -296,6 +305,7 @@ int ask_about_student_id()
         system("clear");
         manually_set_student_id();
       }
+
       else
       {
         askingAboutStudentId = FALSE;
@@ -383,17 +393,19 @@ int generate_student_id(char *FirstName, char *LastName)
   int digit2 = arr[rand() % 10];
   int digit3 = arr[rand() % 10];
 
-  puts(GREEN "Generating student ID" RESET);
-  sleep(1);
-  system("clear");
+  puts("Generating student ID");
+  sleep(2);
+
   // if the student last name is empty
   if (strcmp(LastName, "") == 0)
   {
 
     snprintf(setStudentID, sizeof(setStudentID), "%c%c%d%d%d", toupper(FirstName[0]), toupper(FirstName[1]), digit1, digit2, digit3);
-    puts(GREEN "Id successfully generated!" RESET);
+    puts(GREEN "ID successfully generated!" RESET);
     sleep(1);
-    printf("The id for " BOLD "%s " RESET "is: " BOLD "%s\n" RESET, NewStudent.FirstName, setStudentID);
+    system("clear");
+    printf("The ID for " BOLD "%s " RESET "is: " BOLD "%s\n" RESET, NewStudent.FirstName, setStudentID);
+    sleep(2);
     confirm_generated_student_id(setStudentID);
   }
   else
@@ -401,7 +413,9 @@ int generate_student_id(char *FirstName, char *LastName)
     snprintf(setStudentID, sizeof(setStudentID), "%c%c%s%d%d%d", toupper(FirstName[0]), toupper(FirstName[1]), LastName, digit1, digit2, digit3);
     puts(GREEN "ID successfully generated!" RESET);
     sleep(1);
-    printf("The id for " BOLD "%s %s " RESET "is: " BOLD "%s\n" RESET, NewStudent.FirstName, NewStudent.LastName, setStudentID);
+    system("clear");
+    printf("The ID for " BOLD "%s %s " RESET "is: " BOLD "%s\n" RESET, NewStudent.FirstName, NewStudent.LastName, setStudentID);
+    sleep(2);
     confirm_generated_student_id(setStudentID);
   }
 }
@@ -413,13 +427,12 @@ int generate_student_id(char *FirstName, char *LastName)
  ************************************************************************************/
 int confirm_generated_student_id(char *studentID)
 {
-  sleep(2);
   system("clear");
   int confirmingStudentId = TRUE;
   while (confirmingStudentId == TRUE)
   {
     show_current_step("Confirm Student Id", 6, 6);
-    printf("Is the ID: " BOLD "%s" RESET " satisfactory?[y/n]\n", studentID);
+    printf("Is the ID: " BOLD "%s" RESET " for" BOLD " %s %s" RESET " satisfactory?[y/n]\n", studentID, NewStudent.FirstName, NewStudent.LastName);
     FGETS(buffer);
     UTILS_REMOVE_NEWLINE_CHAR(buffer);
     char setStudentID[15];
@@ -461,7 +474,7 @@ int confirm_generated_student_id(char *studentID)
       puts("Ok lets try again.");
       sleep(1);
       system("clear");
-      generate_student_id(NewStudent.FirstName, NewStudent.LastName);
+      ask_about_student_id();
     }
     else
     {

@@ -431,8 +431,6 @@ extern "C"
     sqlite3_bind_text(statement, 3, StudentID, -1, SQLITE_STATIC);
 
     rc = sqlite3_step(statement);
-
-    puts("Student added successfully");
     return 0;
   }
 }
