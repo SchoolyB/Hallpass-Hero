@@ -72,7 +72,7 @@ int manage_roster(void)
       manageRosterMenuIsOpen = FALSE;
       system("clear");
 
-      int tableExists = get_table_count();
+      int tableExists = get_table_count("../build/db.sqlite");
       if (tableExists == TRUE)
       {
         showingFoundRosters = TRUE;
@@ -140,7 +140,7 @@ int manage_roster(void)
     {
       manageRosterMenuIsOpen = FALSE;
       system("clear");
-      int tableExists = get_table_count();
+      int tableExists = get_table_count("../build/db.sqlite");
       if (tableExists == TRUE)
       {
         showingFoundRosters = TRUE;
@@ -197,7 +197,7 @@ int manage_roster(void)
     {
       manageRosterMenuIsOpen = FALSE;
       system("clear");
-      int tableExists = get_table_count();
+      int tableExists = get_table_count("../build/db.sqlite");
       if (tableExists == TRUE)
       {
         showingFoundRosters = TRUE;

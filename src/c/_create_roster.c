@@ -71,7 +71,7 @@ int create_new_roster(void)
       newRosterMenuIsRunning = FALSE;
       system("clear");
 
-      int tablesExists = get_table_count();
+      int tablesExists = get_table_count("../build/db.sqlite3");
 
       if (tablesExists == TRUE)
       {

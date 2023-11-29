@@ -63,7 +63,8 @@ int add_student_to_db(void)
     }
     else if (menuInput == 2 || strcmp(buffer, "view students") == 0 || strcmp(buffer, "view") == 0)
     {
-      // TODO view students
+      addStudentMenuIsRunning = FALSE;
+      show_students_in_db("../build/students.sqlite", "students");
     }
     else if (menuInput == 3 || strcmp(buffer, "help") == 0)
     {
