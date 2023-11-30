@@ -1,4 +1,4 @@
-#ifndef C_FILE_HEADER_h
+ifndef C_FILE_HEADER_h
 #define C_FILE_HEADER_h
 int create_new_roster(void);
 int manage_roster(void);
@@ -10,7 +10,7 @@ int get_student_first_name(void);
 int get_student_last_name(void);
 int ask_about_student_id(void);
 void manually_set_student_id(void);
-
-// int generate_student_id(char *FirstName, char *LastName);
-int confirm_student_id(char *StudentID);
+int generate_student_id(char *FirstName, char *LastName);
+int confirm_manually_entered_student_id(char *studentID);
+int confirm_generated_student_id(char *studentID);
 #endif
