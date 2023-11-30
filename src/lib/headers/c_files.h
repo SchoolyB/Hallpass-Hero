@@ -1,4 +1,4 @@
-ifndef C_FILE_HEADER_h
+#ifndef C_FILE_HEADER_h
 #define C_FILE_HEADER_h
 int create_new_roster(void);
 int manage_roster(void);
