@@ -17,7 +17,6 @@ Description : This source file contains the function used
 #include "../lib/utils.h"
 #include "../lib/headers/db.hpp"
 #include "../lib/headers/c_files.h"
-#include "../lib/Cuazar/lib/Cuazar.h"
 
 static char buffer[50];
 static uint8_t menuInput;
