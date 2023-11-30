@@ -18,6 +18,7 @@ set(SOURCES_C
     src/c/_manage_student.c
     src/c/_search.c
     src/lib/utils.c
+    src/lib/Cuazar/lib/Cuazar.h
 )
 
 set(SOURCES_CPP
