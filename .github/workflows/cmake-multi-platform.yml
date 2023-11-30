@@ -42,13 +42,25 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install sqlite3 libsqlite3-dev
+      
+    - name: Initialize and Update Submodules
+      run: |
+        git submodule update --init --recursive
+
 
     - name: Set reusable strings
       id: strings
       shell: bash
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+    
+    - name: Debug Submodule
+      run: |
+        echo "******** Submodule Contents ********"
+        ls -R ${GITHUB_WORKSPACE}/src/lib/Cuazar
+        echo "************************************"
 
+  
     - name: Debug SQLite3
       run: |
         echo "SQLite3_INCLUDE_DIRS: ${SQLite3_INCLUDE_DIRS}"

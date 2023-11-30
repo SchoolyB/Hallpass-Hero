@@ -17,6 +17,9 @@ Description : This source file contains the function used
 #include "../lib/headers/db.hpp"
 #include "../lib/headers/c_files.h"
 
+static char buffer[50];
+static uint8_t menuInput;
+static uint8_t mainMenuProccess;
 /************************************************************************************
  * manage_roster(): This is the main function for managing a roster.
  * Note: see usage in ./main.c
@@ -29,10 +32,6 @@ Description : This source file contains the function used
  ************************************************************************************/
 int manage_roster(void)
 {
-
-  char buffer[50];
-  uint8_t menuInput;
-  uint8_t mainMenuProccess;
   uint8_t manageRosterMenuIsOpen = TRUE;
   uint8_t showingFoundRosters = FALSE;
   uint8_t menuWidth = 70;
@@ -73,7 +72,7 @@ int manage_roster(void)
       manageRosterMenuIsOpen = FALSE;
       system("clear");
 
-      int tableExists = get_table_count();
+      int tableExists = get_table_count("../build/db.sqlite");
       if (tableExists == TRUE)
       {
         showingFoundRosters = TRUE;
@@ -141,7 +140,7 @@ int manage_roster(void)
     {
       manageRosterMenuIsOpen = FALSE;
       system("clear");
-      int tableExists = get_table_count();
+      int tableExists = get_table_count("../build/db.sqlite");
       if (tableExists == TRUE)
       {
         showingFoundRosters = TRUE;
@@ -198,7 +197,7 @@ int manage_roster(void)
     {
       manageRosterMenuIsOpen = FALSE;
       system("clear");
-      int tableExists = get_table_count();
+      int tableExists = get_table_count("../build/db.sqlite");
       if (tableExists == TRUE)
       {
         showingFoundRosters = TRUE;

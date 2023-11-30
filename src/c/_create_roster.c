@@ -16,8 +16,11 @@ Description : This source file contains the function used
 #include "../lib/utils.h"
 #include "../lib/headers/db.hpp"
 #include "../lib/headers/c_files.h"
-#include "../lib/Cuazar/lib/Cuazar.h"
+// #include "../lib/Cuazar/lib/Cuazar.h"
 
+static char buffer[50];
+static uint8_t menuInput;
+static uint8_t mainMenuProccess;
 /************************************************************************************
  * create_new_roster() This is the main function for creating new rosters.
  * Note: See usage in ./main.c
@@ -27,9 +30,6 @@ Description : This source file contains the function used
  ************************************************************************************/
 int create_new_roster(void)
 {
-  char buffer[50];
-  uint8_t menuInput;
-  uint8_t mainMenuProccess;
   uint8_t newRosterMenuIsRunning = TRUE;
   uint8_t showingFoundRosters = FALSE;
   uint8_t menuWidth = 70;
@@ -71,7 +71,7 @@ int create_new_roster(void)
       newRosterMenuIsRunning = FALSE;
       system("clear");
 
-      int tablesExists = get_table_count();
+      int tablesExists = get_table_count("../build/db.sqlite3");
 
       if (tablesExists == TRUE)
       {
@@ -98,7 +98,10 @@ int create_new_roster(void)
           if (menuInput == 1 || strcmp(buffer, "back") == 0)
           {
             showingFoundRosters = FALSE;
+            system("clear");
             puts("Going back to create roster menu");
+            sleep(1);
+            system("clear");
             create_new_roster();
           }
           else if (menuInput == 2 || strcmp(buffer, "main") == 0 || strcmp(buffer, "main menu") == 0)
@@ -211,7 +214,7 @@ int get_and_confirm_roster_name(void)
   {
     system("clear");
     show_current_step("Confirm new roster name", 2, 2);
-    printf("You have decided to name your new roster:" BOLD "%s " RESET ".\nIs that correct?(y/n)\n", rosterNameInput);
+    printf("You have decided to name your new roster:" BOLD "%s " RESET ".\nIs that correct?[y/n]\n", rosterNameInput);
 
     // confirming input
     FGETS(buffer);
@@ -256,7 +259,7 @@ int get_and_confirm_roster_name(void)
       FGETS(buffer);
       UTILS_REMOVE_NEWLINE_CHAR(buffer);
 
-      int menuInput = atoi(buffer);
+      menuInput = atoi(buffer);
       if (menuInput == 1 || strcmp(buffer, "try again") == 0)
       {
         system("clear");

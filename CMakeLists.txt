@@ -18,6 +18,7 @@ set(SOURCES_C
     src/c/_manage_student.c
     src/c/_search.c
     src/lib/utils.c
+    src/lib/Cuazar/lib/Cuazar.h
 )
 
 set(SOURCES_CPP
@@ -25,18 +26,14 @@ set(SOURCES_CPP
     src/lib/utils.cpp
 )
 
-
 # C++ source file library
 add_library(cppLib OBJECT ${SOURCES_CPP})
 
 # C source file executable
 add_executable(HallpassHero.exe ${SOURCES_C} $<TARGET_OBJECTS:cppLib>)
 
-# Define the executable
-# add_executable(HallpassHero.exe ${SOURCES_C})
-
 # Specify include directories for the executable
-target_include_directories(HallpassHero.exe PRIVATE ${CMAKE_SOURCE_DIR}/src/lib/headers)
+target_include_directories(HallpassHero.exe PRIVATE ${CMAKE_SOURCE_DIR}/src/lib/headers ${CMAKE_SOURCE_DIR}/src/lib/Cuazar/lib)
 
 # Link against SQLite library
 target_link_libraries(HallpassHero.exe PRIVATE ${SQLite3_LIBRARIES})

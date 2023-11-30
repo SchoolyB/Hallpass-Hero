@@ -14,11 +14,10 @@ Description : This source file contains the main function for the Hallpass Hero 
 #include "../lib/utils.h"
 #include "../lib/headers/main.h"
 #include "../lib/headers/c_files.h"
-#include "../lib/Cuazar/lib/Cuazar.c"
 #include "../lib/Cuazar/lib/Cuazar.h"
 
+static uint8_t menuInput;
 uint8_t mainMenuProccess = FALSE;
-int testModeIsOn;
 char MainMenuOptions[7][50] = {
     "1. Create a new roster",
     "2. View and manage an existing roster",
@@ -31,7 +30,7 @@ char MainMenuOptions[7][50] = {
 int main()
 {
 
-  Init_Cuazar();
+  Init_Cuazar(TRUE);
   if (mkdir("../logs", 0777) != 0)
   {
     UTILS_ERROR_LOGGER("Could not create logs directory as it already exists", "main", MINOR);
@@ -64,7 +63,7 @@ int main()
     /*Here we are handling the input that the user makes on the main menu*/
     FGETS(buffer);
     UTILS_REMOVE_NEWLINE_CHAR(buffer);
-    uint8_t menuInput = atoi(buffer);
+    menuInput = atoi(buffer);
 
     // to create a new roster
     if (menuInput == 1 || strcmp(buffer, "new roster") == 0)
@@ -118,7 +117,7 @@ int main()
   return 0;
 }
 
-void handle_main_menu_decision(int num)
+static void handle_main_menu_decision(int num)
 {
   char buffer[50];
   system("clear");
