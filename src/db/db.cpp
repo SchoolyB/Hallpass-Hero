@@ -382,6 +382,7 @@ extern "C"
       sleep(1);
       exit(1);
     }
+    return 0;
   }
 
   /************************************************************************************
@@ -484,5 +485,6 @@ extern "C"
 
     // Close the database
     sqlite3_close(db);
+    return 0;
   }
 }

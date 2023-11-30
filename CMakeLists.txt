@@ -37,6 +37,8 @@ add_executable(HallpassHero.exe ${SOURCES_C} $<TARGET_OBJECTS:cppLib>)
 
 # Specify include directories for the executable
 target_include_directories(HallpassHero.exe PRIVATE ${CMAKE_SOURCE_DIR}/src/lib/headers)
+target_include_directories(HallpassHero.exe PRIVATE ${CMAKE_SOURCE_DIR}/src/lib/Cuazar/lib)
+
 
 # Link against SQLite library
 target_link_libraries(HallpassHero.exe PRIVATE ${SQLite3_LIBRARIES})
