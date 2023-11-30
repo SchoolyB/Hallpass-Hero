@@ -56,9 +56,11 @@ jobs:
     
     - name: Debug Submodule
       run: |
-        ls -R ${CMAKE_SOURCE_DIR}/src/lib/Cuazar
-   
+        echo "******** Submodule Contents ********"
+        ls -R ${GITHUB_WORKSPACE}/src/lib/Cuazar
+        echo "************************************"
 
+  
     - name: Debug SQLite3
       run: |
         echo "SQLite3_INCLUDE_DIRS: ${SQLite3_INCLUDE_DIRS}"
