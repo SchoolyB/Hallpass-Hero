@@ -13,10 +13,9 @@ Description : This source file contains the function used
 #include <stdlib.h>
 #include <stdint.h>
 #include <time.h>
-#include "../lib/utils.h"
+#include "../lib/headers/utils.h"
 #include "../lib/headers/db.hpp"
 #include "../lib/headers/c_files.h"
-// #include "../lib/Cuazar/lib/Cuazar.h"
 
 static char buffer[50];
 static uint8_t menuInput;
@@ -166,7 +165,7 @@ int create_new_roster(void)
 }
 
 /************************************************************************************
- * add_student_to_db(): Self explanitory. Gets and confirms the roster name.
+ * add_student_to_db():  . Gets and confirms the roster name.
  * Note: see usage in create_new_roster()
  ************************************************************************************/
 int get_and_confirm_roster_name(void)

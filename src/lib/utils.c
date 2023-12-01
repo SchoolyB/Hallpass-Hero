@@ -13,7 +13,8 @@ Description : This source file contains several utility functions that are used
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "utils.h"
+#include "headers/utils.h"
+#include "headers/db.hpp"
 
 /************************************************************************************
  * UTILS_ERROR_LOGGER(): Logs errors errors that occur specifically in 'C' files
@@ -92,45 +93,21 @@ void UTILS_CLEAR_INPUT_BUFFER()
     // Keep reading until a newline or EOF is encountered
   }
 }
-// Typedefs
 
-/* programs are like courses/degrees/certs/diplomas
-basically any over arching program that a student is
-a part of that has a goal or achievement at the end*/
-// typedef struct
-// {
-//   char Name[20];
-//   char Description[100];
-//   char Start_date[20];
-//   char End_date[20];
-//   int Max_students;
-//   int Current_students;
-// } Program;
+// TODO add desc for func
+int list_all_students(void)
+{
 
-// typedef struct
-// {
-//   char FirstName[20];
-//   char LastName[20];
-//   int StudentID;
-//   /*
-//   TODO add members for attendance, grades/performance
-//    */
-//   // Program CurrentProgram;
+  printf("%-15s %-15s %-15s\n", "First Name", "Last Name", "Student ID");
+  show_students_in_db("../build/students.sqlite");
+  int showingStudents = TRUE;
+  while (showingStudents == TRUE)
+  {
+    puts("Press any key to continue...");
+    getchar();
+    showingStudents = FALSE;
+    system("clear");
+  }
 
-// } Student;
-
-// typedef struct
-// {
-//   char firstName[20];
-//   char lastName[20];
-//   char title[20];
-// } Instructor;
-
-/*Rosters a individual classes
-i.e 1st period History, Physiology 342,
-// June Fullstack Cohort, etc. */
-// typedef struct
-// {
-//   Instructor LeadInstructor;
-//   Student Students[100];
-// } Roster;
+  return 0;
+}

@@ -13,8 +13,8 @@ Description : This source file contains all functions that interact with the dat
 #include <iostream>
 #include <sqlite3.h>
 #include "../lib/headers/db.hpp"
-#include "../lib/utils.h"
-#include "../lib/utils.hpp"
+#include "../lib/headers/utils.h"
+#include "../lib/headers/utils.hpp"
 
 /*
 Allows using elements from
@@ -25,20 +25,21 @@ using namespace std;
 int has_tables = FALSE;
 
 /************************************************************************************
- * callback(): Callback function for sqlite3_exec()
- * Note: This callback function is used to print the results of a query
+ * print_student_info_callback(): Callback function for sqlite3_exec()
+ * Note: This callback function is used to print the names of all students
  ************************************************************************************/
-static int callback(void *NotUsed, int argc, char **argv, char **azColName)
+int print_student_info_callback(void *data, int argc, char **argv, char **azColName)
 {
-  int i;
-  for (i = 0; i < argc; i++)
+  cout << "-------------------------------------------" << endl;
+  for (int i = 0; i < argc; i++)
   {
-    printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+    printf(BOLD "| %-10s" RESET, argv[i] ? argv[i] : "NULL");
   }
-  printf("\n");
+  cout << "\n-------------------------------------------" << endl;
+
+  // printf("\n");
   return 0;
 }
-
 /************************************************************************************
  * print_table_names_callback(): Callback function for sqlite3_exec()
  * Note: This callback function is used to print the names of all tables
@@ -416,6 +417,7 @@ extern "C"
     }
 
     sqlite3_close(db);
+    return 0;
   }
 
   /************************************************************************************
@@ -460,7 +462,7 @@ extern "C"
    * show_student_list(): Prints all students currently in the students.sqlite database
    * Note: See function usage in ../src/_add_student.c & ../src/_manage_student.c
    ************************************************************************************/
-  int show_students_in_db(const char *path, const char *tableName)
+  int show_students_in_db(const char *path)
   {
     sqlite3 *db;
     int rc = sqlite3_open(path, &db);
@@ -473,10 +475,10 @@ extern "C"
     }
 
     // Construct the SQL query to select all rows from the specified table
-    string selectSQL = "SELECT * FROM " + string(tableName);
+    string selectSQL = "SELECT FirstName, LastName, StudentID FROM students";
 
     // Execute the query and invoke the callback function to print each row
-    rc = sqlite3_exec(db, selectSQL.c_str(), callback, nullptr, nullptr);
+    rc = sqlite3_exec(db, selectSQL.c_str(), print_student_info_callback, nullptr, nullptr);
 
     if (rc != SQLITE_OK)
     {

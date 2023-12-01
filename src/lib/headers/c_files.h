@@ -13,4 +13,6 @@ void manually_set_student_id(void);
 int generate_student_id(char *FirstName, char *LastName);
 int confirm_manually_entered_student_id(char *studentID);
 int confirm_generated_student_id(char *studentID);
+int list_all_students(void);
+
 #endif

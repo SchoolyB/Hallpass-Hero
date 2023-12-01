@@ -14,7 +14,7 @@ Description : This source file contains the function used
 #include <stdint.h>
 #include <time.h>
 #include <ctype.h>
-#include "../lib/utils.h"
+#include "../lib/headers/utils.h"
 #include "../lib/headers/db.hpp"
 #include "../lib/headers/c_files.h"
 
@@ -62,8 +62,10 @@ int add_student_to_db(void)
     }
     else if (menuInput == 2 || strcmp(buffer, "view students") == 0 || strcmp(buffer, "view") == 0)
     {
+
       addStudentMenuIsRunning = FALSE;
-      show_students_in_db("../build/students.sqlite", "students");
+      system("clear");
+      list_all_students();
     }
     else if (menuInput == 3 || strcmp(buffer, "help") == 0)
     {
@@ -91,7 +93,7 @@ int add_student_to_db(void)
 }
 
 /************************************************************************************
- * get_student_first_name(): Self explanitory. Gets and confirms the students first name.
+ * get_student_first_name():  . Gets and confirms the students first name.
  * Note: see usage in add_student_to_db()
  ************************************************************************************/
 int get_student_first_name(void)
@@ -157,7 +159,7 @@ int get_student_first_name(void)
 }
 
 /************************************************************************************
- * get_student_last_name(): Self explanitory. Gets and confirms the students last name.
+ * get_student_last_name():  . Gets and confirms the students last name.
  * Note: In the event that the student does not have a last name an empty string will be
                                                                   added to the database.
  * Note: see usage in get_student_first_name()

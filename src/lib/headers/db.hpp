@@ -33,7 +33,7 @@ extern "C"
   int drop_table(void);
   int create_student_db_and_table(void);
   int insert_student_into_db(const char *FirstName, const char *LastName, const char *StudentID);
-  int show_students_in_db(const char *path, const char *tableName);
+  int show_students_in_db(const char *path);
 #ifdef __cplusplus
 } // extern "C"
 #endif /* DB_HPP */
