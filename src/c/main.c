@@ -62,8 +62,7 @@ int main()
     }
     puts("===========================================================================================");
     /*Here we are handling the input that the user makes on the main menu*/
-    FGETS(buffer);
-    UTILS_REMOVE_NEWLINE_CHAR(buffer);
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
     menuInput = atoi(buffer);
 
     // to create a new roster

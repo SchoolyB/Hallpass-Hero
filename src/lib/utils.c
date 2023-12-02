@@ -98,16 +98,33 @@ void UTILS_CLEAR_INPUT_BUFFER()
 int list_all_students(void)
 {
 
-  printf("%-15s %-15s %-15s\n", "First Name", "Last Name", "Student ID");
-  show_students_in_db("../build/students.sqlite");
-  int showingStudents = TRUE;
-  while (showingStudents == TRUE)
+  int result = show_students_in_db("../build/students.sqlite");
+  if (result == 0)
   {
-    puts("Press any key to continue...");
-    getchar();
-    showingStudents = FALSE;
-    system("clear");
+    int showingStudents = TRUE;
+    while (showingStudents == TRUE)
+    {
+      puts("Press any key to continue...");
+      getchar();
+      showingStudents = FALSE;
+      system("clear");
+    }
+  }
+  else if (result == 1)
+  {
+    UTILS_ERROR_LOGGER("Could not find students in database or table: 'students' does not exist", "list_all_students()", MODERATE);
+    puts(RED "Error: Could not find students in database or table: 'students' does not exist " RESET);
+    puts("May need to add a student to the database then try this action again.");
+    wait_for_char_input();
   }
 
   return 0;
+}
+// TODO add desc for func
+int wait_for_char_input(void)
+{
+  sleep(2);
+  puts("Press any key to continue...");
+  getchar();
+  system("clear");
 }

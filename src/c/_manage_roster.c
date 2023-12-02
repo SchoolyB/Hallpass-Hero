@@ -63,8 +63,7 @@ int manage_roster(void)
     }
     puts("|===========================================================================================");
 
-    FGETS(buffer);
-    UTILS_REMOVE_NEWLINE_CHAR(buffer);
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
 
     menuInput = atoi(buffer);
     if (menuInput == 1 || strcmp(buffer, "view roster") == 0 || strcmp(buffer, "view") == 0)
@@ -92,8 +91,7 @@ int manage_roster(void)
           puts("1: Back");
           puts("2: Main Menu");
 
-          FGETS(buffer);
-          UTILS_REMOVE_NEWLINE_CHAR(buffer);
+          UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
           menuInput = atoi(buffer);
           if (menuInput == 1 || strcmp(buffer, "back") == 0)
           {
@@ -134,6 +132,7 @@ int manage_roster(void)
       {
         UTILS_ERROR_LOGGER("Failed to get roster table count.", "create_new_roster", MINOR);
         printf(RED "Error: Failed to get roster table count.\n" RESET);
+        wait_for_char_input();
       }
     }
     else if (menuInput == 2 || strcmp(buffer, "rename roster") == 0 || strcmp(buffer, "rename") == 0)
@@ -191,6 +190,7 @@ int manage_roster(void)
       {
         UTILS_ERROR_LOGGER("Failed to get roster table count.", "create_new_roster", MINOR);
         printf(RED "Error: Failed to get roster table count.\n" RESET);
+        wait_for_char_input();
       }
     }
     else if (menuInput == 3 || strcmp(buffer, "delete roster") == 0 || strcmp(buffer, "delete") == 0)
@@ -250,6 +250,7 @@ int manage_roster(void)
       {
         UTILS_ERROR_LOGGER("Failed to get roster table count.", "create_new_roster", MINOR);
         printf(RED "Error: Failed to get roster table count.\n" RESET);
+        wait_for_char_input();
       }
     }
     else if (menuInput == 4 || strcmp(buffer, "add student") == 0 || strcmp(buffer, "add") == 0)

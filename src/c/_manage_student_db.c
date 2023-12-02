@@ -42,20 +42,16 @@ int manage_student_db(void)
     {
       printf("%d. %s\n", i + 1, manageStudentDBMenu[i]);
     }
-    FGETS(buffer);
-    UTILS_REMOVE_NEWLINE_CHAR(buffer);
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
     menuInput = atoi(buffer);
     if (menuInput == 1 || strcmp(buffer, "list") == 0)
     {
-      system("clear");
       manageStudentDBMenuIsRunning = FALSE;
-      // view_student_info();
+      system("clear");
+      list_all_students();
+      manageStudentDBMenuIsRunning = TRUE;
     }
     else if (menuInput == 2 || strcmp(buffer, "view") == 0)
-    {
-      list_all_students();
-    }
-    else if (menuInput == 3 || strcmp(buffer, "update") == 0)
     {
       // do stuff
     }
@@ -65,7 +61,23 @@ int manage_student_db(void)
     }
     else if (menuInput == 4 || strcmp(buffer, "delete") == 0)
     {
-      // do stuff
+      manageStudentDBMenuIsRunning = FALSE;
+      system("clear");
+      show_current_menu("Delete Student From Database");
+      show_students_in_db("../build/students.sqlite");
+      puts("Which student would you like to delete from the database?");
+      puts(RED "WARNING: This action cannot be undone!" RESET);
+      puts(YELLOW "You can cancel this operation by entering 'cancel'." RESET);
+      UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
+
+      if (strcmp(buffer, "cancel") == 0)
+      {
+        system("clear");
+        puts(YELLOW "Cancelling operation" RESET);
+        sleep(1);
+        system("clear");
+        manageStudentDBMenuIsRunning = TRUE;
+      }
     }
     else if (menuInput == 5 || strcmp(buffer, "main") == 0)
     {

@@ -54,8 +54,7 @@ int create_new_roster(void)
       printf("| %-90s\n", "");
     }
     puts("|===========================================================================================");
-    FGETS(buffer);
-    UTILS_REMOVE_NEWLINE_CHAR(buffer);
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
     menuInput = atoi(buffer);
     if (menuInput == 1 || strcmp(buffer, "new roster") == 0 || strcmp(buffer, "new") == 0)
     {
@@ -91,8 +90,7 @@ int create_new_roster(void)
           puts("1: Back");
           puts("2: Main Menu");
 
-          FGETS(buffer);
-          UTILS_REMOVE_NEWLINE_CHAR(buffer);
+          UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
           menuInput = atoi(buffer);
           if (menuInput == 1 || strcmp(buffer, "back") == 0)
           {
@@ -136,6 +134,7 @@ int create_new_roster(void)
       {
         UTILS_ERROR_LOGGER("Failed to get table count", "create_new_roster", MINOR);
         printf(RED "Error: Failed to get table count\n" RESET);
+        wait_for_char_input();
       }
     }
 
@@ -180,8 +179,7 @@ int get_and_confirm_roster_name(void)
   puts("Hint: Roster names can be no less the 1 character and no more then 30 characters.");
   puts("Hint: You can cancel this operation at any time by typing 'cancel'.");
 
-  FGETS(buffer);
-  UTILS_REMOVE_NEWLINE_CHAR(buffer);
+  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
   strcpy(rosterNameInput, buffer);
   if (strlen(rosterNameInput) > 30)
   {
@@ -216,8 +214,7 @@ int get_and_confirm_roster_name(void)
     printf("You have decided to name your new roster:" BOLD "%s " RESET ".\nIs that correct?[y/n]\n", rosterNameInput);
 
     // confirming input
-    FGETS(buffer);
-    UTILS_REMOVE_NEWLINE_CHAR(buffer);
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
     char confirmation[20];
     strcpy(confirmation, buffer);
     if (INPUT_IS_YES(confirmation))
@@ -255,8 +252,7 @@ int get_and_confirm_roster_name(void)
       puts("3: Back");
       puts("4: Main Menu");
 
-      FGETS(buffer);
-      UTILS_REMOVE_NEWLINE_CHAR(buffer);
+      UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
 
       menuInput = atoi(buffer);
       if (menuInput == 1 || strcmp(buffer, "try again") == 0)
