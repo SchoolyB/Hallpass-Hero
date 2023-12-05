@@ -48,9 +48,7 @@ int add_student_to_db(void)
       printf("| %s %-90s\n", addStudentOptions[i], "");
     }
     puts("|===========================================================================================");
-    FGETS(buffer);
-
-    UTILS_REMOVE_NEWLINE_CHAR(buffer);
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
     menuInput = atoi(buffer);
 
     if (menuInput == 1 || strcmp(buffer, "add student") == 0 || strcmp(buffer, "add") == 0)
@@ -103,9 +101,7 @@ int get_student_first_name(void)
 
   puts("Please enter the students first name.");
   puts(YELLOW "You can cancel this operation by entering 'cancel." RESET);
-  FGETS(buffer);
-  UTILS_REMOVE_NEWLINE_CHAR(buffer);
-
+  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
   if (strcmp(buffer, "cancel") == 0)
   {
     system("clear");
@@ -127,8 +123,7 @@ int get_student_first_name(void)
     strcpy(setFirstName, buffer);
 
     /*Getting the confirmation*/
-    FGETS(buffer);
-    UTILS_REMOVE_NEWLINE_CHAR(buffer);
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
     if (INPUT_IS_YES(buffer))
     {
       /*Confirming the entered value and
@@ -174,8 +169,7 @@ int get_student_last_name(void)
   puts("Please enter the students last name.");
   puts("If the student does not have a last name please enter 'none'.");
   puts(YELLOW "You can cancel this operation by entering 'cancel." RESET);
-  FGETS(buffer);
-  UTILS_REMOVE_NEWLINE_CHAR(buffer);
+  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
 
   if (strcmp(buffer, "cancel") == 0)
   {
@@ -197,8 +191,7 @@ int get_student_last_name(void)
     strcpy(setLastName, "");
 
     /*Getting the confirmation*/
-    FGETS(buffer);
-    UTILS_REMOVE_NEWLINE_CHAR(buffer);
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
     if (INPUT_IS_YES(buffer))
     {
       /*Confirming the entered value and
@@ -230,8 +223,7 @@ int get_student_last_name(void)
     system("clear");
     show_current_step("Confirm Student Last Name", 4, 6);
     printf("You entered: " BOLD "%s" RESET " is that correct?[y/n]\n", setLastName);
-    FGETS(buffer);
-    UTILS_REMOVE_NEWLINE_CHAR(buffer);
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
     if (INPUT_IS_YES(buffer))
     {
       strcpy(NewStudent.LastName, setLastName);
@@ -268,8 +260,7 @@ int ask_about_student_id()
   {
     printf("Would you like to assign a student ID to " BOLD "%s %s" RESET " ?[y/n] \n", NewStudent.FirstName, NewStudent.LastName);
     puts(YELLOW "You can assign an id later by choosing option #4 from the main menu." RESET);
-    FGETS(buffer);
-    UTILS_REMOVE_NEWLINE_CHAR(buffer);
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
 
     if (INPUT_IS_YES(buffer))
     {
@@ -281,8 +272,7 @@ int ask_about_student_id()
       puts("1. Automatically generate an ID ");
       puts("2. Create your own");
 
-      FGETS(buffer);
-      UTILS_REMOVE_NEWLINE_CHAR(buffer);
+      UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
       menuInput = atoi(buffer);
 
       if (strcmp(buffer, "cancel") == 0)
@@ -342,8 +332,7 @@ void manually_set_student_id()
     puts(YELLOW "You can cancel this operation by entering 'cancel." RESET);
     gettingStudentId = FALSE;
   }
-  FGETS(buffer);
-  UTILS_REMOVE_NEWLINE_CHAR(buffer);
+  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
 
   if (strcmp(buffer, "cancel") == 0)
   {
@@ -435,8 +424,7 @@ int confirm_generated_student_id(char *studentID)
   {
     show_current_step("Confirm Student Id", 6, 6);
     printf("Is the ID: " BOLD "%s" RESET " for" BOLD " %s %s" RESET " satisfactory?[y/n]\n", studentID, NewStudent.FirstName, NewStudent.LastName);
-    FGETS(buffer);
-    UTILS_REMOVE_NEWLINE_CHAR(buffer);
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
     char setStudentID[15];
     strcpy(setStudentID, studentID);
 
@@ -502,8 +490,7 @@ int confirm_manually_entered_student_id(char *studentID)
   {
     show_current_step("Confirm Student Id", 6, 6);
     printf("You've entered: " BOLD "%s" RESET "is that correct?[y/n]\n", studentID);
-    FGETS(buffer);
-    UTILS_REMOVE_NEWLINE_CHAR(buffer);
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
     char setStudentID[15];
     strcpy(setStudentID, studentID);
 

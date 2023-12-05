@@ -68,6 +68,11 @@ int refresh_table_count(void)
   has_tables = FALSE;
   return 0;
 }
+/*Simple helper that prints a heading when showing the student list*/
+int print_student_list_heading()
+{
+  printf("%-15s %-15s %-15s\n", "First Name", "Last Name", "Student ID");
+}
 extern "C"
 {
   /************************************************************************************
@@ -469,11 +474,12 @@ extern "C"
 
     if (rc != SQLITE_OK)
     {
-      cerr << "Failed to open SQLite3 database. Error: " << sqlite3_errmsg(db) << endl;
+      cerr << RED "Failed to open SQLite3 database. Error: " RESET << sqlite3_errmsg(db) << endl;
+      CPP_UTILS_ERROR_LOGGER("Failed to open SQLite3 database. ", "show_students_in_db", CppErrorLevel::CRITICAL);
       sqlite3_close(db);
       exit(1);
     }
-
+    print_student_list_heading();
     // Construct the SQL query to select all rows from the specified table
     string selectSQL = "SELECT FirstName, LastName, StudentID FROM students";
 
@@ -482,7 +488,7 @@ extern "C"
 
     if (rc != SQLITE_OK)
     {
-      cerr << "SQL error: " << sqlite3_errmsg(db) << endl;
+      return 1;
     }
 
     // Close the database
@@ -490,3 +496,8 @@ extern "C"
     return 0;
   }
 }
+
+/************************************************************************************
+ * delete_student_from_db(): Deletes a student from the students.sqlite database
+ * Note: See function usage in ../src/_manage_student.c
+ ************************************************************************************/

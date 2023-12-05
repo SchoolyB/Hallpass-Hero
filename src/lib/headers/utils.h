@@ -62,11 +62,9 @@ extern "C"
 
 #define INPUT_IS_NO(param) (strcmp(param, "n") == 0 || strcmp(param, "N") == 0 || \
                             strcmp(param, "no") == 0 || strcmp(param, "No") == 0)
-//--------------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------------//
 
-// Standard fgets() and removing the newline character at the end of the user's string input
-#define FGETS(param) (fgets(param, sizeof(param), stdin))
-
+#define UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(param) (fgets(param, sizeof(param), stdin), UTILS_REMOVE_NEWLINE_CHAR(param))
   //--------------------------------------------------------------------------------//
 
   // Declaration of utility functions
@@ -77,6 +75,8 @@ extern "C"
   void UTILS_CLEAR_INPUT_BUFFER();
   void show_current_menu(char *str);
   void show_current_step(char *str, int currentStep, int totalSteps);
+  int wait_for_char_input(void);
+  int list_all_students(void);
 
   typedef struct
   {
