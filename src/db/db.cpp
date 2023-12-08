@@ -232,6 +232,7 @@ extern "C"
       }
       else if (answer == "n" || answer == "N" || answer == "no" || answer == "No" || answer == "NO")
       {
+
         system("clear");
         cout << "Exiting..." << endl;
         sqlite3_close(db);
@@ -369,6 +370,45 @@ extern "C"
     }
   }
 
+int add_student_to_roster(const char *rosterName, const char *firstName, const char *lastName, const char *studentID)
+{
+
+  sqlite3 *db;
+
+  int rc = sqlite3_open("../build/db.sqlite", &db);
+
+  if(rc!= SQLITE_OK)
+  {
+    sqlite3_close(db);
+    CPP_UTILS_ERROR_LOGGER("Failed to open SQLite3 database. ", "add_student_to_roster", CppErrorLevel::CRITICAL);
+    cerr << RED "CRITICAL ERROR: Failed to find/open database" RESET << endl;
+    cout << "Exiting program" << endl;
+    sleep(1);
+    exit(1);
+  }
+
+  const char *addStudentToSQLTable = "INSERT INTO " + *rosterName + " (FirstName, LastName, StudentID) VALUES (?, ?, ?)";
+
+  sqlite3_stmt *statement;
+  
+  rc = sqlite3_prepare_v2(db, addStudentToSQLTable, -1, &statement, nullptr);
+  if (rc != SQLITE_OK)
+  {
+    CPP_UTILS_ERROR_LOGGER("Can't prepare SQL statement", "add_student_to_roster", CppErrorLevel::CRITICAL);
+    sqlite3_close(db);
+    return 1;
+  }
+
+  sqlite3_bind_text(statement, 1, rosterName, -1, SQLITE_STATIC);
+  sqlite3_bind_text(statement, 1, firstName, -1, SQLITE_STATIC);
+  sqlite3_bind_text(statement, 2, lastName, -1, SQLITE_STATIC);
+  sqlite3_bind_text(statement, 3, studentID, -1, SQLITE_STATIC);
+
+  
+ rc = sqlite3_step(statement);
+ 
+  return 0;
+}
   /***************!EVERYTHING BELOW HERE IS FOR THE STUDENTS DATABASE!***************/
   /***************!EVERYTHING BELOW HERE IS FOR THE STUDENTS DATABASE!***************/
   /***************!EVERYTHING BELOW HERE IS FOR THE STUDENTS DATABASE!***************/
@@ -481,10 +521,10 @@ extern "C"
     }
     print_student_list_heading();
     // Construct the SQL query to select all rows from the specified table
-    string selectSQL = "SELECT FirstName, LastName, StudentID FROM students";
+    string selectFromStudentSQLTable = "SELECT FirstName, LastName, StudentID FROM students";
 
     // Execute the query and invoke the callback function to print each row
-    rc = sqlite3_exec(db, selectSQL.c_str(), print_student_info_callback, nullptr, nullptr);
+    rc = sqlite3_exec(db, selectFromStudentSQLTable.c_str(), print_student_info_callback, nullptr, nullptr);
 
     if (rc != SQLITE_OK)
     {
@@ -498,6 +538,52 @@ extern "C"
 }
 
 /************************************************************************************
- * delete_student_from_db(): Deletes a student from the students.sqlite database
- * Note: See function usage in ../src/_manage_student.c
+ *  search_for_student_in_db(): Takes in a string from the frontend and queries
+ *                                      the students.sqlite database for a match
+ * Note: See function usage in  ../src/_manage_student.c & ../src/_search.c
  ************************************************************************************/
+int search_for_student_in_db(const char *searchParam)
+{
+  sqlite3 *db;
+  sqlite3_stmt *statement;
+  int rc = sqlite3_open("../build/students.sqlite", &db);
+
+  if (rc != SQLITE_OK)
+  {
+    cerr << "Failed to open SQLite3 database. Error: " << sqlite3_errmsg(db) << endl;
+    sqlite3_close(db);
+    return -1;
+  }
+
+  const char *sql = "SELECT * FROM students WHERE FirstName = ? OR LastName = ? OR StudentID = ?";
+
+  if (sqlite3_prepare_v2(db, sql, -1, &statement, NULL) == SQLITE_OK)
+  {
+    sqlite3_bind_text(statement, 1, searchParam, -1, SQLITE_STATIC);
+    sqlite3_bind_text(statement, 2, searchParam, -1, SQLITE_STATIC);
+    sqlite3_bind_text(statement, 3, searchParam, -1, SQLITE_STATIC);
+
+    // printf(GREEN "Successfully retrieved student records" RESET);
+    while (sqlite3_step(statement) == SQLITE_ROW)
+    {
+      cout << "-------------------------------------------" << endl;
+      cout << BOLD << "First Name: " << RESET << sqlite3_column_text(statement, 1) << endl;
+      cout << BOLD << "Last Name: " << RESET << sqlite3_column_text(statement, 2) << endl;
+      cout << BOLD << "Student ID: " << RESET << sqlite3_column_text(statement, 3) << endl;
+      cout << "-------------------------------------------" << endl;
+    }
+
+    sqlite3_finalize(statement);
+    return 0;
+  }
+  else
+  {
+    cerr << "Failed to prepare the statement: " << sqlite3_errmsg(db) << endl;
+    sqlite3_close(db);
+    return -1;
+  }
+
+  sqlite3_close(db);
+
+  return 0;
+}

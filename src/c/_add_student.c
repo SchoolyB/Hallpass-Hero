@@ -17,6 +17,7 @@ Description : This source file contains the function used
 #include "../lib/headers/utils.h"
 #include "../lib/headers/db.hpp"
 #include "../lib/headers/c_files.h"
+#include "../lib/Cuazar/lib/Cuazar.h"
 
 static char buffer[50];
 static uint8_t menuInput;
@@ -60,7 +61,6 @@ int add_student_to_db(void)
     }
     else if (menuInput == 2 || strcmp(buffer, "view students") == 0 || strcmp(buffer, "view") == 0)
     {
-
       addStudentMenuIsRunning = FALSE;
       system("clear");
       list_all_students();
@@ -96,7 +96,7 @@ int add_student_to_db(void)
  ************************************************************************************/
 int get_student_first_name(void)
 {
-  show_current_step("Enter Student First Name", 1, 6);
+  show_current_step("Enter Student First Name", 1, 7);
   char buffer[50];
 
   puts("Please enter the students first name.");
@@ -114,7 +114,7 @@ int get_student_first_name(void)
   else
   {
     system("clear");
-    show_current_step("Confirm Student First Name", 2, 6);
+    show_current_step("Confirm Student First Name", 2, 7);
     printf("You entered: " BOLD "%s" RESET " is that correct[y/n]\n", buffer);
 
     /*Taking the entered value and
@@ -163,7 +163,7 @@ int get_student_last_name(void)
 {
   char *setLastName[30];
   system("clear");
-  show_current_step("Enter Student Last Name", 3, 6);
+  show_current_step("Enter Student Last Name", 3, 7);
   char buffer[50];
 
   puts("Please enter the students last name.");
@@ -183,7 +183,7 @@ int get_student_last_name(void)
   else if (strcmp(buffer, "none") == 0)
   {
     system("clear");
-    show_current_step("Confirm Student Last Name", 4, 6);
+    show_current_step("Confirm Student Last Name", 4, 7);
     puts(YELLOW "This student does not have a last name. is that correct?[y/n]" RESET);
 
     /*Taking the entered value and
@@ -221,7 +221,7 @@ int get_student_last_name(void)
   {
     strcpy(setLastName, buffer);
     system("clear");
-    show_current_step("Confirm Student Last Name", 4, 6);
+    show_current_step("Confirm Student Last Name", 4, 7);
     printf("You entered: " BOLD "%s" RESET " is that correct?[y/n]\n", setLastName);
     UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
     if (INPUT_IS_YES(buffer))
@@ -325,7 +325,7 @@ void manually_set_student_id()
   while (gettingStudentId == TRUE)
   {
 
-    show_current_step("Set Student Id", 5, 6);
+    show_current_step("Set Student Id", 5, 7);
     puts("Please enter the students id.");
     puts(YELLOW "NOTE: The id can be no MORE than 15 characters and LESS than 2." RESET);
     puts(RED "IMPORTANT: It is not recommended to use private information such as social security numbers or birth dates as an id." RESET);
@@ -422,7 +422,7 @@ int confirm_generated_student_id(char *studentID)
   int confirmingStudentId = TRUE;
   while (confirmingStudentId == TRUE)
   {
-    show_current_step("Confirm Student Id", 6, 6);
+    show_current_step("Confirm Student Id", 6, 7);
     printf("Is the ID: " BOLD "%s" RESET " for" BOLD " %s %s" RESET " satisfactory?[y/n]\n", studentID, NewStudent.FirstName, NewStudent.LastName);
     UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
     char setStudentID[15];
@@ -431,30 +431,10 @@ int confirm_generated_student_id(char *studentID)
     if (INPUT_IS_YES(buffer))
     {
       confirmingStudentId = FALSE;
-      show_current_step("Confirm Student Id", 6, 6);
+      show_current_step("Confirm Student Id", 6, 7);
       strcpy(NewStudent.StudentID, setStudentID);
       system("clear");
-      puts(GREEN "Adding new student to database..." RESET);
-      sleep(2);
-      system("clear");
-      int result = insert_student_into_db(NewStudent.FirstName, NewStudent.LastName, NewStudent.StudentID);
-
-      if (result == 0)
-      {
-        puts(GREEN "Student successfully added to database." RESET);
-        sleep(1);
-        system("clear");
-        addStudentMenuIsRunning = TRUE;
-        return 0;
-      }
-      else if (result == 1)
-      {
-        puts(RED "Please try again." RESET);
-        sleep(1);
-        system("clear");
-        addStudentMenuIsRunning = TRUE;
-        return 0;
-      }
+      ask_to_add_to_roster();
     }
 
     else if (INPUT_IS_NO(buffer))
@@ -464,7 +444,7 @@ int confirm_generated_student_id(char *studentID)
       puts("Ok lets try again.");
       sleep(1);
       system("clear");
-      ask_about_student_id();
+      generate_student_id(NewStudent.FirstName, NewStudent.LastName);
     }
     else
     {
@@ -488,7 +468,7 @@ int confirm_manually_entered_student_id(char *studentID)
   int confirmingStudentId = TRUE;
   while (confirmingStudentId == TRUE)
   {
-    show_current_step("Confirm Student Id", 6, 6);
+    show_current_step("Confirm Student Id", 6, 7);
     printf("You've entered: " BOLD "%s" RESET "is that correct?[y/n]\n", studentID);
     UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
     char setStudentID[15];
@@ -497,30 +477,10 @@ int confirm_manually_entered_student_id(char *studentID)
     if (INPUT_IS_YES(buffer))
     {
       confirmingStudentId = FALSE;
-      show_current_step("Confirm Student Id", 6, 6);
+      show_current_step("Confirm Student Id", 6, 7);
       strcpy(NewStudent.StudentID, setStudentID);
       system("clear");
-      puts(GREEN "Adding new student to database..." RESET);
-      sleep(2);
-      system("clear");
-      int result = insert_student_into_db(NewStudent.FirstName, NewStudent.LastName, NewStudent.StudentID);
-
-      if (result == 0)
-      {
-        puts(GREEN "Student successfully added to database." RESET);
-        sleep(1);
-        system("clear");
-        addStudentMenuIsRunning = TRUE;
-        return 0;
-      }
-      else if (result == 1)
-      {
-        puts(RED "Please try again." RESET);
-        sleep(1);
-        system("clear");
-        addStudentMenuIsRunning = TRUE;
-        return 0;
-      }
+      ask_to_add_to_roster();
     }
 
     else if (INPUT_IS_NO(buffer))
@@ -540,5 +500,73 @@ int confirm_manually_entered_student_id(char *studentID)
       system("clear");
       confirm_manually_entered_student_id(studentID);
     }
+  }
+}
+
+int ask_to_add_to_roster(void)
+{
+  system("clear");
+  show_current_step("Add Student To Roster", 7, 7);
+  puts("Would you like to add this student to a roster?");
+  puts(YELLOW "NOTE: You can choose to do this later as well" RESET);
+
+  puts("1: Yes");
+  puts("2: No");
+  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
+  menuInput = atoi(buffer);
+  if (menuInput == 1 || strcmp(buffer, "yes") == 0 || strcmp(buffer, "y") == 0)
+  {
+    sleep(1);
+    system("clear");
+    show_tables();
+    puts("Please enter the name of the roster you would like to add this student to.");
+    // do stuff
+    puts(GREEN "Adding new student to database..." RESET);
+    sleep(2);
+    system("clear");
+    int result = insert_student_into_db(NewStudent.FirstName, NewStudent.LastName, NewStudent.StudentID);
+
+    if (result == 0)
+    {
+      puts(GREEN "Student successfully added to database." RESET);
+      sleep(1);
+      system("clear");
+      addStudentMenuIsRunning = TRUE;
+      return 0;
+    }
+    else if (result == 1)
+    {
+      puts(RED "Please try again." RESET);
+      sleep(1);
+      system("clear");
+      addStudentMenuIsRunning = TRUE;
+      return 0;
+    }
+  }
+  else if (menuInput == 2 || strcmp(buffer, "no") == 0 || strcmp(buffer, "n") == 0)
+  {
+    int result = insert_student_into_db(NewStudent.FirstName, NewStudent.LastName, NewStudent.StudentID);
+    if (result == 0)
+    {
+      puts(GREEN "Student successfully added to database." RESET);
+      sleep(1);
+      system("clear");
+      addStudentMenuIsRunning = TRUE;
+      return 0;
+    }
+    else if (result == 1)
+    {
+      puts(RED "Please try again." RESET);
+      sleep(1);
+      system("clear");
+      addStudentMenuIsRunning = TRUE;
+      return 0;
+    }
+  }
+  else
+  {
+    puts("Sorry, I didn't understand that.");
+    puts("Please try again");
+    ask_to_add_to_roster();
   }
 }

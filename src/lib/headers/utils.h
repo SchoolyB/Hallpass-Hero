@@ -77,17 +77,31 @@ extern "C"
   void show_current_step(char *str, int currentStep, int totalSteps);
   int wait_for_char_input(void);
   int list_all_students(void);
+  int search_for_student(void);
+
+
+  typedef struct
+  {
+    char RelationshipToStudent[20];
+    char FirstName[30]; 
+    char LastName[30];
+    char PhoneNumber[20]; //need to hash this
+  } EmergerncyContact;
+
+  typedef struct
+  {
+    char Birthdate[20]; //need to hash this
+    char Address[50]; //need to hash this
+    EmergerncyContact EmergencyContact;
+  } PrivateInfo;
 
   typedef struct
   {
     char FirstName[30];
     char LastName[30];
-    /*
-    Made the StudentID a string instead
-     of an integer to allow stuff
-    like 'CoolName1234', or CName1234
-    */
     char StudentID[20];
+    char Email[50];
+    PrivateInfo PrivateInfo;    
     // Program CurrentProgram;
 
   } Student;

@@ -34,6 +34,8 @@ extern "C"
   int create_student_db_and_table(void);
   int insert_student_into_db(const char *FirstName, const char *LastName, const char *StudentID);
   int show_students_in_db(const char *path);
+  int search_for_student_in_db(const char *searchParam);
+  int add_student_to_roster(const char *rosterName, const char *FirstName, const char *LastName, const char *StudentID);
 #ifdef __cplusplus
 } // extern "C"
 #endif /* DB_HPP */

@@ -12,10 +12,16 @@
 // #include <stdio.h>
 // #include <stdlib.h>
 // #include <stdint.h>
-// #include "../lib/utils.h"
-// #include "../lib/headers/db.hh"
+// #include "../lib/headers/utils.h"
+// #include "../lib/headers/db.hpp"
 // #include "../lib/headers/c_files.h"
 
-// void search_for_student()
+// static char buffer[50];
+// static uint8_t menuInput;
+// static uint8_t mainMenuProccess;
+
+// int search_for_student()
 // {
+//   UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
+//   search_for_students_in_db(buffer);
 // }

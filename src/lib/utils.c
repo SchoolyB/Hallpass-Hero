@@ -121,10 +121,36 @@ int list_all_students(void)
   return 0;
 }
 // TODO add desc for func
+int search_for_student()
+{
+  char buffer[50];
+  puts("Search for a student by name or ID...");
+  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
+  int result = search_for_student_in_db(buffer);
+
+  if (result == 0)
+  {
+    puts(GREEN "Successfully queried database student database." RESET);
+  }
+}
+// TODO add desc for func
 int wait_for_char_input(void)
 {
   sleep(2);
   puts("Press any key to continue...");
   getchar();
   system("clear");
+}
+
+int hash_data(char *data)
+{
+  int hash = 0;
+  int c;
+
+  while ((c = *data++))
+  {
+    hash += c;
+  }
+
+  return hash;
 }
