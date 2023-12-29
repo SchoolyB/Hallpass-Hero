@@ -22,8 +22,21 @@ the 'std' namespace without
 prefixing them all with ''
 */
 using namespace std;
-int has_tables = FALSE;
+int hasTables = FALSE;
+int studentIDExists = FALSE;
 
+int table_exists_callback(void *exists, int argc, char **argv, char **columnNames)
+{
+  hasTables = (argc > 0 && argv[0]);
+  return 0;
+}
+
+int student_id_exists_callback(void *data, int argc, char **argv, char **azColName)
+{
+  studentIDExists = (argc > 0);
+
+  return 0;
+}
 /************************************************************************************
  * print_student_info_callback(): Callback function for sqlite3_exec()
  * Note: This callback function is used to print the names of all students
@@ -40,6 +53,7 @@ int print_student_info_callback(void *data, int argc, char **argv, char **azColN
   // printf("\n");
   return 0;
 }
+
 /************************************************************************************
  * print_table_names_callback(): Callback function for sqlite3_exec()
  * Note: This callback function is used to print the names of all tables
@@ -52,20 +66,67 @@ int print_table_names_callback(void *data, int argc, char **argv, char **azColNa
     if (strcmp(argv[i], "sqlite_sequence") != 0)
     {
       cout << BOLD << (argv[i] ? argv[i] : "NULL") << RESET << "\n";
-      has_tables = TRUE; // Set the flag to true when a table (other than sqlite_sequence) is found
+      hasTables = TRUE; // Set the flag to true when a table (other than sqlite_sequence) is found
     }
   }
 
   return 0;
 }
 
+int callback(void *notUsed, int argc, char **argv, char **azColName)
+{
+  // Print the table names directly
+  for (int i = 0; i < argc; i++)
+  {
+    if (strcmp(argv[i], "sqlite_sequence") != 0)
+    {
+      cout << BOLD << (argv[i] ? argv[i] : "NULL") << RESET << "\n";
+      hasTables = TRUE; // Set the flag to true when a table (other than sqlite_sequence) is found
+    }
+  }
+  return 0;
+}
+
+int check_if_table_exists(const char *rosterName)
+{
+  string cppString(rosterName);
+
+  sqlite3 *db;
+  int rc = sqlite3_open("../build/db.sqlite", &db);
+
+  if (rc != SQLITE_OK)
+  {
+    sqlite3_close(db);
+    cerr << "Failed to open SQLite3 database." << endl;
+    return 1;
+  }
+
+  string SQLTableNameExistsCheck = "SELECT name FROM sqlite_master WHERE type ='table' AND name ='" + cppString + "'";
+  rc = sqlite3_exec(db, SQLTableNameExistsCheck.c_str(), table_exists_callback, &hasTables, nullptr);
+
+  if (rc != SQLITE_OK)
+  {
+    cerr << "SQLite error: " << sqlite3_errmsg(db) << endl;
+    sqlite3_close(db);
+    return 1;
+  }
+
+  if (hasTables)
+  {
+    return 1;
+  }
+  else
+  {
+    return 0;
+  }
+}
 /************************************************************************************
- * refresh_table_count(): This helper function resets the has_tables flag to FALSE
+ * refresh_table_count(): This helper function resets the hasTables flag to FALSE
  * Note: See function usage in the drop_table() function
  ************************************************************************************/
 int refresh_table_count(void)
 {
-  has_tables = FALSE;
+  hasTables = FALSE;
   return 0;
 }
 /*Simple helper that prints a heading when showing the student list*/
@@ -130,29 +191,39 @@ extern "C"
    * show_tables(): Prints all rosters currently in the db.sqlite database
    * Note: See function usage in ../src/_create_roster.c & ../src/_manage_roster.c
    ************************************************************************************/
-  int show_tables(void)
+  int show_tables()
   {
     sqlite3 *db;
     int rc = sqlite3_open("../build/db.sqlite", &db);
 
     if (rc != SQLITE_OK)
     {
-      sqlite3_close(db);
-      CPP_UTILS_ERROR_LOGGER("Failed to open SQLite3 database: ", "show_tables", CppErrorLevel::CRITICAL);
-      cerr << RED "Failed to open SQLite3 database" RESET << endl;
-      exit(1);
+      // CPP_UTILS_ERROR_LOGGER("Failed to open SQLite3 database: ", "show_tables", 1);
+      std::cerr << "Failed to open SQLite3 database" << std::endl;
+      return -1; // Or handle the error in your own way
     }
 
-    const char *selectSQLTables = "SELECT name FROM sqlite_master WHERE type='table'";
+    const char *selectSQLTables = "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'Roster%'";
 
-    // nullptr takes the place of a callback function
-    rc = sqlite3_exec(db, selectSQLTables, nullptr, nullptr, nullptr);
+    // Print the header
+    cout << "==========================================================================================" << endl;
+    cout << BOLD << "Created rosters:" << RESET << endl;
+    cout << "------------------------------------------------------------------------------------------" << endl;
+    rc = sqlite3_exec(db, selectSQLTables, callback, nullptr, nullptr);
+
+    if (rc != SQLITE_OK)
+    {
+      std::cerr << "Failed to execute query" << std::endl;
+    }
+
+    cout << "==========================================================================================" << endl;
 
     sqlite3_close(db);
-    int tableCountResult = get_table_count("../build/db.sqlite");
-    return tableCountResult;
-  }
 
+    // If you want to get the count of tables, you can call your get_table_count function here
+    // int tableCountResult = get_table_count("../build/db.sqlite");
+    // return tableCountResult;
+  }
   /************************************************************************************
    * rename_roster(): Renames a roster in the db.sqlite database
    * Note: See function usage in ../src/_manage_roster.c
@@ -356,11 +427,11 @@ extern "C"
 
     const char *selectSQLTables = "SELECT name FROM sqlite_master WHERE type='table'";
 
-    rc = sqlite3_exec(db, selectSQLTables, print_table_names_callback, nullptr, nullptr);
+    rc = sqlite3_exec(db, selectSQLTables, callback, nullptr, nullptr);
     sqlite3_close(db);
 
     // Checking if any tables were found
-    if (has_tables)
+    if (hasTables)
     {
       return TRUE; // Tables found
     }
@@ -370,49 +441,84 @@ extern "C"
     }
   }
 
-int add_student_to_roster(const char *rosterName, const char *firstName, const char *lastName, const char *studentID)
-{
-
-  sqlite3 *db;
-
-  int rc = sqlite3_open("../build/db.sqlite", &db);
-
-  if(rc!= SQLITE_OK)
+  int add_student_to_roster(const char *rosterName, const char *firstName, const char *lastName, const char *studentID)
   {
-    sqlite3_close(db);
-    CPP_UTILS_ERROR_LOGGER("Failed to open SQLite3 database. ", "add_student_to_roster", CppErrorLevel::CRITICAL);
-    cerr << RED "CRITICAL ERROR: Failed to find/open database" RESET << endl;
-    cout << "Exiting program" << endl;
-    sleep(1);
-    exit(1);
+    string cppString(rosterName);
+    sqlite3 *db;
+
+    int rc = sqlite3_open("../build/db.sqlite", &db);
+
+    if (rc != SQLITE_OK)
+    {
+      sqlite3_close(db);
+      CPP_UTILS_ERROR_LOGGER("Failed to open SQLite3 database. ", "add_student_to_roster", CppErrorLevel::CRITICAL);
+      cerr << RED "CRITICAL ERROR: Failed to find/open database" RESET << endl;
+      cout << "Exiting program" << endl;
+      sleep(1);
+      exit(1);
+    }
+
+    string addStudentToSQLTable = "INSERT INTO " + cppString + " (FirstName, LastName, StudentID) VALUES (?, ?, ?)";
+    const char *addStudentToSQLTableChar = addStudentToSQLTable.c_str();
+    sqlite3_stmt *statement;
+
+    rc = sqlite3_prepare_v2(db, addStudentToSQLTableChar, -1, &statement, nullptr);
+    if (rc != SQLITE_OK)
+    {
+      CPP_UTILS_ERROR_LOGGER("Can't prepare SQL statement", "add_student_to_roster", CppErrorLevel::CRITICAL);
+      sqlite3_close(db);
+      return 1;
+    }
+
+    sqlite3_bind_text(statement, 1, rosterName, -1, SQLITE_STATIC);
+    sqlite3_bind_text(statement, 1, firstName, -1, SQLITE_STATIC);
+    sqlite3_bind_text(statement, 2, lastName, -1, SQLITE_STATIC);
+    sqlite3_bind_text(statement, 3, studentID, -1, SQLITE_STATIC);
+
+    rc = sqlite3_step(statement);
+
+    return 0;
   }
+  /***************!EVERYTHING BELOW HERE IS FOR THE STUDENTS DATABASE!***************/
+  /***************!EVERYTHING BELOW HERE IS FOR THE STUDENTS DATABASE!***************/
+  /***************!EVERYTHING BELOW HERE IS FOR THE STUDENTS DATABASE!***************/
+  /***************!EVERYTHING BELOW HERE IS FOR THE STUDENTS DATABASE!***************/
 
-  const char *addStudentToSQLTable = "INSERT INTO " + *rosterName + " (FirstName, LastName, StudentID) VALUES (?, ?, ?)";
-
-  sqlite3_stmt *statement;
-  
-  rc = sqlite3_prepare_v2(db, addStudentToSQLTable, -1, &statement, nullptr);
-  if (rc != SQLITE_OK)
+  int check_if_student_id_exists(const char *ID)
   {
-    CPP_UTILS_ERROR_LOGGER("Can't prepare SQL statement", "add_student_to_roster", CppErrorLevel::CRITICAL);
-    sqlite3_close(db);
-    return 1;
+    studentIDExists = FALSE;
+    string cppString(ID);
+
+    sqlite3 *db;
+    int rc = sqlite3_open("../build/db.sqlite", &db);
+
+    if (rc != SQLITE_OK)
+    {
+      sqlite3_close(db);
+      cerr << "Failed to open SQLite3 database." << endl;
+      return 1;
+    }
+
+    string SQLStudentIDExistsCheck = "SELECT * FROM students WHERE StudentID  ='" + cppString + "'";
+    rc = sqlite3_exec(db, SQLStudentIDExistsCheck.c_str(), student_id_exists_callback, &studentIDExists, nullptr);
+
+    if (rc != SQLITE_OK)
+    {
+      cerr << "SQLite error: " << sqlite3_errmsg(db) << endl;
+      sqlite3_close(db);
+      return 1;
+    }
+
+    if (studentIDExists)
+    {
+      return 1;
+    }
+    else
+    {
+
+      return 2;
+    }
   }
-
-  sqlite3_bind_text(statement, 1, rosterName, -1, SQLITE_STATIC);
-  sqlite3_bind_text(statement, 1, firstName, -1, SQLITE_STATIC);
-  sqlite3_bind_text(statement, 2, lastName, -1, SQLITE_STATIC);
-  sqlite3_bind_text(statement, 3, studentID, -1, SQLITE_STATIC);
-
-  
- rc = sqlite3_step(statement);
- 
-  return 0;
-}
-  /***************!EVERYTHING BELOW HERE IS FOR THE STUDENTS DATABASE!***************/
-  /***************!EVERYTHING BELOW HERE IS FOR THE STUDENTS DATABASE!***************/
-  /***************!EVERYTHING BELOW HERE IS FOR THE STUDENTS DATABASE!***************/
-  /***************!EVERYTHING BELOW HERE IS FOR THE STUDENTS DATABASE!***************/
 
   int get_student_db_row_count(const char *path)
   {
@@ -432,7 +538,7 @@ int add_student_to_roster(const char *rosterName, const char *firstName, const c
   }
 
   /************************************************************************************
-   *  create_student_db_and_table();: Begins the process of adding a student to the students.sqlite database
+   *  create_student_db_and_table();: Begins the process of adding a student to the db.sqlite database
    * Note: See function usage in  ../src/_add_student.c
    * Note: THis function relies on the following helper functions:
    ************************************************************************************/
@@ -440,7 +546,7 @@ int add_student_to_roster(const char *rosterName, const char *firstName, const c
   {
 
     sqlite3 *db;
-    int rc = sqlite3_open("../build/students.sqlite", &db);
+    int rc = sqlite3_open("../build/db.sqlite", &db);
 
     if (rc != SQLITE_OK)
     {
@@ -466,13 +572,13 @@ int add_student_to_roster(const char *rosterName, const char *firstName, const c
   }
 
   /************************************************************************************
-   *  insert_student_into_db();: Inserts a student into the students.sqlite database using the data from the student struct
+   *  insert_student_into_db();: Inserts a student into the db.sqlite database using the data from the student struct
    * Note: See function usage in  ../src/_add_student.c
    ************************************************************************************/
   int insert_student_into_db(const char *FirsName, const char *LastName, const char *StudentID)
   {
     sqlite3 *db;
-    int rc = sqlite3_open("../build/students.sqlite", &db);
+    int rc = sqlite3_open("../build/db.sqlite", &db);
 
     if (rc != SQLITE_OK)
     {
@@ -504,7 +610,7 @@ int add_student_to_roster(const char *rosterName, const char *firstName, const c
   }
 
   /************************************************************************************
-   * show_student_list(): Prints all students currently in the students.sqlite database
+   * show_student_list(): Prints all students currently in the db.sqlite database
    * Note: See function usage in ../src/_add_student.c & ../src/_manage_student.c
    ************************************************************************************/
   int show_students_in_db(const char *path)
@@ -539,14 +645,14 @@ int add_student_to_roster(const char *rosterName, const char *firstName, const c
 
 /************************************************************************************
  *  search_for_student_in_db(): Takes in a string from the frontend and queries
- *                                      the students.sqlite database for a match
+ *                                      the db.sqlite database for a match
  * Note: See function usage in  ../src/_manage_student.c & ../src/_search.c
  ************************************************************************************/
 int search_for_student_in_db(const char *searchParam)
 {
   sqlite3 *db;
   sqlite3_stmt *statement;
-  int rc = sqlite3_open("../build/students.sqlite", &db);
+  int rc = sqlite3_open("../build/db.sqlite", &db);
 
   if (rc != SQLITE_OK)
   {

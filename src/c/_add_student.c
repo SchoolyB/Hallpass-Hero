@@ -255,62 +255,42 @@ int get_student_last_name(void)
 // TODO might make an option in the future to enable or disable the need to do this
 int ask_about_student_id()
 {
-  int askingAboutStudentId = TRUE;
-  while (askingAboutStudentId == TRUE)
+  system("clear");
+  puts("How would you like to assign the student ID?");
+  puts("Please enter either '1' or '2'.");
+  puts(YELLOW "To cancel this operation enter 'cancel'" RESET);
+  puts("1. Automatically generate an ID ");
+  puts("2. Create your own");
+
+  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
+  menuInput = atoi(buffer);
+
+  if (strcmp(buffer, "cancel") == 0)
   {
-    printf("Would you like to assign a student ID to " BOLD "%s %s" RESET " ?[y/n] \n", NewStudent.FirstName, NewStudent.LastName);
-    puts(YELLOW "You can assign an id later by choosing option #4 from the main menu." RESET);
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
+    system("clear");
+    puts(YELLOW "Canceling operation." RESET);
+    sleep(1);
+    system("clear");
+    addStudentMenuIsRunning = TRUE;
+    return 0;
+  }
 
-    if (INPUT_IS_YES(buffer))
-    {
-      askingAboutStudentId = FALSE;
-      system("clear");
-      puts("How would you like to assign the student ID?");
-      puts("Please enter either '1' or '2'.");
-      puts(YELLOW "To cancel this operation enter 'cancel'" RESET);
-      puts("1. Automatically generate an ID ");
-      puts("2. Create your own");
+  if (menuInput == 1)
+  {
+    system("clear");
+    generate_student_id(NewStudent.FirstName, NewStudent.LastName);
+  }
+  else if (menuInput == 2)
+  {
+    system("clear");
+    manually_set_student_id();
+  }
 
-      UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-      menuInput = atoi(buffer);
-
-      if (strcmp(buffer, "cancel") == 0)
-      {
-        system("clear");
-        puts(YELLOW "Canceling operation." RESET);
-        sleep(1);
-        system("clear");
-        addStudentMenuIsRunning = TRUE;
-        return 0;
-      }
-
-      if (menuInput == 1)
-      {
-        askingAboutStudentId = FALSE;
-        system("clear");
-        generate_student_id(NewStudent.FirstName, NewStudent.LastName);
-      }
-      else if (menuInput == 2)
-      {
-        askingAboutStudentId = FALSE;
-        system("clear");
-        manually_set_student_id();
-      }
-
-      else
-      {
-        askingAboutStudentId = FALSE;
-        system("clear");
-        puts("Please make a valid decision.");
-        ask_about_student_id();
-      }
-    }
-    else if (INPUT_IS_NO(buffer))
-    {
-      printf("You've decided not to assign an id to " BOLD "%s  %s" RESET ".\n This can be done later on if you change your mind", NewStudent.FirstName, NewStudent.LastName);
-      return 0;
-    }
+  else
+  {
+    system("clear");
+    puts("Please make a valid decision.");
+    ask_about_student_id();
   }
 }
 
@@ -324,7 +304,6 @@ void manually_set_student_id()
 
   while (gettingStudentId == TRUE)
   {
-
     show_current_step("Set Student Id", 5, 7);
     puts("Please enter the students id.");
     puts(YELLOW "NOTE: The id can be no MORE than 15 characters and LESS than 2." RESET);
@@ -362,10 +341,22 @@ void manually_set_student_id()
   else
   {
     gettingStudentId == FALSE;
-    system("clear");
+    // system("clear");
     char studentID[15];
     strcpy(studentID, buffer);
-    confirm_manually_entered_student_id(studentID);
+    int result = check_if_student_id_exists(studentID);
+    if (result == 2)
+    {
+      confirm_manually_entered_student_id(studentID);
+    }
+    else if (result == 1)
+    {
+      system("clear");
+      printf(YELLOW "Duplicate ID detected. Please try again.\n" RESET);
+      sleep(3);
+      system("clear");
+      manually_set_student_id();
+    }
   }
 }
 
@@ -402,12 +393,25 @@ int generate_student_id(char *FirstName, char *LastName)
   else
   {
     snprintf(setStudentID, sizeof(setStudentID), "%c%c%s%d%d%d", toupper(FirstName[0]), toupper(FirstName[1]), LastName, digit1, digit2, digit3);
-    puts(GREEN "ID successfully generated!" RESET);
-    sleep(1);
-    system("clear");
-    printf("The ID for " BOLD "%s %s " RESET "is: " BOLD "%s\n" RESET, NewStudent.FirstName, NewStudent.LastName, setStudentID);
-    sleep(2);
-    confirm_generated_student_id(setStudentID);
+    int result = check_if_student_id_exists(setStudentID);
+    if (result == 2)
+    {
+      puts(GREEN "ID successfully generated!" RESET);
+      sleep(1);
+      system("clear");
+      printf("The ID for " BOLD "%s %s " RESET "is: " BOLD "%s\n" RESET, NewStudent.FirstName, NewStudent.LastName, setStudentID);
+      sleep(2);
+      confirm_generated_student_id(setStudentID);
+    }
+    else if (result == 1)
+    {
+      system("clear");
+      sleep(1);
+
+      printf(YELLOW "Duplicate ID detected. Regenerating....\n" RESET);
+      sleep(1);
+      generate_student_id(FirstName, LastName);
+    }
   }
 }
 

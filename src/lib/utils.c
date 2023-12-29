@@ -98,7 +98,7 @@ void UTILS_CLEAR_INPUT_BUFFER()
 int list_all_students(void)
 {
 
-  int result = show_students_in_db("../build/students.sqlite");
+  int result = show_students_in_db("../build/db.sqlite");
   if (result == 0)
   {
     int showingStudents = TRUE;

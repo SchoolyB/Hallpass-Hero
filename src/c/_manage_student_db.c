@@ -58,10 +58,9 @@ int manage_student_db(void)
       manageStudentDBMenuIsRunning = FALSE;
       system("clear");
       show_current_menu("Delete Student From Database");
-      show_students_in_db("../build/students.sqlite");
+      show_students_in_db("../build/db.sqlite");
       puts("Which student would you like to delete from the database?");
-      'petertriho/nvim-scrollbar',
-          puts(RED "WARNING: This action cannot be undone!" RESET);
+      puts(RED "WARNING: This action cannot be undone!" RESET);
       puts(YELLOW "You can cancel this operation by entering 'cancel'." RESET);
       UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
 
@@ -73,6 +72,7 @@ int manage_student_db(void)
         system("clear");
         manageStudentDBMenuIsRunning = TRUE;
       }
+
     }
     else if (menuInput == 4 || strcmp(buffer, "main") == 0)
     {
@@ -92,6 +92,12 @@ int manage_student_db(void)
   }
   return 0;
 }
+
+int delete_student_from_db()
+{
+  
+}
+
 int update_student_info(void)
 {
   system("clear");
