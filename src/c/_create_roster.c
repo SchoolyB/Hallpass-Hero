@@ -185,7 +185,7 @@ int get_and_confirm_roster_name(void)
     UTILS_CLEAR_INPUT_BUFFER();
     get_and_confirm_roster_name();
   }
-  else if (strlen(rosterNameInput) < 1 || strcmp(rosterNameInput, "") == 0)
+  else if (!has_one_non_space_character(rosterNameInput))
   {
     printf(YELLOW "Sorry that name is too short please try again.\n" RESET);
     sleep(1);

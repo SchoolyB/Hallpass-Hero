@@ -97,12 +97,20 @@ int add_student_to_db(void)
 int get_student_first_name(void)
 {
   show_current_step("Enter Student First Name", 1, 7);
-  char buffer[50];
+  char buffer[30];
 
   puts("Please enter the students first name.");
   puts(YELLOW "You can cancel this operation by entering 'cancel." RESET);
   UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-  if (strcmp(buffer, "cancel") == 0)
+  if (!has_one_non_space_character(buffer))
+  {
+    printf(YELLOW "The entered first name is too short. Please try again\n" RESET);
+    sleep(1);
+    system("clear");
+    UTILS_ERROR_LOGGER("The entered first name is too short", "get_student_first_name", MINOR);
+    get_student_first_name();
+  }
+  else if (strcmp(buffer, "cancel") == 0)
   {
     system("clear");
     puts(YELLOW "Canceling operation." RESET);
@@ -119,7 +127,7 @@ int get_student_first_name(void)
 
     /*Taking the entered value and
     assigning it to a variable.*/
-    char *setFirstName[30];
+    char setFirstName[30];
     strcpy(setFirstName, buffer);
 
     /*Getting the confirmation*/
@@ -128,9 +136,15 @@ int get_student_first_name(void)
     {
       /*Confirming the entered value and
       setting the struct members value to it */
-      strcpy(NewStudent.FirstName, setFirstName);
-      get_student_last_name();
-      return 0;
+      if (setFirstName[0] != '\0')
+      {
+        /* Ensuring the first letter of the first name
+        is capitalized when it hits the database */
+        setFirstName[0] = toupper(setFirstName[0]);
+        strcpy(NewStudent.FirstName, setFirstName);
+        get_student_last_name();
+        return 0;
+      }
     }
     else if (INPUT_IS_NO(buffer))
     {
@@ -161,17 +175,25 @@ int get_student_first_name(void)
  ************************************************************************************/
 int get_student_last_name(void)
 {
-  char *setLastName[30];
+  char setLastName[30];
   system("clear");
   show_current_step("Enter Student Last Name", 3, 7);
-  char buffer[50];
+  char buffer[30];
 
   puts("Please enter the students last name.");
   puts("If the student does not have a last name please enter 'none'.");
   puts(YELLOW "You can cancel this operation by entering 'cancel." RESET);
   UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-
-  if (strcmp(buffer, "cancel") == 0)
+  if (!has_one_non_space_character(buffer))
+  {
+    printf(YELLOW "The entered last name is too short. Please try again\n" RESET);
+    printf(YELLOW "If the student does not have a last name please enter 'none'.\n" RESET);
+    sleep(2);
+    system("clear");
+    UTILS_ERROR_LOGGER("The entered last name is too short", "get_student_last_name", MINOR);
+    get_student_last_name();
+  }
+  else if (strcmp(buffer, "cancel") == 0)
   {
     system("clear");
     puts(YELLOW "Canceling operation." RESET);
@@ -226,9 +248,15 @@ int get_student_last_name(void)
     UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
     if (INPUT_IS_YES(buffer))
     {
-      strcpy(NewStudent.LastName, setLastName);
-      system("clear");
-      ask_about_student_id();
+      if (setLastName[0] != '\0')
+      {
+        /* Ensuring the first letter of the last name
+        is capitalized when it hits the database */
+        setLastName[0] = toupper(setLastName[0]);
+        strcpy(NewStudent.LastName, setLastName);
+        system("clear");
+        ask_about_student_id();
+      }
     }
     else if (INPUT_IS_NO(buffer))
     {
@@ -377,7 +405,7 @@ int generate_student_id(char *FirstName, char *LastName)
 
   puts("Generating student ID");
   sleep(2);
-
+  size_t lastNameLength = strlen(NewStudent.LastName);
   // if the student last name is empty
   if (strcmp(LastName, "") == 0)
   {
@@ -390,11 +418,23 @@ int generate_student_id(char *FirstName, char *LastName)
     sleep(2);
     confirm_generated_student_id(setStudentID);
   }
-  else
+  /*In the event that the last name is to0 long
+  the last name will be truncated to 10 characters
+  */
+  else if (strlen(NewStudent.LastName) > 10)
   {
-    snprintf(setStudentID, sizeof(setStudentID), "%c%c%s%d%d%d", toupper(FirstName[0]), toupper(FirstName[1]), LastName, digit1, digit2, digit3);
+    char truncatedLastName[11];
+    strncpy(truncatedLastName, NewStudent.LastName, 10);
+    truncatedLastName[10] = '\0';
+
+    printf(YELLOW "Due to the entered last name of:" BOLD "%s" RESET YELLOW
+                  " being more than 10 characters, the last name used in the student ID will be truncated to:" BOLD "%s\n" RESET,
+           NewStudent.LastName, truncatedLastName);
+    sleep(4);
+    system("clear");
+    snprintf(setStudentID, sizeof(setStudentID), "%c%c%s%d%d%d", toupper(FirstName[0]), toupper(FirstName[1]), truncatedLastName, digit1, digit2, digit3);
     int result = check_if_student_id_exists(setStudentID);
-    if (result == 2)
+    if (result == FALSE)
     {
       puts(GREEN "ID successfully generated!" RESET);
       sleep(1);
@@ -403,11 +443,33 @@ int generate_student_id(char *FirstName, char *LastName)
       sleep(2);
       confirm_generated_student_id(setStudentID);
     }
-    else if (result == 1)
+    else if (result == TRUE)
     {
       system("clear");
       sleep(1);
-
+      printf(YELLOW "Duplicate ID detected. Regenerating....\n" RESET);
+      sleep(1);
+      generate_student_id(FirstName, LastName);
+    }
+  }
+  else
+  {
+    snprintf(setStudentID, sizeof(setStudentID), "%c%c%s%d%d%d", toupper(FirstName[0]), toupper(FirstName[1]), LastName, digit1, digit2, digit3);
+    // printf("%s\n", setStudentID);
+    int result = check_if_student_id_exists(setStudentID);
+    if (result == FALSE)
+    {
+      puts(GREEN "ID successfully generated!" RESET);
+      sleep(1);
+      system("clear");
+      printf("The ID for " BOLD "%s %s " RESET "is: " BOLD "%s\n" RESET, NewStudent.FirstName, NewStudent.LastName, setStudentID);
+      sleep(2);
+      confirm_generated_student_id(setStudentID);
+    }
+    else if (result == TRUE)
+    {
+      system("clear");
+      sleep(1);
       printf(YELLOW "Duplicate ID detected. Regenerating....\n" RESET);
       sleep(1);
       generate_student_id(FirstName, LastName);

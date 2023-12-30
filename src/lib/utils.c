@@ -15,7 +15,6 @@ Description : This source file contains several utility functions that are used
 #include <stdlib.h>
 #include "headers/utils.h"
 #include "headers/db.hpp"
-
 /************************************************************************************
  * UTILS_ERROR_LOGGER(): Logs errors errors that occur specifically in 'C' files
  * Note: For 'C++' code error logging see CPP_UTILS_ERROR_LOGGER in utils.cpp
@@ -120,7 +119,26 @@ int list_all_students(void)
 
   return 0;
 }
-// TODO add desc for func
+
+/*Helper function that takes in a string/input.
+Checks if the string has at least one non-space character
+i.e  "        "would return FALSE
+     "  a    " would return TRUE
+*/
+int has_one_non_space_character(const char *str)
+{
+  while (*str)
+  {
+    if (*str != ' ')
+    {
+      return TRUE; // Non-space character found
+    }
+    str++;
+  }
+  return FALSE; // Only spaces found
+}
+
+// TODO add desc for func and possibly move to _search.c
 int search_for_student()
 {
   char buffer[50];
