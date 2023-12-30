@@ -80,11 +80,7 @@ int create_new_roster(void)
           printf(GREEN "Successfully found created roster(s)\n" RESET);
           sleep(1);
           system("clear");
-          printf("==========================================================================================\n");
-          printf(BOLD "Created rosters:\n" RESET);
-          puts("------------------------------------------------------------------------------------------");
           show_tables();
-          printf("==========================================================================================\n");
           showingFoundRosters = FALSE;
           puts("What would you like to do?");
           puts("1: Back");

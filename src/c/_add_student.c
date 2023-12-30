@@ -345,11 +345,11 @@ void manually_set_student_id()
     char studentID[15];
     strcpy(studentID, buffer);
     int result = check_if_student_id_exists(studentID);
-    if (result == 2)
+    if (result == FALSE)
     {
       confirm_manually_entered_student_id(studentID);
     }
-    else if (result == 1)
+    else if (result == TRUE)
     {
       system("clear");
       printf(YELLOW "Duplicate ID detected. Please try again.\n" RESET);

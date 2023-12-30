@@ -113,11 +113,11 @@ int check_if_table_exists(const char *rosterName)
 
   if (hasTables)
   {
-    return 1;
+    return TRUE;
   }
   else
   {
-    return 0;
+    return FALSE;
   }
 }
 /************************************************************************************
@@ -433,11 +433,11 @@ extern "C"
     // Checking if any tables were found
     if (hasTables)
     {
-      return TRUE; // Tables found
+      return TRUE;
     }
     else
     {
-      return FALSE; // No tables found
+      return FALSE;
     }
   }
 
@@ -511,12 +511,12 @@ extern "C"
 
     if (studentIDExists)
     {
-      return 1;
+      return TRUE;
     }
     else
     {
 
-      return 2;
+      return FALSE;
     }
   }
 
