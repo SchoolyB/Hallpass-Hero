@@ -30,21 +30,21 @@ int UTILS_ERROR_LOGGER(char *errorMessage, char *function, enum ErrorLevel level
   {
   case MINOR:
     fprintf(errorLog, "Logged @ %s", ctime(&currentTime));
-    fprintf(errorLog, "Minor Error: %s in function: %s()\n", errorMessage, function);
-    fprintf(errorLog, "=============================================================\n");
+    fprintf(errorLog, "Minor Error: %s, in function call: %s()\n", errorMessage, function);
+    fprintf(errorLog, "======================================================================================\n");
     fflush(errorLog);
     return 0;
     break;
   case MODERATE:
     fprintf(errorLog, "Logged @ %s", ctime(&currentTime));
-    fprintf(errorLog, "Moderate Error: %s in function: %s()\n", errorMessage, function);
-    fprintf(errorLog, "=============================================================\n");
+    fprintf(errorLog, "Moderate Error: %s, in function call: %s()\n", errorMessage, function);
+    fprintf(errorLog, "======================================================================================\n");
     fflush(errorLog);
     return 1;
   case CRITICAL:
     fprintf(errorLog, "Logged @ %s", ctime(&currentTime));
-    fprintf(errorLog, "CRITICAL ERROR: %s in function: %s()\n", errorMessage, function);
-    fprintf(errorLog, "=============================================================\n");
+    fprintf(errorLog, "CRITICAL ERROR: %s, in function call: %s()\n", errorMessage, function);
+    fprintf(errorLog, "======================================================================================\n");
     printf(RED "Critical Error Occurred @ %s: For more information see logs/errors.log \n" RESET, ctime(&currentTime));
     fflush(errorLog);
     exit(1);
@@ -125,6 +125,10 @@ Checks if the string has at least one non-space character
 i.e  "        "would return FALSE
      "  a    " would return TRUE
 */
+/************************************************************************************
+ * has_one_non_space_character(): Helper function that checks if a string has at least
+ * one non-space character.
+ ************************************************************************************/
 int has_one_non_space_character(const char *str)
 {
   while (*str)
@@ -138,19 +142,6 @@ int has_one_non_space_character(const char *str)
   return FALSE; // Only spaces found
 }
 
-// TODO add desc for func and possibly move to _search.c
-int search_for_student()
-{
-  char buffer[50];
-  puts("Search for a student by name or ID...");
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-  int result = search_for_student_in_db(buffer);
-
-  if (result == 0)
-  {
-    puts(GREEN "Successfully queried database student database." RESET);
-  }
-}
 // TODO add desc for func
 int wait_for_char_input(void)
 {

@@ -644,11 +644,11 @@ extern "C"
 }
 
 /************************************************************************************
- *  search_for_student_in_db(): Takes in a string from the frontend and queries
+ *  query_db_for_student_name(): Takes in a string from the frontend and queries
  *                                      the db.sqlite database for a match
  * Note: See function usage in  ../src/_manage_student.c & ../src/_search.c
  ************************************************************************************/
-int search_for_student_in_db(const char *searchParam)
+int query_db_for_student_name(const char *searchParam)
 {
   sqlite3 *db;
   sqlite3_stmt *statement;
@@ -669,10 +669,10 @@ int search_for_student_in_db(const char *searchParam)
     sqlite3_bind_text(statement, 2, searchParam, -1, SQLITE_STATIC);
     sqlite3_bind_text(statement, 3, searchParam, -1, SQLITE_STATIC);
 
-    // printf(GREEN "Successfully retrieved student records" RESET);
     while (sqlite3_step(statement) == SQLITE_ROW)
     {
-      cout << "-------------------------------------------" << endl;
+      system("clear");
+      sleep(1);
       cout << BOLD << "First Name: " << RESET << sqlite3_column_text(statement, 1) << endl;
       cout << BOLD << "Last Name: " << RESET << sqlite3_column_text(statement, 2) << endl;
       cout << BOLD << "Student ID: " << RESET << sqlite3_column_text(statement, 3) << endl;

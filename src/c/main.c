@@ -32,10 +32,7 @@ int main()
 {
 
   Init_Cuazar(clear()); // Pass NULL to disable the clear terminal function
-  if (mkdir("../logs", 0777) != 0)
-  {
-    UTILS_ERROR_LOGGER("Could not create logs directory as it already exists", "main", MINOR);
-  }
+  mkdir("../logs", 0777);
 
   FILE *errorLogFile = fopen("../logs/errors.log", "a");
   if (errorLogFile == NULL)
