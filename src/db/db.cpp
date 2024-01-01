@@ -86,11 +86,14 @@ int callback(void *notUsed, int argc, char **argv, char **azColName)
   }
   return 0;
 }
-
+/************************************************************************************
+ * check_if_table_exists(): Simply checks if the passed in string is an existing table
+ * Note:
+ ************************************************************************************/
+// TODO add usage locations to comment ^^^.
 int check_if_table_exists(const char *rosterName)
 {
   string cppString(rosterName);
-
   sqlite3 *db;
   int rc = sqlite3_open("../build/db.sqlite", &db);
 
@@ -98,7 +101,7 @@ int check_if_table_exists(const char *rosterName)
   {
     sqlite3_close(db);
     cerr << "Failed to open SQLite3 database." << endl;
-    return 1;
+    return -1;
   }
 
   string SQLTableNameExistsCheck = "SELECT name FROM sqlite_master WHERE type ='table' AND name ='" + cppString + "'";
@@ -108,7 +111,7 @@ int check_if_table_exists(const char *rosterName)
   {
     cerr << "SQLite error: " << sqlite3_errmsg(db) << endl;
     sqlite3_close(db);
-    return 1;
+    return -1;
   }
 
   if (hasTables)
@@ -120,6 +123,7 @@ int check_if_table_exists(const char *rosterName)
     return FALSE;
   }
 }
+
 /************************************************************************************
  * refresh_table_count(): This helper function resets the hasTables flag to FALSE
  * Note: See function usage in the drop_table() function
@@ -156,7 +160,7 @@ extern "C"
     }
 
     // Manually concatenate the table name into the SQL string
-    string createSQLTable = "CREATE TABLE IF NOT EXISTS " + cppString + " (id INTEGER PRIMARY KEY AUTOINCREMENT)";
+    string createSQLTable = "CREATE TABLE IF NOT EXISTS " + cppString + " (id INTEGER PRIMARY KEY AUTOINCREMENT, FirstName TEXT, LastName TEXT, StudentID TEXT)";
     const char *createSQLTableChar = createSQLTable.c_str();
 
     sqlite3_stmt *statement;
@@ -198,9 +202,8 @@ extern "C"
 
     if (rc != SQLITE_OK)
     {
-      // CPP_UTILS_ERROR_LOGGER("Failed to open SQLite3 database: ", "show_tables", 1);
       std::cerr << "Failed to open SQLite3 database" << std::endl;
-      return -1; // Or handle the error in your own way
+      return -1;
     }
 
     const char *selectSQLTables = "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'Roster%'";
@@ -443,7 +446,8 @@ extern "C"
 
   int add_student_to_roster(const char *rosterName, const char *firstName, const char *lastName, const char *studentID)
   {
-    string cppString(rosterName);
+    string rosterNameString(rosterName);
+
     sqlite3 *db;
 
     int rc = sqlite3_open("../build/db.sqlite", &db);
@@ -458,7 +462,10 @@ extern "C"
       exit(1);
     }
 
-    string addStudentToSQLTable = "INSERT INTO " + cppString + " (FirstName, LastName, StudentID) VALUES (?, ?, ?)";
+    string addStudentToSQLTable = "INSERT INTO " + rosterNameString + " (FirstName, LastName, StudentID) VALUES (?, ?, ?)";
+
+    // const char *addStudentToSQLTable = "INSERT INTO Roster_main (FirstName, LastName, StudentID) VALUES (?, ?, ?)";
+    cout << rosterNameString << endl;
     const char *addStudentToSQLTableChar = addStudentToSQLTable.c_str();
     sqlite3_stmt *statement;
 
@@ -467,17 +474,26 @@ extern "C"
     {
       CPP_UTILS_ERROR_LOGGER("Can't prepare SQL statement", "add_student_to_roster", CppErrorLevel::CRITICAL);
       sqlite3_close(db);
-      return 1;
+      return -1;
     }
 
-    sqlite3_bind_text(statement, 1, rosterName, -1, SQLITE_STATIC);
     sqlite3_bind_text(statement, 1, firstName, -1, SQLITE_STATIC);
     sqlite3_bind_text(statement, 2, lastName, -1, SQLITE_STATIC);
     sqlite3_bind_text(statement, 3, studentID, -1, SQLITE_STATIC);
 
     rc = sqlite3_step(statement);
 
-    return 0;
+    sqlite3_finalize(statement);
+    sqlite3_close(db);
+
+    if (rc != SQLITE_DONE)
+    {
+      // Handle the error
+      CPP_UTILS_ERROR_LOGGER("Execution failed: ", "add_student_to_roster", CppErrorLevel::CRITICAL);
+      return -2;
+    }
+
+    return TRUE; // Success...this just makes more sense to me than returning 0. The frontend wants 1
   }
   /***************!EVERYTHING BELOW HERE IS FOR THE STUDENTS DATABASE!***************/
   /***************!EVERYTHING BELOW HERE IS FOR THE STUDENTS DATABASE!***************/

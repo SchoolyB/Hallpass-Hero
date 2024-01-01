@@ -219,8 +219,7 @@ int get_and_confirm_roster_name(void)
       printf("Checking if " BOLD "%s" RESET " exists...\n", rosterNameInput);
       sleep(1);
       int table_exists = check_if_table_exists(rosterNameWithPrefix);
-
-      if (table_exists == 0)
+      if (table_exists == FALSE)
       {
         int result = create_new_roster_table(rosterNameWithPrefix);
         if (result == 0)
@@ -240,7 +239,7 @@ int get_and_confirm_roster_name(void)
           create_new_roster();
         }
       }
-      else if (table_exists == 1)
+      else if (table_exists == TRUE)
       {
         printf(YELLOW "Roster: %s already exists\n" RESET, rosterNameInput);
         puts("Please try again");
@@ -261,7 +260,6 @@ int get_and_confirm_roster_name(void)
       puts("4: Main Menu");
 
       UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-
       menuInput = atoi(buffer);
       if (menuInput == 1 || strcmp(buffer, "try again") == 0)
       {

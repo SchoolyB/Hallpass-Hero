@@ -389,7 +389,9 @@ void manually_set_student_id()
 }
 
 /************************************************************************************
- * generate_student_id(): This takes the proposed students first and last *                         name and 3 random digits to create a student id.
+ * generate_student_id(): This takes the proposed students first and last
+ *                        name and 3 random digits to create a student id.
+ *
  * Note: see usage in ask_about_student_id()
  ************************************************************************************/
 int generate_student_id(char *FirstName, char *LastName)
@@ -404,7 +406,7 @@ int generate_student_id(char *FirstName, char *LastName)
   int digit3 = arr[rand() % 10];
 
   puts("Generating student ID");
-  sleep(2);
+  sleep(1);
   size_t lastNameLength = strlen(NewStudent.LastName);
   // if the student last name is empty
   if (strcmp(LastName, "") == 0)
@@ -414,8 +416,6 @@ int generate_student_id(char *FirstName, char *LastName)
     puts(GREEN "ID successfully generated!" RESET);
     sleep(1);
     system("clear");
-    printf("The ID for " BOLD "%s " RESET "is: " BOLD "%s\n" RESET, NewStudent.FirstName, setStudentID);
-    sleep(2);
     confirm_generated_student_id(setStudentID);
   }
   /*In the event that the last name is to0 long
@@ -427,8 +427,8 @@ int generate_student_id(char *FirstName, char *LastName)
     strncpy(truncatedLastName, NewStudent.LastName, 10);
     truncatedLastName[10] = '\0';
 
-    printf(YELLOW "Due to the entered last name of:" BOLD "%s" RESET YELLOW
-                  " being more than 10 characters, the last name used in the student ID will be truncated to:" BOLD "%s\n" RESET,
+    printf(YELLOW "Entered last name:" BOLD " %s" RESET YELLOW
+                  " longer than 10 characters, this will be shortened to" BOLD " %s in the student ID \n" RESET,
            NewStudent.LastName, truncatedLastName);
     printf("Are you sure you want to continue with this students last name?[y/n]\n");
     UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
@@ -442,7 +442,6 @@ int generate_student_id(char *FirstName, char *LastName)
         puts(GREEN "ID successfully generated!" RESET);
         sleep(1);
         system("clear");
-        printf("The ID for " BOLD "%s %s " RESET "is: " BOLD "%s\n" RESET, NewStudent.FirstName, NewStudent.LastName, setStudentID);
         sleep(2);
         confirm_generated_student_id(setStudentID);
       }
@@ -457,37 +456,10 @@ int generate_student_id(char *FirstName, char *LastName)
     }
     else if (INPUT_IS_NO(buffer))
     {
-      system("clear");
-      sleep(1);
-      system("clear");
-      puts("Please enter the number of an option listed below?");
-      puts("1. Enter a new last name");
-      puts("2. Manually set an ID");
-      puts("3. Cancel");
-      UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-      menuInput = atoi(buffer);
-      switch (menuInput)
-      {
-      case 1:
-        system("clear");
-        get_student_last_name();
-        break;
-      case 2:
-        system("clear");
-        manually_set_student_id();
-        break;
-      case 3:
-        system("clear");
-        puts(YELLOW "Canceling operation." RESET);
-        sleep(1);
-        system("clear");
-        addStudentMenuIsRunning = TRUE;
-        break;
-      }
+      handle_last_name_truncated_menu();
     }
     else
     {
-
       system("clear");
       puts("Please make a valid decision.");
       sleep(1);
@@ -505,8 +477,6 @@ int generate_student_id(char *FirstName, char *LastName)
       puts(GREEN "ID successfully generated!" RESET);
       sleep(1);
       system("clear");
-      printf("The ID for " BOLD "%s %s " RESET "is: " BOLD "%s\n" RESET, NewStudent.FirstName, NewStudent.LastName, setStudentID);
-      sleep(2);
       confirm_generated_student_id(setStudentID);
     }
     else if (result == TRUE)
@@ -543,7 +513,7 @@ int confirm_generated_student_id(char *studentID)
       show_current_step("Confirm Student Id", 6, 7);
       strcpy(NewStudent.StudentID, setStudentID);
       system("clear");
-      ask_to_add_to_roster();
+      ask_to_add_new_student_to_roster();
     }
 
     else if (INPUT_IS_NO(buffer))
@@ -589,7 +559,7 @@ int confirm_manually_entered_student_id(char *studentID)
       show_current_step("Confirm Student Id", 6, 7);
       strcpy(NewStudent.StudentID, setStudentID);
       system("clear");
-      ask_to_add_to_roster();
+      ask_to_add_new_student_to_roster();
     }
 
     else if (INPUT_IS_NO(buffer))
@@ -612,7 +582,14 @@ int confirm_manually_entered_student_id(char *studentID)
   }
 }
 
-int ask_to_add_to_roster(void)
+/************************************************************************************
+ * ask_to_add_new_student_to_roster(): Once Students first name, last name, and ID is created
+ *                              asks user if they want to add the newly created student to DB.
+ *
+ * Note: see usage in confirm_manually_entered_student_id()
+ *                    confirm_generated_student_id()
+ ************************************************************************************/
+int ask_to_add_new_student_to_roster(void)
 {
   system("clear");
   show_current_step("Add Student To Roster", 7, 7);
@@ -623,13 +600,9 @@ int ask_to_add_to_roster(void)
   puts("2: No");
   UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
   menuInput = atoi(buffer);
-  if (menuInput == 1 || strcmp(buffer, "yes") == 0 || strcmp(buffer, "y") == 0)
+  if (menuInput == 1 || INPUT_IS_YES(buffer))
   {
-    sleep(1);
-    system("clear");
-    show_tables();
-    puts("Please enter the name of the roster you would like to add this student to.");
-    // do stuff
+    ask_which_roster_to_add_newly_created_student();
     puts(GREEN "Adding new student to database..." RESET);
     sleep(2);
     system("clear");
@@ -652,7 +625,7 @@ int ask_to_add_to_roster(void)
       return 0;
     }
   }
-  else if (menuInput == 2 || strcmp(buffer, "no") == 0 || strcmp(buffer, "n") == 0)
+  else if (menuInput == 2 || INPUT_IS_NO(buffer))
   {
     int result = insert_student_into_db(NewStudent.FirstName, NewStudent.LastName, NewStudent.StudentID);
     if (result == 0)
@@ -676,6 +649,93 @@ int ask_to_add_to_roster(void)
   {
     puts("Sorry, I didn't understand that.");
     puts("Please try again");
-    ask_to_add_to_roster();
+    ask_to_add_new_student_to_roster();
   }
+}
+
+/************************************************************************************
+ * ask_which_roster_to_add_newly_created_student(): Gets the name of the roster that
+ *                                                  the user wants to add the newly
+ *                                                  created student to
+ *
+ * Note: see usage ask_to_add_new_student_to_roster()
+ ************************************************************************************/
+int ask_which_roster_to_add_newly_created_student()
+{
+  char rosterNameWithPrefix[40];
+  puts("Please enter the name of the roster you would like to add this student to.");
+  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
+  sprintf(rosterNameWithPrefix, "Roster_%s", buffer);
+
+  int rosterExists = check_if_table_exists(rosterNameWithPrefix);
+  if (rosterExists == TRUE)
+  {
+    puts("Table exists");
+    int addedToRoster = add_student_to_roster(rosterNameWithPrefix, NewStudent.FirstName, NewStudent.LastName, NewStudent.StudentID);
+    if (addedToRoster == TRUE)
+    {
+      system("clear");
+      puts(GREEN "Student successfully added to roster." RESET);
+      sleep(1);
+      system("clear");
+      return 0;
+    }
+    else
+    {
+      system("clear");
+      printf(RED "Failed to add student to roster. Please try again.\n" RESET);
+      UTILS_ERROR_LOGGER("Failed to add student to roster", "ask_which_roster_to_add_newly_created_student", MINOR);
+    }
+  }
+  else if (rosterExists == FALSE)
+  {
+    system("clear");
+    printf(YELLOW "The entered name:" BOLD RESET YELLOW "%s does not exist. Please try again.\n" RESET);
+    sleep(1);
+    system("clear");
+    ask_which_roster_to_add_newly_created_student();
+  }
+}
+
+/************************************************************************************
+ * handle_last_name_truncated_menu(): Shows a menu and handles decision in the event
+ *                                    that the entered students last name is over 10 char
+ *
+ * Note: see usage in generate_student_id()
+ ************************************************************************************/
+int handle_last_name_truncated_menu(void)
+{
+  sleep(1);
+  system("clear");
+  puts("Please enter the number of an option listed below?");
+  puts("1. Enter a new last name");
+  puts("2. Manually set an ID");
+  puts("3. Cancel");
+  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
+  menuInput = atoi(buffer);
+  if (menuInput == 1)
+  {
+    system("clear");
+    get_student_last_name();
+  }
+  else if (menuInput == 2)
+  {
+    system("clear");
+    manually_set_student_id();
+  }
+  else if (menuInput == 3)
+  {
+    system("clear");
+    puts(YELLOW "Canceling operation." RESET);
+    sleep(1);
+    system("clear");
+    add_student_to_db();
+  }
+  else
+  {
+    system("clear");
+    puts("Please enter a valid decision.");
+    handle_last_name_truncated_menu();
+  }
+  return 0;
 }
