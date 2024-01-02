@@ -33,7 +33,7 @@ extern "C"
   int show_tables(void);
   int rename_roster(const char *oldRosterName, const char *rosterName);
   int get_table_count(const char *path);
-  int drop_table(void);
+  int drop_table(const char *tableName);
   int check_if_student_id_exists(const char *ID);
   int create_student_db_and_table(void);
   int insert_student_into_db(const char *FirstName, const char *LastName, const char *StudentID);

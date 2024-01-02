@@ -274,77 +274,41 @@ extern "C"
    * drop_table(): Drops a roster table from the db.sqlite database
    * Note: See function usage in  ../src/_manage_roster.c
    ************************************************************************************/
-  int drop_table(void)
+  int drop_table(const char *tableName)
   {
+    string tableNameString(tableName);
     sqlite3 *db;
     int rc = sqlite3_open("../build/db.sqlite", &db);
-
     if (rc != SQLITE_OK)
     {
-      sqlite3_close(db);
-      CPP_UTILS_ERROR_LOGGER("Failed to open SQLite3 database: ", "rename_roster", CppErrorLevel::CRITICAL);
-      cerr << RED "Failed to open SQLite3 database" RESET << endl;
-      exit(1);
-    }
-
-    string currentTableName;
-    cout << "What roster would you like to delete?" << endl;
-    cout << RED << "WARNING: This action cannot be undone!" RESET << endl;
-    cout << YELLOW "To cancel this operation, type 'cancel'." RESET << endl;
-    getline(cin, currentTableName);
-    if (currentTableName == "cancel")
-    {
-      system("clear");
-      cout << YELLOW "Canceling roster deletion" RESET << endl;
-      sqlite3_close(db);
-      CPP_UTILS_SLEEP(1);
+      cerr << "Failed to open SQLite3 database" << endl;
       return 1;
     }
-    else
+
+    string dropSQLTable = "DROP TABLE " + tableNameString;
+
+    sqlite3_stmt *statement;
+    rc = sqlite3_prepare_v2(db, dropSQLTable.c_str(), -1, &statement, nullptr);
+    if (rc != SQLITE_OK)
     {
-      system("clear");
-      cout << "To confirm the deletion of " BOLD << currentTableName << RESET " enter 'delete'." << endl;
-
-      cout << YELLOW "To cancel this operation, type 'cancel'." RESET << endl;
-      string answer;
-      getline(cin, answer); // Get user's input for the answer
-
-      if (answer == "delete" || answer == "DELETE")
-      {
-        system("clear");
-        cout << YELLOW "Deleting " << currentTableName << RESET << endl;
-        string deleteSQLTable = "DROP TABLE " + currentTableName;
-
-        rc = sqlite3_exec(db, deleteSQLTable.c_str(), nullptr, nullptr, nullptr);
-        system("clear");
-        cout << GREEN << "The " BOLD GREEN << currentTableName + RESET GREEN " roster has successfully been deleted" RESET << endl;
-        sqlite3_close(db);
-        refresh_table_count();
-        return 2;
-      }
-      else if (answer == "cancel")
-      {
-        system("clear");
-        cout << YELLOW "Canceling roster deletion" RESET << endl;
-        sqlite3_close(db);
-        CPP_UTILS_SLEEP(1);
-        return 1;
-      }
-      else
-      {
-        cout << "Please make a valid decision" << endl;
-        return 1;
-      }
-
-      if (rc != SQLITE_OK)
-      {
-        sqlite3_close(db);
-        CPP_UTILS_ERROR_LOGGER("Failed to delete roster table: ", "delete_roster", CppErrorLevel::CRITICAL);
-        cerr << RED "Failed to open SQLite3 database" RESET << endl;
-        exit(1);
-      }
-      return 0;
+      cerr << "Can't prepare SQL statement: " << sqlite3_errmsg(db) << endl;
+      sqlite3_close(db);
+      return 1;
     }
+
+    rc = sqlite3_step(statement);
+
+    if (rc != SQLITE_DONE)
+    {
+      cerr << "Error executing SQL statement: " << sqlite3_errmsg(db) << endl;
+      sqlite3_finalize(statement);
+      sqlite3_close(db);
+      return 1;
+    }
+
+    sqlite3_finalize(statement);
+    sqlite3_close(db);
+    return 0;
   }
   /************************************************************************************
   * get_table_count(): This helper function returns 1 or 0 depending on if any tables
