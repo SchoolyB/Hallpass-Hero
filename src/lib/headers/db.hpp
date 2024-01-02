@@ -31,7 +31,7 @@ extern "C"
   int check_if_table_exists(const char *rosterName);
   int create_new_roster_table(const char *rosterName);
   int show_tables(void);
-  int rename_roster(void);
+  int rename_roster(const char *oldRosterName, const char *rosterName);
   int get_table_count(const char *path);
   int drop_table(void);
   int check_if_student_id_exists(const char *ID);
