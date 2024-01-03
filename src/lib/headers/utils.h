@@ -78,21 +78,20 @@ extern "C"
   int wait_for_char_input(void);
   int list_all_students(void);
   int search_for_student(void);
-
-
+  int has_one_non_space_char(const char *str);
   typedef struct
   {
     char RelationshipToStudent[20];
-    char FirstName[30]; 
+    char FirstName[30];
     char LastName[30];
-    char PhoneNumber[20]; //need to hash this
-  } EmergerncyContact;
+    char PhoneNumber[20]; // need to hash this
+  } EmergencyContact;
 
   typedef struct
   {
-    char Birthdate[20]; //need to hash this
-    char Address[50]; //need to hash this
-    EmergerncyContact EmergencyContact;
+    char BirthDate[20]; // need to hash this
+    char Address[50];   // need to hash this
+    EmergencyContact EmergencyContact;
   } PrivateInfo;
 
   typedef struct
@@ -101,10 +100,23 @@ extern "C"
     char LastName[30];
     char StudentID[20];
     char Email[50];
-    PrivateInfo PrivateInfo;    
+    PrivateInfo PrivateInfo;
     // Program CurrentProgram;
 
   } Student;
+
+  // typedef struct
+  // {
+  //   char AssignmentName[40]
+
+  //   } Assignment;
+  // typedef struct
+  // {
+  //   int DaysTardy;  // days late
+  //   int DaysAbsent; // days missed
+  //   char AssignmentsMissed
+
+  // } RosterColumn;
 
 #ifdef __cplusplus
 } // extern "C"

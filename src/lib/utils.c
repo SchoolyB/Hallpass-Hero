@@ -126,10 +126,10 @@ i.e  "        "would return FALSE
      "  a    " would return TRUE
 */
 /************************************************************************************
- * has_one_non_space_character(): Helper function that checks if a string has at least
+ * has_one_non_space_char(): Helper function that checks if a string has at least
  * one non-space character.
  ************************************************************************************/
-int has_one_non_space_character(const char *str)
+int has_one_non_space_char(const char *str)
 {
   while (*str)
   {
