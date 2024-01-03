@@ -42,19 +42,20 @@ int manage_roster(void)
   while (manageRosterMenuIsOpen == TRUE)
   {
     mainMenuProccess = FALSE;
-    char manageRosterOptions[7][50] = {
+    char manageRosterOptions[8][50] = {
         "1. View roster",
         "2: Rename roster",
         "3: Delete roster",
         "4. Add student to roster",
         "5. Remove student from roster",
-        "6. Help",
-        "7. Main menu"};
+        "6. Add a column to a roster",
+        "7. Help",
+        "8. Main menu"};
 
     show_current_menu("Manage Roster");
     puts("What would you like to do?");
     puts("|===========================================================================================");
-    for (int i = 0; i < 7; ++i)
+    for (int i = 0; i < 8; ++i)
     {
       printf("| %s %-90s\n", manageRosterOptions[i], "");
     }
@@ -127,7 +128,7 @@ int manage_roster(void)
       }
       else
       {
-        UTILS_ERROR_LOGGER("Failed to get roster table count.", "create_new_roster", MINOR);
+        UTILS_ERROR_LOGGER("Failed to get roster table count.", "manage_roster", MINOR);
         printf(RED "Error: Failed to get roster table count.\n" RESET);
         wait_for_char_input();
       }
@@ -157,7 +158,7 @@ int manage_roster(void)
       }
       else
       {
-        UTILS_ERROR_LOGGER("Failed to get roster table count.", "create_new_roster", MINOR);
+        UTILS_ERROR_LOGGER("Failed to get roster table count.", "manage_roster", MINOR);
         printf(RED "Error: Failed to get roster table count.\n" RESET);
         wait_for_char_input();
       }
@@ -187,35 +188,113 @@ int manage_roster(void)
       }
       else
       {
-        UTILS_ERROR_LOGGER("Failed to get roster table count.", "create_new_roster", MINOR);
+        UTILS_ERROR_LOGGER("Failed to get roster table count.", "manage_roster", MINOR);
         printf(RED "Error: Failed to get roster table count.\n" RESET);
         wait_for_char_input();
       }
     }
-
     else if (menuInput == 4 || strcmp(buffer, "add student") == 0 || strcmp(buffer, "add") == 0)
     {
-      puts("You selected to add a student to the roster.");
       manageRosterMenuIsOpen = FALSE;
       system("clear");
-      // do stuff
+      int tableExists = get_table_count("../build/db.sqlite");
+      if (tableExists == TRUE)
+      {
+        showingFoundRosters = TRUE;
+        while (showingFoundRosters == TRUE)
+        {
+          ask_which_roster_and_preform_action("add student to roster");
+          showingFoundRosters = FALSE;
+        }
+      }
+      else if (tableExists == FALSE)
+      {
+        system("clear");
+        printf(YELLOW "No rosters found\n" RESET);
+        puts("Please create a new roster");
+        sleep(1);
+        system("clear");
+        manageRosterMenuIsOpen = TRUE;
+      }
+      else
+      {
+        UTILS_ERROR_LOGGER("Failed to get roster table count.", "manage_roster", MINOR);
+        printf(RED "Error: Failed to get roster table count.\n" RESET);
+        wait_for_char_input();
+      }
     }
     else if (menuInput == 5 || strcmp(buffer, "remove student") == 0 || strcmp(buffer, "remove") == 0)
     {
-      puts("You selected to remove a student from the roster.");
       manageRosterMenuIsOpen = FALSE;
       system("clear");
-      puts("removing student from roster");
+      int tableExists = get_table_count("../build/db.sqlite");
+      if (tableExists == TRUE)
+      {
+        showingFoundRosters = TRUE;
+        while (showingFoundRosters == TRUE)
+        {
+          ask_which_roster_and_preform_action("remove student from roster");
+          showingFoundRosters = FALSE;
+        }
+      }
+      else if (tableExists == FALSE)
+      {
+        system("clear");
+        printf(YELLOW "No rosters found\n" RESET);
+        puts("Please create a new roster");
+        sleep(1);
+        system("clear");
+        manageRosterMenuIsOpen = TRUE;
+      }
+      else
+      {
+        UTILS_ERROR_LOGGER("Failed to get roster table count.", "manage_roster", MINOR);
+        printf(RED "Error: Failed to get roster table count.\n" RESET);
+        wait_for_char_input();
+      }
     }
-    else if (menuInput == 6 || strcmp(buffer, "help") == 0)
+    else if (menuInput == 7 || strcmp(buffer, "add column") == 0)
     {
+      manageRosterMenuIsOpen = FALSE;
+      system("clear");
+      int tableExists = get_table_count("../build/db.sqlite");
+      if (tableExists == TRUE)
+      {
+        showingFoundRosters = TRUE;
+        while (showingFoundRosters == TRUE)
+        {
+          ask_which_roster_and_preform_action("add a colum to a roster");
+          showingFoundRosters = FALSE;
+        }
+      }
+      else if (tableExists == FALSE)
+      {
+        system("clear");
+        printf(YELLOW "No rosters found\n" RESET);
+        puts("Please create a new roster");
+        sleep(1);
+        system("clear");
+        manageRosterMenuIsOpen = TRUE;
+      }
+      else
+      {
+        UTILS_ERROR_LOGGER("Failed to get roster table count.", "manage_roster", MINOR);
+        printf(RED "Error: Failed to get roster table count.\n" RESET);
+        wait_for_char_input();
+      }
+    }
+    else if (menuInput == 7 || strcmp(buffer, "help") == 0)
+    {
+      manageRosterMenuIsOpen = FALSE;
       puts("You selected to to get help.");
       manageRosterMenuIsOpen = FALSE;
       system("clear");
       puts("showing help");
+      // do stuff
     }
-    else if (menuInput == 7 || strcmp(buffer, "main menu") == 0 || strcmp(buffer, "main") == 0)
+    else if (menuInput == 8 || strcmp(buffer, "main menu") == 0 || strcmp(buffer, "main") == 0)
     {
+      manageRosterMenuIsOpen = FALSE;
       system("clear");
       puts("Returning to main menu.");
       sleep(1);
@@ -377,6 +456,57 @@ int ask_which_roster_and_preform_action(char *action)
       }
     }
   }
+  else if (strcmp(action, "add student to roster") == 0)
+  {
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
+    sprintf(rosterNameWithPrefix, "Roster_%s", buffer);
+    int rosterExists = check_if_table_exists(rosterNameWithPrefix);
+    if (rosterExists == FALSE)
+    {
+      system("clear");
+      sleep(1);
+      printf(YELLOW "The entered roster: " BOLD "%s" RESET YELLOW " does not exist please try again. \n" RESET, buffer);
+      sleep(2);
+      system("clear");
+      ask_which_roster_and_preform_action("add student to roster");
+    }
+    else if (rosterExists == TRUE)
+    {
+      system("clear");
+      sleep(1);
+      // do stuff
+      // todo Marsh, the problem to come back to... there are a couple things that need to happen for this action. 1. We need to search for the student. 2. handle multiple results in the event that there are people with the same name. one way to do that might be to do a for loop. add a number too each entry in the query then let the user enter the number associated with the query.  3. Then take that students firstName, lastName, and studentID and copy it into the new roster. 4. prob more complicated than this idk lol. Have fun
+    }
+  }
+  else if (strcmp(action, "remove a student from a roster") == 0)
+  {
+    // do stuff
+    return 0;
+  }
+  else if (strcmp(action, "add a colum to a roster") == 0)
+
+  {
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
+    {
+      sprintf(rosterNameWithPrefix, "Roster_%s", buffer);
+      int rosterExists = check_if_table_exists(rosterNameWithPrefix);
+      if (rosterExists == FALSE)
+      {
+        system("clear");
+        sleep(1);
+        printf(YELLOW "The entered roster: " BOLD "%s" RESET YELLOW " does not exist please try again. \n" RESET, buffer);
+        sleep(2);
+        system("clear");
+        ask_which_roster_and_preform_action("add student to roster");
+      }
+      else if (rosterExists == TRUE)
+      {
+        system("clear");
+        sleep(1);
+        // do stuff
+      }
+    }
+  }
 }
 
 int confirm_action(const char *action, ...)
@@ -409,3 +539,9 @@ int confirm_action(const char *action, ...)
     confirm_action(action);
   }
 }
+
+int add_column_to_roster()
+{
+}
+
+

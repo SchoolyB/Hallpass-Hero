@@ -102,7 +102,7 @@ int get_student_first_name(void)
   puts("Please enter the students first name.");
   puts(YELLOW "You can cancel this operation by entering 'cancel." RESET);
   UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-  if (!has_one_non_space_character(buffer))
+  if (!has_one_non_space_char(buffer))
   {
     printf(YELLOW "The entered first name is too short. Please try again\n" RESET);
     sleep(1);
@@ -184,7 +184,7 @@ int get_student_last_name(void)
   puts("If the student does not have a last name please enter 'none'.");
   puts(YELLOW "You can cancel this operation by entering 'cancel." RESET);
   UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-  if (!has_one_non_space_character(buffer))
+  if (!has_one_non_space_char(buffer))
   {
     printf(YELLOW "The entered last name is too short. Please try again\n" RESET);
     printf(YELLOW "If the student does not have a last name please enter 'none'.\n" RESET);
