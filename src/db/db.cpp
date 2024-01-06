@@ -135,9 +135,10 @@ int refresh_table_count(void)
   return 0;
 }
 /*Simple helper that prints a heading when showing the student list*/
-int print_student_list_heading()
+int print_student_list_heading(void)
 {
   printf("%-15s %-15s %-15s\n", "First Name", "Last Name", "Student ID");
+  return 0;
 }
 extern "C"
 {
@@ -224,6 +225,8 @@ extern "C"
 
     sqlite3_close(db);
 
+    return 0;
+
     // If you want to get the count of tables, you can call your get_table_count function here
     // int tableCountResult = get_table_count("../build/db.sqlite");
     // return tableCountResult;
@@ -267,6 +270,47 @@ extern "C"
     sqlite3_finalize(statement);
     sqlite3_close(db);
 
+    return 0;
+  }
+
+  /************************************************************************************
+   * add_col_to_roster(): Adds the passed in col name to the passed in roster
+   * Note: See function usage in  ../src/_manage_roster.c
+   ************************************************************************************/
+  int add_col_to_roster(const char *rosterName, const char *colName)
+  {
+    string rosterNameString(rosterName);
+    sqlite3 *db;
+    int rc = sqlite3_open("../build/db.sqlite", &db);
+    if (rc != SQLITE_OK)
+    {
+      cerr << "Failed to open SQLite3 database" << endl;
+      return 1;
+    }
+
+    string addColToSQLTable = "ALTER TABLE " + rosterNameString + " ADD " + colName + " TEXT";
+    const char *addColToSQLTableChar = addColToSQLTable.c_str();
+
+    sqlite3_stmt *statement;
+    rc = sqlite3_prepare_v2(db, addColToSQLTableChar, -1, &statement, nullptr);
+    if (rc != SQLITE_OK)
+    {
+      cerr << "Can't prepare SQL statement to add a column: " << sqlite3_errmsg(db) << endl;
+      sqlite3_close(db);
+      return -1;
+    }
+
+    rc = sqlite3_step(statement);
+    if (rc != SQLITE_DONE)
+    {
+      cerr << "Failed to add column: " << sqlite3_errmsg(db) << endl;
+      sqlite3_finalize(statement);
+      sqlite3_close(db);
+      return 2;
+    }
+
+    sqlite3_finalize(statement);
+    sqlite3_close(db);
     return 0;
   }
 

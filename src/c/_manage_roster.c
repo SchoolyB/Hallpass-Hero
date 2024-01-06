@@ -253,7 +253,7 @@ int manage_roster(void)
         wait_for_char_input();
       }
     }
-    else if (menuInput == 7 || strcmp(buffer, "add column") == 0)
+    else if (menuInput == 6 || strcmp(buffer, "add column") == 0)
     {
       manageRosterMenuIsOpen = FALSE;
       system("clear");
@@ -503,8 +503,55 @@ int ask_which_roster_and_preform_action(char *action)
       {
         system("clear");
         sleep(1);
-        // do stuff
+        create_col_name(rosterNameWithPrefix);
       }
+    }
+  }
+}
+
+int create_col_name(const char *rosterName)
+{
+  char colName[20];
+  system("clear");
+  puts("Enter a name for the new column");
+  puts("Note: The column name must be atleast one character long");
+  puts(YELLOW "To cancel this operation enter 'cancel'" RESET);
+  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
+  strcpy(colName, buffer);
+  printf("TESTING...col name is: %s\n", colName);
+
+  if (strcmp(buffer, "cancel") == 0)
+  {
+    // TODO cancel operation
+    // do stuff
+  }
+  else
+  {
+
+    int hasNonSpaceChar = has_one_non_space_char(buffer);
+    if (hasNonSpaceChar == TRUE)
+    {
+
+      int result = add_col_to_roster(rosterName, colName);
+      if (result == 0)
+      {
+        system("clear");
+        printf(GREEN "Successfully added a new column to " BOLD "%s.\n" RESET, rosterName);
+      }
+      else
+      {
+        printf(RED "ERROR: Unable to add colum: " BOLD "%s" RESET RED " to roster: " BOLD "%s\n" RESET, colName, rosterName);
+        puts("Please try again.");
+        return 0;
+      }
+    }
+    else if (hasNonSpaceChar == FALSE)
+    {
+      system("clear");
+      puts(YELLOW "The entered name is too short please try again" RESET);
+      sleep(1);
+      system("clear");
+      create_col_name(rosterName);
     }
   }
 }
@@ -539,9 +586,3 @@ int confirm_action(const char *action, ...)
     confirm_action(action);
   }
 }
-
-int add_column_to_roster()
-{
-}
-
-
