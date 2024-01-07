@@ -42,15 +42,16 @@ int manage_roster(void)
   while (manageRosterMenuIsOpen == TRUE)
   {
     mainMenuProccess = FALSE;
-    char manageRosterOptions[8][50] = {
+    char manageRosterOptions[10][50] = {
         "1. View roster",
         "2: Rename roster",
         "3: Delete roster",
         "4. Add student to roster",
         "5. Remove student from roster",
-        "6. Add a column to a roster",
-        "7. Help",
-        "8. Main menu"};
+        "6. Create a column",
+        "7. Delete a column",
+        "99. Help",
+        "100. Main menu"};
 
     show_current_menu("Manage Roster");
     puts("What would you like to do?");
@@ -263,7 +264,7 @@ int manage_roster(void)
         showingFoundRosters = TRUE;
         while (showingFoundRosters == TRUE)
         {
-          ask_which_roster_and_preform_action("add a colum to a roster");
+          ask_which_roster_and_preform_action("Create a column");
           showingFoundRosters = FALSE;
         }
       }
@@ -283,7 +284,40 @@ int manage_roster(void)
         wait_for_char_input();
       }
     }
-    else if (menuInput == 7 || strcmp(buffer, "help") == 0)
+
+    else if (menuInput == 7 || strcmp(buffer, "delete a column") == 0)
+    {
+
+      manageRosterMenuIsOpen = FALSE;
+      system("clear");
+      int tableExists = get_table_count("../build/db.sqlite");
+      if (tableExists == TRUE)
+      {
+        showingFoundRosters = TRUE;
+        while (showingFoundRosters == TRUE)
+        {
+          ask_which_roster_and_preform_action("delete a column");
+          showingFoundRosters = FALSE;
+        }
+      }
+      else if (tableExists == FALSE)
+      {
+        system("clear");
+        printf(YELLOW "No rosters found\n" RESET);
+        puts("Please create a new roster");
+        sleep(1);
+        system("clear");
+        manageRosterMenuIsOpen = TRUE;
+      }
+      else
+      {
+        UTILS_ERROR_LOGGER("Failed to get roster table count.", "manage_roster", MINOR);
+        printf(RED "Error: Failed to get roster table count.\n" RESET);
+        wait_for_char_input();
+      }
+    }
+
+    else if (menuInput == 99 || strcmp(buffer, "help") == 0)
     {
       manageRosterMenuIsOpen = FALSE;
       puts("You selected to to get help.");
@@ -292,7 +326,7 @@ int manage_roster(void)
       puts("showing help");
       // do stuff
     }
-    else if (menuInput == 8 || strcmp(buffer, "main menu") == 0 || strcmp(buffer, "main") == 0)
+    else if (menuInput == 100 || strcmp(buffer, "main menu") == 0 || strcmp(buffer, "main") == 0)
     {
       manageRosterMenuIsOpen = FALSE;
       system("clear");
@@ -445,6 +479,7 @@ int ask_which_roster_and_preform_action(char *action)
       }
       else if (INPUT_IS_NO(confirmation))
       {
+        // todo handle this
       }
       else
       {
@@ -483,33 +518,61 @@ int ask_which_roster_and_preform_action(char *action)
     // do stuff
     return 0;
   }
-  else if (strcmp(action, "add a colum to a roster") == 0)
+  else if (strcmp(action, "Create a column") == 0)
 
   {
     UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
+
+    sprintf(rosterNameWithPrefix, "Roster_%s", buffer);
+    int rosterExists = check_if_table_exists(rosterNameWithPrefix);
+    if (rosterExists == FALSE)
     {
-      sprintf(rosterNameWithPrefix, "Roster_%s", buffer);
-      int rosterExists = check_if_table_exists(rosterNameWithPrefix);
-      if (rosterExists == FALSE)
-      {
-        system("clear");
-        sleep(1);
-        printf(YELLOW "The entered roster: " BOLD "%s" RESET YELLOW " does not exist please try again. \n" RESET, buffer);
-        sleep(2);
-        system("clear");
-        ask_which_roster_and_preform_action("add student to roster");
-      }
-      else if (rosterExists == TRUE)
-      {
-        system("clear");
-        sleep(1);
-        create_col_name(rosterNameWithPrefix);
-      }
+      system("clear");
+      sleep(1);
+      printf(YELLOW "The entered roster: " BOLD "%s" RESET YELLOW " does not exist please try again. \n" RESET, buffer);
+      sleep(2);
+      system("clear");
+      ask_which_roster_and_preform_action("create a column");
     }
+    else if (rosterExists == TRUE)
+    {
+      system("clear");
+      sleep(1);
+      choose_col_type(rosterNameWithPrefix);
+    }
+  }
+  else if (strcmp(action, "delete a column") == 0)
+  {
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
+    sprintf(rosterNameWithPrefix, "Roster_%s", buffer);
+    int rosterExists = check_if_table_exists(rosterNameWithPrefix);
+    if (rosterExists == FALSE)
+    {
+      system("clear");
+      sleep(1);
+      printf(YELLOW "The entered roster: " BOLD "%s" RESET YELLOW " does not exist please try again. \n" RESET, buffer);
+      sleep(2);
+      system("clear");
+      ask_which_roster_and_preform_action("delete a column");
+    }
+    else if (rosterExists == TRUE)
+    {
+      system("clear");
+      sleep(1);
+      delete_col(rosterNameWithPrefix);
+    }
+  }
+  else
+  {
+    system("clear");
+    printf(RED "ERROR: Invalid action: " BOLD "%s\n" RESET, action);
+    sleep(1);
+    system("clear");
+    return 0;
   }
 }
 
-int create_col_name(const char *rosterName)
+int create_col(const char *rosterName, const char *colType)
 {
   char colName[20];
   system("clear");
@@ -518,40 +581,180 @@ int create_col_name(const char *rosterName)
   puts(YELLOW "To cancel this operation enter 'cancel'" RESET);
   UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
   strcpy(colName, buffer);
-  printf("TESTING...col name is: %s\n", colName);
 
   if (strcmp(buffer, "cancel") == 0)
   {
-    // TODO cancel operation
-    // do stuff
+    system("clear");
+    printf(YELLOW "Cancelling operation\n" RESET);
+    sleep(1);
+    system("clear");
+    return 0; // TODO come back to this. might call a function instead
   }
   else
   {
-
     int hasNonSpaceChar = has_one_non_space_char(buffer);
     if (hasNonSpaceChar == TRUE)
     {
-
-      int result = add_col_to_roster(rosterName, colName);
-      if (result == 0)
+      int confirmation = confirm_action("Create a column", rosterName);
+      if (confirmation == 1)
+      {
+        int result = add_col_to_roster(rosterName, colName, colType);
+        if (result == 0)
+        {
+          system("clear");
+          printf(GREEN "Successfully added a new column to " BOLD "%s.\n" RESET, rosterName);
+        }
+        else
+        {
+          printf(RED "ERROR: Unable to add column: " BOLD "%s" RESET RED " to roster: " BOLD "%s\n" RESET, colName, rosterName);
+          puts("Please try again.");
+          return 0;
+        }
+      }
+      else if (confirmation == 0)
       {
         system("clear");
-        printf(GREEN "Successfully added a new column to " BOLD "%s.\n" RESET, rosterName);
+        puts("Ok lets try again.");
+        sleep(1);
+        system("clear");
+        create_col(rosterName, colType);
       }
       else
       {
-        printf(RED "ERROR: Unable to add colum: " BOLD "%s" RESET RED " to roster: " BOLD "%s\n" RESET, colName, rosterName);
-        puts("Please try again.");
-        return 0;
+        system("clear");
+        puts("Please enter a valid decision.");
+        sleep(1);
+        system("clear");
+        create_col(rosterName, colType);
       }
     }
+
     else if (hasNonSpaceChar == FALSE)
     {
       system("clear");
       puts(YELLOW "The entered name is too short please try again" RESET);
       sleep(1);
       system("clear");
-      create_col_name(rosterName);
+      create_col(rosterName, colType);
+    }
+  }
+}
+
+int delete_col(const char *rosterName)
+{
+  char colName[20];
+  system("clear");
+  puts("Enter a name for the column that you would like to delete");
+  puts("Note: The column name must be atleast one character long");
+  puts(YELLOW "To cancel this operation enter 'cancel'" RESET);
+  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
+  strcpy(colName, buffer);
+
+  if (strcmp(buffer, "cancel") == 0)
+  {
+    system("clear");
+    printf(YELLOW "Cancelling operation\n" RESET);
+    sleep(1);
+    system("clear");
+    return 0; // TODO come back to this. might call a function instead
+  }
+  else
+  {
+    int hasCol = check_if_col_exists(rosterName, colName);
+    if (hasCol == TRUE)
+    {
+      int confirmation = confirm_action("delete a column", rosterName);
+      if (confirmation == 1)
+      {
+        int result = delete_col_from_roster(rosterName, colName);
+        if (result == 0)
+        {
+          system("clear");
+          printf(GREEN "Successfully deleted column: " BOLD "%s" RESET GREEN " from roster: " BOLD "%s\n" RESET, colName, rosterName);
+        }
+        else
+        {
+          printf(RED "ERROR: Unable to delete column: " BOLD "%s" RESET RED " from roster: " BOLD "%s\n" RESET, colName, rosterName);
+          puts("Please try again.");
+          return 0;
+        }
+      }
+      else if (confirmation == 0)
+      {
+        system("clear");
+        puts("Ok lets try again.");
+        sleep(1);
+        system("clear");
+        delete_col(rosterName);
+      }
+      else
+      {
+        system("clear");
+        puts("Please enter a valid decision.");
+        sleep(1);
+        system("clear");
+        delete_col(rosterName);
+      }
+    }
+
+    else if (hasCol == FALSE)
+    {
+      system("clear");
+      puts(YELLOW "The entered name is too short please try again" RESET);
+      sleep(1);
+      system("clear");
+      delete_col(rosterName);
+    }
+  }
+}
+
+int choose_col_type(const char *rosterName)
+{
+  int showingColSelectionMenu = TRUE;
+  char colType[20];
+  while (showingColSelectionMenu == TRUE)
+  {
+    system("clear");
+    puts("Enter the number for the type of data this column will hold?");
+    puts(YELLOW "Enter 'cancel' to cancel this operation" RESET);
+    puts("1. Text");
+    puts("2. Whole Numbers");
+    puts("3. Decimals");
+    puts("4. True or False Values");
+    puts("5. Dates");
+    puts("6. Not sure");
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
+    int numSelection = atoi(buffer);
+    showingColSelectionMenu = FALSE;
+    switch (numSelection)
+    {
+    case 1:
+    case 6: // in the event the user doesn't know. We just store it as TEXT
+      strcpy(colType, "TEXT");
+      create_col(rosterName, colType);
+      break;
+    case 2:
+      strcpy(colType, "INTEGER");
+      create_col(rosterName, colType);
+      break;
+    case 3:
+      strcpy(colType, "REAL"); // the REAL data type is used to store floating-point values
+      create_col(rosterName, colType);
+      break;
+    case 4:
+      strcpy(colType, "BOOLEAN");
+      create_col(rosterName, colType);
+      break;
+    case 5:
+      strcpy(colType, "DATE");
+      create_col(rosterName, colType);
+      break;
+    default:
+      system("clear");
+      puts("Please enter a valid decision.");
+      sleep(1);
+      system("clear");
+      showingColSelectionMenu = TRUE;
     }
   }
 }
@@ -585,4 +788,9 @@ int confirm_action(const char *action, ...)
     system("clear");
     confirm_action(action);
   }
+}
+
+// this handles the action of viewing all of a rosters information
+int show_roster_data(const char *rosterName)
+{
 }
