@@ -54,11 +54,11 @@ jobs:
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
     
-    - name: Debug Submodule
-      run: |
-        echo "******** Submodule Contents ********"
-        ls -R ${GITHUB_WORKSPACE}/src/lib/Cuazar
-        echo "************************************"
+    # - name: Debug Submodule
+    #   run: |
+    #     echo "******** Submodule Contents ********"
+    #     ls -R ${GITHUB_WORKSPACE}/src/lib/Cuazar
+    #     echo "************************************"
 
   
     - name: Debug SQLite3
