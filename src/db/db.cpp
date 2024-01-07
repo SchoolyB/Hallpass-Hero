@@ -22,6 +22,39 @@ int hasTables = FALSE;
 int studentIDExists = FALSE;
 const char *dbPath = dbPath;
 
+int __throw_error_opening_db(string functionName, sqlite3 *database, int param)
+{
+  CPP_UTILS_ERROR_LOGGER("Failed to open SQLite3 database. ", functionName.c_str(), CppErrorLevel::CRITICAL);
+  cerr << RED << "CRITICAL ERROR: Failed to find/open sqlite database" << RESET << endl;
+  sqlite3_close(database);
+  return -1;
+}
+
+int __throw_error_exec_query(string functionName, sqlite3 *database, int param)
+{
+  CPP_UTILS_ERROR_LOGGER("Failed to execute query ", functionName.c_str(), CppErrorLevel::CRITICAL);
+  cerr << RED << "CRITICAL ERROR: Failed to execute query" << RESET << endl;
+  sqlite3_close(database);
+  return -2;
+}
+
+int __throw_error_prepare_statement(string functionName, sqlite3 *database, int param)
+{
+  CPP_UTILS_ERROR_LOGGER("Failed to prepare SQL statement. ", functionName.c_str(), CppErrorLevel::CRITICAL);
+  cerr << RED << "CRITICAL ERROR: Failed to prepare SQL statement" << RESET << endl;
+  sqlite3_close(database);
+  return -3;
+}
+
+int __throw_error_statement_step(string functionName, sqlite3 *database, int param, sqlite3_stmt *statement)
+{
+  CPP_UTILS_ERROR_LOGGER("Failed to execute SQL statement step. ", functionName.c_str(), CppErrorLevel::CRITICAL);
+  cerr << RED << "Error executing SQL statement: " << sqlite3_errmsg(database) << endl;
+  sqlite3_finalize(statement);
+  sqlite3_close(database);
+  return -4;
+}
+
 int table_exists_callback(void *exists, int argc, char **argv, char **columnNames)
 {
   hasTables = (argc > 0 && argv[0]);
@@ -146,39 +179,7 @@ int print_student_list_heading(void)
 }
 extern "C"
 {
-
-  int __throw_error_opening_db(string functionName, sqlite3 *database, int param)
-  {
-    CPP_UTILS_ERROR_LOGGER("Failed to open SQLite3 database. ", functionName.c_str(), CppErrorLevel::CRITICAL);
-    cerr << RED << "CRITICAL ERROR: Failed to find/open sqlite database" << RESET << endl;
-    sqlite3_close(database);
-    return -1;
-  }
-
-  int __throw_error_exec_query(string functionName, sqlite3 *database, int param)
-  {
-    CPP_UTILS_ERROR_LOGGER("Failed to execute query ", functionName.c_str(), CppErrorLevel::CRITICAL);
-    cerr << RED << "CRITICAL ERROR: Failed to execute query" << RESET << endl;
-    sqlite3_close(database);
-    return -2;
-  }
-
-  int __throw_error_prepare_statement(string functionName, sqlite3 *database, int param)
-  {
-    CPP_UTILS_ERROR_LOGGER("Failed to prepare SQL statement. ", functionName.c_str(), CppErrorLevel::CRITICAL);
-    cerr << RED << "CRITICAL ERROR: Failed to prepare SQL statement" << RESET << endl;
-    sqlite3_close(database);
-    return -3;
-  }
-
-  int __throw_error_statement_step(string functionName, sqlite3 *database, int param, sqlite3_stmt *statement)
-  {
-    CPP_UTILS_ERROR_LOGGER("Failed to execute SQL statement step. ", functionName.c_str(), CppErrorLevel::CRITICAL);
-    cerr << RED << "Error executing SQL statement: " << sqlite3_errmsg(database) << endl;
-    sqlite3_finalize(statement);
-    sqlite3_close(database);
-    return -4;
-  }
+#include <sqlite3.h>
   /************************************************************************************
    * create_new_roster_table(): Creates a new table in the db.sqlite database
    * Note: See function usage in ../src/_create_roster.c

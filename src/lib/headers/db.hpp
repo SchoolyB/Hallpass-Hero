@@ -15,19 +15,21 @@ Notes       : This uses extern "C" linkage to allow the C++ functions to be
 #ifndef DB_HPP
 #define DB_HPP
 
-#include <sqlite3.h>
-
 // Declaration of C++ functions with extern "C" linkage
 #ifdef __cplusplus
+#include <sqlite3.h>
+#include <iostream>
+int __throw_error_opening_db(std::string functionName, sqlite3 *database, int param);
+int __throw_error_exec_query(std::string functionName, sqlite3 *database, int param);
+int __throw_error_prepare_statement(std::string functionName, sqlite3 *database, int param);
+int __throw_error_statement_step(std::string functionName, sqlite3 *database, int param, sqlite3_stmt);
 extern "C"
 {
+#include <sqlite3.h>
 #endif
 
   // C++ function declarations
-  int __throw_error_opening_db(string functionName, sqlite3 *database, int param);
-  int __throw_error_exec_query(string functionName, sqlite3 *database, int param);
-  int __throw_error_prepare_statement(string functionName, sqlite3 *database, int param);
-  int __throw_error_statement_step(string functionName, sqlite3 *database, int param, sqlite3_stmt);
+
   int table_exists_callback(void *exists, int argc, char **argv, char **columnNames);
   int student_id_exists_callback(void *data, int argc, char **argv, char **azColName);
   int print_table_names_callback(void *data, int argc, char **argv, char **azColName);
