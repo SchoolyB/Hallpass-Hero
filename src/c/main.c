@@ -15,7 +15,7 @@ Description : This source file contains the main function for the Hallpass Hero 
 #include "../lib/headers/main.h"
 #include "../lib/headers/db.hpp"
 #include "../lib/headers/c_files.h"
-#include "../lib/Cuazar/lib/Cuazar.h"
+// #include "../lib/Cuazar/lib/Cuazar.h"
 
 static uint8_t menuInput;
 uint8_t mainMenuProccess = FALSE;
@@ -31,7 +31,7 @@ char MainMenuOptions[7][50] = {
 int main()
 {
 
-  Init_Cuazar(clear()); // Pass NULL to disable the clear terminal function
+  // Init_Cuazar(clear()); // Pass NULL to disable the clear terminal function
   mkdir("../logs", 0777);
 
   FILE *errorLogFile = fopen("../logs/errors.log", "a");
