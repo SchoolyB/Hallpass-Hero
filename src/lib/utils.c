@@ -15,7 +15,6 @@ Description : This source file contains several utility functions that are used
 #include <stdlib.h>
 #include "headers/utils.h"
 #include "headers/db.hpp"
-
 /************************************************************************************
  * UTILS_ERROR_LOGGER(): Logs errors errors that occur specifically in 'C' files
  * Note: For 'C++' code error logging see CPP_UTILS_ERROR_LOGGER in utils.cpp
@@ -31,21 +30,21 @@ int UTILS_ERROR_LOGGER(char *errorMessage, char *function, enum ErrorLevel level
   {
   case MINOR:
     fprintf(errorLog, "Logged @ %s", ctime(&currentTime));
-    fprintf(errorLog, "Minor Error: %s in function: %s()\n", errorMessage, function);
-    fprintf(errorLog, "=============================================================\n");
+    fprintf(errorLog, "Minor Error: %s, in function call: %s()\n", errorMessage, function);
+    fprintf(errorLog, "======================================================================================\n");
     fflush(errorLog);
     return 0;
     break;
   case MODERATE:
     fprintf(errorLog, "Logged @ %s", ctime(&currentTime));
-    fprintf(errorLog, "Moderate Error: %s in function: %s()\n", errorMessage, function);
-    fprintf(errorLog, "=============================================================\n");
+    fprintf(errorLog, "Moderate Error: %s, in function call: %s()\n", errorMessage, function);
+    fprintf(errorLog, "======================================================================================\n");
     fflush(errorLog);
     return 1;
   case CRITICAL:
     fprintf(errorLog, "Logged @ %s", ctime(&currentTime));
-    fprintf(errorLog, "CRITICAL ERROR: %s in function: %s()\n", errorMessage, function);
-    fprintf(errorLog, "=============================================================\n");
+    fprintf(errorLog, "CRITICAL ERROR: %s, in function call: %s()\n", errorMessage, function);
+    fprintf(errorLog, "======================================================================================\n");
     printf(RED "Critical Error Occurred @ %s: For more information see logs/errors.log \n" RESET, ctime(&currentTime));
     fflush(errorLog);
     exit(1);
@@ -98,7 +97,7 @@ void UTILS_CLEAR_INPUT_BUFFER()
 int list_all_students(void)
 {
 
-  int result = show_students_in_db("../build/students.sqlite");
+  int result = show_students_in_db("../build/db.sqlite");
   if (result == 0)
   {
     int showingStudents = TRUE;
@@ -120,6 +119,29 @@ int list_all_students(void)
 
   return 0;
 }
+
+/*Helper function that takes in a string/input.
+Checks if the string has at least one non-space character
+i.e  "        "would return FALSE
+     "  a    " would return TRUE
+*/
+/************************************************************************************
+ * has_one_non_space_char(): Helper function that checks if a string has at least
+ * one non-space character.
+ ************************************************************************************/
+int has_one_non_space_char(const char *str)
+{
+  while (*str)
+  {
+    if (*str != ' ')
+    {
+      return TRUE; // Non-space character found
+    }
+    str++;
+  }
+  return FALSE; // Only spaces found
+}
+
 // TODO add desc for func
 int wait_for_char_input(void)
 {
@@ -127,4 +149,17 @@ int wait_for_char_input(void)
   puts("Press any key to continue...");
   getchar();
   system("clear");
+}
+
+int hash_data(char *data)
+{
+  int hash = 0;
+  int c;
+
+  while ((c = *data++))
+  {
+    hash += c;
+  }
+
+  return hash;
 }

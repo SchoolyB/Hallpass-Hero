@@ -69,7 +69,7 @@ int create_new_roster(void)
       newRosterMenuIsRunning = FALSE;
       system("clear");
 
-      int tablesExists = get_table_count("../build/db.sqlite3");
+      int tablesExists = get_table_count("../build/db.sqlite");
 
       if (tablesExists == TRUE)
       {
@@ -80,11 +80,7 @@ int create_new_roster(void)
           printf(GREEN "Successfully found created roster(s)\n" RESET);
           sleep(1);
           system("clear");
-          printf("==========================================================================================\n");
-          printf(BOLD "Created rosters:\n" RESET);
-          puts("------------------------------------------------------------------------------------------");
           show_tables();
-          printf("==========================================================================================\n");
           showingFoundRosters = FALSE;
           puts("What would you like to do?");
           puts("1: Back");
@@ -171,9 +167,8 @@ int get_and_confirm_roster_name(void)
 {
   show_current_step("Name your new roster", 1, 2);
   char buffer[50];
-
   char rosterNameInput[30];
-  char newRosterName[30];
+  char rosterNameWithPrefix[40];
   // getting initial input
   puts("What would you like to name your new roster?");
   puts("Hint: Roster names can be no less the 1 character and no more then 30 characters.");
@@ -190,7 +185,7 @@ int get_and_confirm_roster_name(void)
     UTILS_CLEAR_INPUT_BUFFER();
     get_and_confirm_roster_name();
   }
-  else if (strlen(rosterNameInput) < 1 || strcmp(rosterNameInput, "") == 0)
+  else if (!has_one_non_space_char(rosterNameInput))
   {
     printf(YELLOW "Sorry that name is too short please try again.\n" RESET);
     sleep(1);
@@ -220,21 +215,33 @@ int get_and_confirm_roster_name(void)
     if (INPUT_IS_YES(confirmation))
     {
       system("clear");
-      strcpy(newRosterName, rosterNameInput);
-      printf("Creating new roster:" BOLD " %s.\n" RESET, rosterNameInput);
-      create_new_roster_table(rosterNameInput);
+      sprintf(rosterNameWithPrefix, "Roster_%s", rosterNameInput);
+      printf("Checking if " BOLD "%s" RESET " exists...\n", rosterNameInput);
       sleep(1);
-      int result = create_new_roster_table(rosterNameInput);
-      if (result == 0)
+      int table_exists = check_if_table_exists(rosterNameWithPrefix);
+      if (table_exists == FALSE)
       {
-        printf(GREEN "Successfully created new roster: %s\n" RESET, rosterNameInput);
-        sleep(3);
-        system("clear");
-        create_new_roster();
+        int result = create_new_roster_table(rosterNameWithPrefix);
+        if (result == 0)
+        {
+          printf("Creating new roster:" BOLD " %s.\n" RESET, rosterNameInput);
+          printf(GREEN "Successfully created new roster: %s\n" RESET, rosterNameInput);
+          sleep(3);
+          system("clear");
+          create_new_roster();
+        }
+        else
+        {
+          printf(RED "Error: Failed to create new roster: %s\n" RESET, rosterNameInput);
+          puts("Please try again");
+          sleep(3);
+          system("clear");
+          create_new_roster();
+        }
       }
-      else
+      else if (table_exists == TRUE)
       {
-        printf(RED "Error: Failed to create new roster: %s\n" RESET, rosterNameInput);
+        printf(YELLOW "Roster: %s already exists\n" RESET, rosterNameInput);
         puts("Please try again");
         sleep(3);
         system("clear");
@@ -253,7 +260,6 @@ int get_and_confirm_roster_name(void)
       puts("4: Main Menu");
 
       UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-
       menuInput = atoi(buffer);
       if (menuInput == 1 || strcmp(buffer, "try again") == 0)
       {
