@@ -686,7 +686,7 @@ int ask_which_roster_to_add_newly_created_student(void)
   else if (rosterExists == FALSE)
   {
     system("clear");
-    printf(YELLOW "The entered name:" BOLD RESET YELLOW "%s does not exist. Please try again.\n" RESET);
+    printf(YELLOW "The entered name:" BOLD RESET YELLOW "%s does not exist. Please try again.\n" RESET, addStudentInput.StrInput);
     sleep(1);
     system("clear");
     ask_which_roster_to_add_newly_created_student();
