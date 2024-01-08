@@ -12,12 +12,10 @@ Description : This source file contains the main function for the Hallpass Hero 
 #include <stdlib.h>
 #include <stdint.h>
 #include "../lib/headers/utils.h"
-#include "../lib/headers/main.h"
-#include "../lib/headers/db.hpp"
+// #include "../lib/headers/db.hpp"
 #include "../lib/headers/c_files.h"
-// #include "../lib/Cuazar/lib/Cuazar.h"
 
-static uint8_t menuInput;
+UserInput mainMenuInput;
 uint8_t mainMenuProccess = FALSE;
 char MainMenuOptions[7][50] = {
     "1. Create a new roster",
@@ -28,10 +26,8 @@ char MainMenuOptions[7][50] = {
     "6. Help",
     "7. Exit"};
 
-int main()
+int main(void)
 {
-
-  // Init_Cuazar(clear()); // Pass NULL to disable the clear terminal function
   mkdir("../logs", 0777);
 
   FILE *errorLogFile = fopen("../logs/errors.log", "a");
@@ -60,45 +56,45 @@ int main()
     puts("===========================================================================================");
     /*Here we are handling the input that the user makes on the main menu*/
     UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-    menuInput = atoi(buffer);
+    mainMenuInput.NumInput = atoi(buffer);
 
     // to create a new roster
-    if (menuInput == 1 || strcmp(buffer, "new roster") == 0)
+    if (mainMenuInput.NumInput == 1 || strcmp(buffer, "new roster") == 0)
     {
       system("clear");
       create_new_roster();
     }
     // to manage an existing roster
-    else if (menuInput == 2 || strcmp(buffer, "manage roster") == 0)
+    else if (mainMenuInput.NumInput == 2 || strcmp(buffer, "manage roster") == 0)
     {
       system("clear");
       manage_roster();
     }
     // to add a student to the student database
-    else if (menuInput == 3 || strcmp(buffer, "add student") == 0)
+    else if (mainMenuInput.NumInput == 3 || strcmp(buffer, "add student") == 0)
     {
       system("clear");
       system("clear");
       add_student_to_db();
     }
     // to view and manage the student database
-    else if (menuInput == 4 || strcmp(buffer, "manage student database") == 0)
+    else if (mainMenuInput.NumInput == 4 || strcmp(buffer, "manage student database") == 0)
     {
       system("clear");
       manage_student_db();
     }
     // to search for a student
-    else if (menuInput == 5 || strcmp(buffer, "search student") == 0)
+    else if (mainMenuInput.NumInput == 5 || strcmp(buffer, "search student") == 0)
     {
       system("clear");
       // do stuff
     }
-    else if (menuInput == 6 || strcmp(buffer, "help") == 0)
+    else if (mainMenuInput.NumInput == 6 || strcmp(buffer, "help") == 0)
     {
       system("clear");
       // do stuff
     }
-    else if (menuInput == 7 || strcmp(buffer, "exit") == 0)
+    else if (mainMenuInput.NumInput == 7 || strcmp(buffer, "exit") == 0)
     {
       system("clear");
       puts("See you soon!");

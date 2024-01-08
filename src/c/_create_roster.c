@@ -17,7 +17,7 @@ Description : This source file contains the function used
 #include "../lib/headers/db.hpp"
 #include "../lib/headers/c_files.h"
 
-static char buffer[50];
+UserInput createRosterInput;
 static uint8_t menuInput;
 static uint8_t mainMenuProccess;
 /************************************************************************************
@@ -54,16 +54,16 @@ int create_new_roster(void)
       printf("| %-90s\n", "");
     }
     puts("|===========================================================================================");
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-    menuInput = atoi(buffer);
-    if (menuInput == 1 || strcmp(buffer, "new roster") == 0 || strcmp(buffer, "new") == 0)
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(createRosterInput.StrInput);
+    menuInput = atoi(createRosterInput.StrInput);
+    if (menuInput == 1 || strcmp(createRosterInput.StrInput, "new roster") == 0 || strcmp(createRosterInput.StrInput, "new") == 0)
     {
       puts("You selected to create a new roster.");
       newRosterMenuIsRunning = FALSE;
       system("clear");
       get_and_confirm_roster_name();
     }
-    else if (menuInput == 2 || strcmp(buffer, "view rosters") == 0 || strcmp(buffer, "view") == 0)
+    else if (menuInput == 2 || strcmp(createRosterInput.StrInput, "view rosters") == 0 || strcmp(createRosterInput.StrInput, "view") == 0)
     {
       puts("You selected to view created rosters.");
       newRosterMenuIsRunning = FALSE;
@@ -86,9 +86,9 @@ int create_new_roster(void)
           puts("1: Back");
           puts("2: Main Menu");
 
-          UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-          menuInput = atoi(buffer);
-          if (menuInput == 1 || strcmp(buffer, "back") == 0)
+          UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(createRosterInput.StrInput);
+          menuInput = atoi(createRosterInput.StrInput);
+          if (menuInput == 1 || strcmp(createRosterInput.StrInput, "back") == 0)
           {
             showingFoundRosters = FALSE;
             system("clear");
@@ -97,7 +97,7 @@ int create_new_roster(void)
             system("clear");
             create_new_roster();
           }
-          else if (menuInput == 2 || strcmp(buffer, "main") == 0 || strcmp(buffer, "main menu") == 0)
+          else if (menuInput == 2 || strcmp(createRosterInput.StrInput, "main") == 0 || strcmp(createRosterInput.StrInput, "main menu") == 0)
           {
             showingFoundRosters = FALSE;
             system("clear");
@@ -134,14 +134,14 @@ int create_new_roster(void)
       }
     }
 
-    else if (menuInput == 3 || strcmp(buffer, "help") == 0)
+    else if (menuInput == 3 || strcmp(createRosterInput.StrInput, "help") == 0)
     {
       puts("You selected to get help.");
       newRosterMenuIsRunning = FALSE;
       system("clear");
       // show_help_menu();
     }
-    else if (menuInput == 4 || strcmp(buffer, "main") == 0 || strcmp(buffer, "main menu") == 0)
+    else if (menuInput == 4 || strcmp(createRosterInput.StrInput, "main") == 0 || strcmp(createRosterInput.StrInput, "main menu") == 0)
     {
 
       system("clear");
@@ -166,16 +166,15 @@ int create_new_roster(void)
 int get_and_confirm_roster_name(void)
 {
   show_current_step("Name your new roster", 1, 2);
-  char buffer[50];
   char rosterNameInput[30];
-  char rosterNameWithPrefix[40];
+  char rosterNameWithPrefix[60];
   // getting initial input
   puts("What would you like to name your new roster?");
   puts("Hint: Roster names can be no less the 1 character and no more then 30 characters.");
   puts("Hint: You can cancel this operation at any time by typing 'cancel'.");
 
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-  strcpy(rosterNameInput, buffer);
+  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(createRosterInput.StrInput);
+  strcpy(rosterNameInput, createRosterInput.StrInput);
   if (strlen(rosterNameInput) > 30)
   {
     printf(YELLOW "Sorry that name is too long please try again.\n" RESET);
@@ -191,7 +190,7 @@ int get_and_confirm_roster_name(void)
     sleep(1);
     system("clear");
     UTILS_ERROR_LOGGER("Entered roster name is too short", "get_and_confirm_roster_name", MINOR);
-    // No need to clear input buffer here because the user didn't enter anything
+    // No need to clear input createRosterInput.StrInput here because the user didn't enter anything
     get_and_confirm_roster_name();
   }
   else if (strcmp(rosterNameInput, "cancel") == 0)
@@ -209,9 +208,9 @@ int get_and_confirm_roster_name(void)
     printf("You have decided to name your new roster:" BOLD "%s " RESET ".\nIs that correct?[y/n]\n", rosterNameInput);
 
     // confirming input
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(createRosterInput.StrInput);
     char confirmation[20];
-    strcpy(confirmation, buffer);
+    strcpy(confirmation, createRosterInput.StrInput);
     if (INPUT_IS_YES(confirmation))
     {
       system("clear");
@@ -259,9 +258,9 @@ int get_and_confirm_roster_name(void)
       puts("3: Back");
       puts("4: Main Menu");
 
-      UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-      menuInput = atoi(buffer);
-      if (menuInput == 1 || strcmp(buffer, "try again") == 0)
+      UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(createRosterInput.StrInput);
+      menuInput = atoi(createRosterInput.StrInput);
+      if (menuInput == 1 || strcmp(createRosterInput.StrInput, "try again") == 0)
       {
         system("clear");
         puts("Ok please try again.");
@@ -269,20 +268,20 @@ int get_and_confirm_roster_name(void)
         system("clear");
         get_and_confirm_roster_name();
       }
-      else if (menuInput == 2 || strcmp(buffer, "help") == 0)
+      else if (menuInput == 2 || strcmp(createRosterInput.StrInput, "help") == 0)
       {
         system("clear");
         sleep(1);
         // do stuff with help menu
       }
-      else if (menuInput == 3 || strcmp(buffer, "back") == 0)
+      else if (menuInput == 3 || strcmp(createRosterInput.StrInput, "back") == 0)
       {
         system("clear");
         puts("Going back to previous menu.");
         sleep(1);
         create_new_roster();
       }
-      else if (menuInput == 4 || strcmp(buffer, "main") == 0 || strcmp(buffer, "main menu") == 0)
+      else if (menuInput == 4 || strcmp(createRosterInput.StrInput, "main") == 0 || strcmp(createRosterInput.StrInput, "main menu") == 0)
       {
         system("clear");
         puts("Returning to main menu.");

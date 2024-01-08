@@ -32,6 +32,7 @@ extern "C"
 {
 #endif
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-START MACROS+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
+
 // Booleans
 #define FALSE 0
 #define TRUE 1
@@ -79,6 +80,13 @@ extern "C"
   int list_all_students(void);
   int search_for_student(void);
   int has_one_non_space_char(const char *str);
+
+  // this type allows the same input through each C source file. As opposed to constantly declaring char arrays
+  typedef struct
+  {
+    int NumInput;
+    char StrInput[50];
+  } UserInput;
   typedef struct
   {
     char RelationshipToStudent[20];
@@ -105,18 +113,12 @@ extern "C"
 
   } Student;
 
-  // typedef struct
-  // {
-  //   char AssignmentName[40]
+  typedef struct
+  {
+    char Str1[100];
+    char Str2[100];
 
-  //   } Assignment;
-  // typedef struct
-  // {
-  //   int DaysTardy;  // days late
-  //   int DaysAbsent; // days missed
-  //   char AssignmentsMissed
-
-  // } RosterColumn;
+  } GenericDataType;
 
 #ifdef __cplusplus
 } // extern "C"

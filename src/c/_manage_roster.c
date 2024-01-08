@@ -18,8 +18,7 @@ Description : This source file contains the function used
 #include "../lib/headers/db.hpp"
 #include "../lib/headers/c_files.h"
 
-static char buffer[50];
-static uint8_t menuInput;
+UserInput manageRosterInput;
 static uint8_t mainMenuProccess;
 /************************************************************************************
  * manage_roster(): This is the main function for managing a roster.
@@ -66,10 +65,10 @@ int manage_roster(void)
     }
     puts("|===========================================================================================");
 
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
 
-    menuInput = atoi(buffer);
-    if (menuInput == 1 || strcmp(buffer, "view roster") == 0 || strcmp(buffer, "view") == 0)
+    manageRosterInput.NumInput = atoi(manageRosterInput.StrInput);
+    if (manageRosterInput.NumInput == 1 || strcmp(manageRosterInput.StrInput, "view roster") == 0 || strcmp(manageRosterInput.StrInput, "view") == 0)
     {
       manageRosterMenuIsOpen = FALSE;
       system("clear");
@@ -90,15 +89,15 @@ int manage_roster(void)
           puts("1: Back");
           puts("2: Main Menu");
 
-          UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-          menuInput = atoi(buffer);
-          if (menuInput == 1 || strcmp(buffer, "back") == 0)
+          UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+          manageRosterInput.NumInput = atoi(manageRosterInput.StrInput);
+          if (manageRosterInput.NumInput == 1 || strcmp(manageRosterInput.StrInput, "back") == 0)
           {
             system("clear");
             showingFoundRosters = FALSE;
             manageRosterMenuIsOpen = TRUE;
           }
-          else if (menuInput == 2 || strcmp(buffer, "main") == 0 || strcmp(buffer, "main menu") == 0)
+          else if (manageRosterInput.NumInput == 2 || strcmp(manageRosterInput.StrInput, "main") == 0 || strcmp(manageRosterInput.StrInput, "main menu") == 0)
           {
             showingFoundRosters = FALSE;
             system("clear");
@@ -134,7 +133,7 @@ int manage_roster(void)
         wait_for_char_input();
       }
     }
-    else if (menuInput == 2 || strcmp(buffer, "rename roster") == 0 || strcmp(buffer, "rename") == 0)
+    else if (manageRosterInput.NumInput == 2 || strcmp(manageRosterInput.StrInput, "rename roster") == 0 || strcmp(manageRosterInput.StrInput, "rename") == 0)
     {
       manageRosterMenuIsOpen = FALSE;
       system("clear");
@@ -164,7 +163,7 @@ int manage_roster(void)
         wait_for_char_input();
       }
     }
-    else if (menuInput == 3 || strcmp(buffer, "delete roster") == 0 || strcmp(buffer, "delete") == 0)
+    else if (manageRosterInput.NumInput == 3 || strcmp(manageRosterInput.StrInput, "delete roster") == 0 || strcmp(manageRosterInput.StrInput, "delete") == 0)
     {
       manageRosterMenuIsOpen = FALSE;
       system("clear");
@@ -194,7 +193,7 @@ int manage_roster(void)
         wait_for_char_input();
       }
     }
-    else if (menuInput == 4 || strcmp(buffer, "add student") == 0 || strcmp(buffer, "add") == 0)
+    else if (manageRosterInput.NumInput == 4 || strcmp(manageRosterInput.StrInput, "add student") == 0 || strcmp(manageRosterInput.StrInput, "add") == 0)
     {
       manageRosterMenuIsOpen = FALSE;
       system("clear");
@@ -224,7 +223,7 @@ int manage_roster(void)
         wait_for_char_input();
       }
     }
-    else if (menuInput == 5 || strcmp(buffer, "remove student") == 0 || strcmp(buffer, "remove") == 0)
+    else if (manageRosterInput.NumInput == 5 || strcmp(manageRosterInput.StrInput, "remove student") == 0 || strcmp(manageRosterInput.StrInput, "remove") == 0)
     {
       manageRosterMenuIsOpen = FALSE;
       system("clear");
@@ -254,7 +253,7 @@ int manage_roster(void)
         wait_for_char_input();
       }
     }
-    else if (menuInput == 6 || strcmp(buffer, "add column") == 0)
+    else if (manageRosterInput.NumInput == 6 || strcmp(manageRosterInput.StrInput, "add column") == 0)
     {
       manageRosterMenuIsOpen = FALSE;
       system("clear");
@@ -285,7 +284,7 @@ int manage_roster(void)
       }
     }
 
-    else if (menuInput == 7 || strcmp(buffer, "delete a column") == 0)
+    else if (manageRosterInput.NumInput == 7 || strcmp(manageRosterInput.StrInput, "delete a column") == 0)
     {
 
       manageRosterMenuIsOpen = FALSE;
@@ -317,7 +316,7 @@ int manage_roster(void)
       }
     }
 
-    else if (menuInput == 99 || strcmp(buffer, "help") == 0)
+    else if (manageRosterInput.NumInput == 99 || strcmp(manageRosterInput.StrInput, "help") == 0)
     {
       manageRosterMenuIsOpen = FALSE;
       puts("You selected to to get help.");
@@ -326,7 +325,7 @@ int manage_roster(void)
       puts("showing help");
       // do stuff
     }
-    else if (menuInput == 100 || strcmp(buffer, "main menu") == 0 || strcmp(buffer, "main") == 0)
+    else if (manageRosterInput.NumInput == 100 || strcmp(manageRosterInput.StrInput, "main menu") == 0 || strcmp(manageRosterInput.StrInput, "main") == 0)
     {
       manageRosterMenuIsOpen = FALSE;
       system("clear");
@@ -346,15 +345,23 @@ int manage_roster(void)
 // action to be preformed on the roster
 int ask_which_roster_and_preform_action(char *action)
 {
-  char rosterNameWithPrefix[30];
+  char rosterNameWithPrefix[60];
   char oldRosterName[30];
-  char buffer[30];
   printf("Enter the name of the roster that you would like to %s?\n", action);
+  puts(YELLOW "To cancel this operation enter 'cancel'" RESET);
   // TODO handle canceling operation printf(YELLOW "To cancel this operation enter" BOLD " 'cancel'. \n" RESET);
   if (strcmp(action, "rename") == 0)
   {
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-    strcpy(oldRosterName, buffer);
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+    if (strcmp(manageRosterInput.StrInput, "cancel") == 0)
+    {
+      system("clear");
+      printf(YELLOW "Cancelling operation\n" RESET);
+      sleep(1);
+      system("clear");
+      return 0; // TODO come back to this. might call a function instead
+    }
+    strcpy(oldRosterName, manageRosterInput.StrInput);
     sprintf(rosterNameWithPrefix, "Roster_%s", oldRosterName);
     int rosterExists = check_if_table_exists(rosterNameWithPrefix);
     if (rosterExists == FALSE)
@@ -418,7 +425,7 @@ int ask_which_roster_and_preform_action(char *action)
         else
         {
           system("clear");
-          printf(YELLOW "The entered roster name: " BOLD " %s" RESET YELLOW " is too short please try again.\n" RESET);
+          printf(YELLOW "The entered roster name: " BOLD " %s" RESET YELLOW " is too short please try again.\n" RESET, newRosterName);
           ask_which_roster_and_preform_action("rename");
         }
       }
@@ -426,14 +433,22 @@ int ask_which_roster_and_preform_action(char *action)
   }
   else if (strcmp(action, "delete") == 0)
   {
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-    sprintf(rosterNameWithPrefix, "Roster_%s", buffer);
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+    if (strcmp(manageRosterInput.StrInput, "cancel") == 0)
+    {
+      system("clear");
+      printf(YELLOW "Cancelling operation\n" RESET);
+      sleep(1);
+      system("clear");
+      return 0; // TODO come back to this. might call a function instead
+    }
+    sprintf(rosterNameWithPrefix, "Roster_%s", manageRosterInput.StrInput);
     int rosterExists = check_if_table_exists(rosterNameWithPrefix);
     if (rosterExists == FALSE)
     {
       system("clear");
       sleep(1);
-      printf(YELLOW "The entered roster: " BOLD "%s" RESET YELLOW " does not exist please try again. \n" RESET, buffer);
+      printf(YELLOW "The entered roster: " BOLD "%s" RESET YELLOW " does not exist please try again. \n" RESET, manageRosterInput.StrInput);
       sleep(2);
       system("clear");
       ask_which_roster_and_preform_action("delete");
@@ -444,13 +459,13 @@ int ask_which_roster_and_preform_action(char *action)
       char confirmation[30];
       system("clear");
       sleep(1);
-      printf(RED "WARNING: You are about to delete the roster:" BOLD " %s.\n" RESET, buffer);
+      printf(RED "WARNING: You are about to delete the roster:" BOLD " %s.\n" RESET, manageRosterInput.StrInput);
       printf(RED "This action is IRREVERSIBLE.\n" RESET);
       printf("Do you understand that this cannot be undone? [y/n]\n");
       UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(confirmation);
       if (INPUT_IS_YES(confirmation))
       {
-        int confirmation = confirm_action("delete", buffer);
+        int confirmation = confirm_action("delete", manageRosterInput.StrInput);
         switch (confirmation)
         {
         case 1:
@@ -458,14 +473,14 @@ int ask_which_roster_and_preform_action(char *action)
           if (retValue == 0)
           {
             system("clear");
-            printf(GREEN "Successfully deleted roster:" BOLD " %s\n" RESET, buffer);
+            printf(GREEN "Successfully deleted roster:" BOLD " %s\n" RESET, manageRosterInput.StrInput);
             sleep(2);
             system("clear");
           }
           else
           {
             system("clear");
-            printf(RED "Failed to delete roster:" BOLD " %s" RESET RED "please try again\n" RESET, buffer);
+            printf(RED "Failed to delete roster:" BOLD " %s" RESET RED "please try again\n" RESET, manageRosterInput.StrInput);
             sleep(2);
             system("clear");
           }
@@ -493,14 +508,23 @@ int ask_which_roster_and_preform_action(char *action)
   }
   else if (strcmp(action, "add student to roster") == 0)
   {
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-    sprintf(rosterNameWithPrefix, "Roster_%s", buffer);
+
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+    if (strcmp(manageRosterInput.StrInput, "cancel") == 0)
+    {
+      system("clear");
+      printf(YELLOW "Cancelling operation\n" RESET);
+      sleep(1);
+      system("clear");
+      return 0; // TODO come back to this. might call a function instead
+    }
+    sprintf(rosterNameWithPrefix, "Roster_%s", manageRosterInput.StrInput);
     int rosterExists = check_if_table_exists(rosterNameWithPrefix);
     if (rosterExists == FALSE)
     {
       system("clear");
       sleep(1);
-      printf(YELLOW "The entered roster: " BOLD "%s" RESET YELLOW " does not exist please try again. \n" RESET, buffer);
+      printf(YELLOW "The entered roster: " BOLD "%s" RESET YELLOW " does not exist please try again. \n" RESET, manageRosterInput.StrInput);
       sleep(2);
       system("clear");
       ask_which_roster_and_preform_action("add student to roster");
@@ -521,15 +545,22 @@ int ask_which_roster_and_preform_action(char *action)
   else if (strcmp(action, "Create a column") == 0)
 
   {
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-
-    sprintf(rosterNameWithPrefix, "Roster_%s", buffer);
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+    if (strcmp(manageRosterInput.StrInput, "cancel") == 0)
+    {
+      system("clear");
+      printf(YELLOW "Cancelling operation\n" RESET);
+      sleep(1);
+      system("clear");
+      return 0; // TODO come back to this. might call a function instead
+    }
+    sprintf(rosterNameWithPrefix, "Roster_%s", manageRosterInput.StrInput);
     int rosterExists = check_if_table_exists(rosterNameWithPrefix);
     if (rosterExists == FALSE)
     {
       system("clear");
       sleep(1);
-      printf(YELLOW "The entered roster: " BOLD "%s" RESET YELLOW " does not exist please try again. \n" RESET, buffer);
+      printf(YELLOW "The entered roster: " BOLD "%s" RESET YELLOW " does not exist please try again. \n" RESET, manageRosterInput.StrInput);
       sleep(2);
       system("clear");
       ask_which_roster_and_preform_action("create a column");
@@ -543,14 +574,22 @@ int ask_which_roster_and_preform_action(char *action)
   }
   else if (strcmp(action, "delete a column") == 0)
   {
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-    sprintf(rosterNameWithPrefix, "Roster_%s", buffer);
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+    if (strcmp(manageRosterInput.StrInput, "cancel") == 0)
+    {
+      system("clear");
+      printf(YELLOW "Cancelling operation\n" RESET);
+      sleep(1);
+      system("clear");
+      return 0; // TODO come back to this. might call a function instead
+    }
+    sprintf(rosterNameWithPrefix, "Roster_%s", manageRosterInput.StrInput);
     int rosterExists = check_if_table_exists(rosterNameWithPrefix);
     if (rosterExists == FALSE)
     {
       system("clear");
       sleep(1);
-      printf(YELLOW "The entered roster: " BOLD "%s" RESET YELLOW " does not exist please try again. \n" RESET, buffer);
+      printf(YELLOW "The entered roster: " BOLD "%s" RESET YELLOW " does not exist please try again. \n" RESET, manageRosterInput.StrInput);
       sleep(2);
       system("clear");
       ask_which_roster_and_preform_action("delete a column");
@@ -579,10 +618,10 @@ int create_col(const char *rosterName, const char *colType)
   puts("Enter a name for the new column");
   puts("Note: The column name must be atleast one character long");
   puts(YELLOW "To cancel this operation enter 'cancel'" RESET);
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-  strcpy(colName, buffer);
+  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+  strcpy(colName, manageRosterInput.StrInput);
 
-  if (strcmp(buffer, "cancel") == 0)
+  if (strcmp(manageRosterInput.StrInput, "cancel") == 0)
   {
     system("clear");
     printf(YELLOW "Cancelling operation\n" RESET);
@@ -592,7 +631,7 @@ int create_col(const char *rosterName, const char *colType)
   }
   else
   {
-    int hasNonSpaceChar = has_one_non_space_char(buffer);
+    int hasNonSpaceChar = has_one_non_space_char(manageRosterInput.StrInput);
     if (hasNonSpaceChar == TRUE)
     {
       int confirmation = confirm_action("Create a column", rosterName);
@@ -647,10 +686,10 @@ int delete_col(const char *rosterName)
   puts("Enter a name for the column that you would like to delete");
   puts("Note: The column name must be atleast one character long");
   puts(YELLOW "To cancel this operation enter 'cancel'" RESET);
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-  strcpy(colName, buffer);
+  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+  strcpy(colName, manageRosterInput.StrInput);
 
-  if (strcmp(buffer, "cancel") == 0)
+  if (strcmp(manageRosterInput.StrInput, "cancel") == 0)
   {
     system("clear");
     printf(YELLOW "Cancelling operation\n" RESET);
@@ -723,8 +762,8 @@ int choose_col_type(const char *rosterName)
     puts("4. True or False Values");
     puts("5. Dates");
     puts("6. Not sure");
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-    int numSelection = atoi(buffer);
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+    int numSelection = atoi(manageRosterInput.StrInput);
     showingColSelectionMenu = FALSE;
     switch (numSelection)
     {
@@ -761,7 +800,6 @@ int choose_col_type(const char *rosterName)
 
 int confirm_action(const char *action, ...)
 {
-  char buffer[30];
   va_list args;
   va_start(args, action);
 
@@ -771,12 +809,12 @@ int confirm_action(const char *action, ...)
   system("clear");
   printf(YELLOW "Are you sure that you want to %s" BOLD " %s " RESET YELLOW " [y/n]\n" RESET, action, rosterName);
 
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-  if (INPUT_IS_YES(buffer))
+  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+  if (INPUT_IS_YES(manageRosterInput.StrInput))
   {
     return 1;
   }
-  else if (INPUT_IS_NO(buffer))
+  else if (INPUT_IS_NO(manageRosterInput.StrInput))
   {
     return 2;
   }
@@ -789,8 +827,4 @@ int confirm_action(const char *action, ...)
     confirm_action(action);
   }
 }
-
-// this handles the action of viewing all of a rosters information
-int show_roster_data(const char *rosterName)
-{
-}
+// todo crate a function to handle showing a roster and all its data
