@@ -762,7 +762,7 @@ extern "C"
     sqlite3_bind_text(statement, 3, StudentID, -1, SQLITE_STATIC);
 
     dbConnection = sqlite3_step(statement);
-    if (dbConnection != SQLITE_OK)
+    if (dbConnection != SQLITE_DONE)
     {
       __throw_error_statement_step("insert_student_into_db", database, dbConnection, statement);
     }
@@ -792,6 +792,8 @@ extern "C"
     if (dbConnection != SQLITE_OK)
     {
       __throw_error_exec_query("show_students_in_db", database, dbConnection);
+      cout << YELLOW << "It is possible that there are no students in the student database." << RESET << endl;
+      cout << "Try adding a student to the student database first then try again." << endl;
     }
 
     // Close the database
