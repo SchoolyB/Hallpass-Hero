@@ -100,6 +100,28 @@ int print_student_info_callback(void *data, int argc, char **argv, char **azColN
   return 0;
 }
 
+int display_data_callback(void *data, int argc, char **argv, char **colNames)
+{
+  if (argc <= 0)
+  {
+    return FALSE; // No data, do nothing
+  }
+
+  // Display data
+  for (int i = 0; i < argc; i++)
+  {
+    if (argv[i] != nullptr)
+    {
+      printf("%-30s | ", argv[i]);
+    }
+  }
+  printf("\n");
+
+  // Display footer
+  printf("=====================================================================================================================================\n");
+
+  return FALSE;
+}
 /************************************************************************************
  * print_table_names_callback(): Callback function for sqlite3_exec()
  * Note: This callback function is used to print the names of all tables
@@ -116,17 +138,6 @@ int print_table_names_callback(void *data, int argc, char **argv, char **azColNa
     }
   }
 
-  return 0;
-}
-
-// todo come back to this and use it when showing all of a roster's data
-int show_table_data_callback(void *data, int argc, char **argv, char **azColName)
-{
-  for (int i = 0; i < argc; i++)
-  {
-    printf(BOLD "| %-10s" RESET, argv[i] ? argv[i] : "NULL");
-  }
-  printf("\n");
   return 0;
 }
 
@@ -291,6 +302,7 @@ extern "C"
    * add_col_to_roster(): Adds the passed in col name to the passed in roster
    * Note: See function usage in  ../src/_manage_roster.c
    ************************************************************************************/
+  // todo marshall you are working on checking existing column types. you made a function called int check_col_type below. you need to use this func here as an example...
   int add_col_to_roster(const char *rosterName, const char *colName, const char *colType)
   {
     string rosterNameString(rosterName);
@@ -388,21 +400,162 @@ extern "C"
       __throw_error_prepare_statement("check_if_col_exists", database, dbConnection);
     }
 
-    bool colExists = false;
+    int colExists = FALSE;
 
     while (sqlite3_step(statement) == SQLITE_ROW)
     {
+      // Dont ask me what the fuck is going on here.
       const char *columnName = reinterpret_cast<const char *>(sqlite3_column_text(statement, 1));
       if (strcmp(columnName, colName) == 0)
       {
-        colExists = true;
+        colExists = TRUE;
         break; // break out of the loop if the column is found
       }
     }
     sqlite3_finalize(statement);
     sqlite3_close(database);
 
-    return colExists ? 0 : 1;
+    /* The ternary operator threw me off a bit.
+      while debugging I noticed that the value of colExists
+      was always 0. I had true and false in the wrong order.
+      - Marshall Burns
+
+      returns 1 if the column exists, 0 if it does not
+   */
+    return colExists ? TRUE : FALSE;
+  }
+
+  /************************************************************************************
+   * check_col_type(): Checks the type of the passed in column
+   * Note: See function usage in  ../src/_manage_roster.c
+   ************************************************************************************/
+  int check_col_type(const char *rosterName, const char *colName)
+  {
+    string rosterNameString(rosterName);
+    string colNameString(colName);
+
+    sqlite3 *database;
+    int dbConnection = sqlite3_open(dbPath, &database);
+
+    if (dbConnection != SQLITE_OK)
+    {
+      __throw_error_opening_db("check_col_type", database, dbConnection);
+    }
+    string checkForSQLColType = "PRAGMA table_info(" + rosterNameString + ")";
+    const char *checkForSQLColTypeChar = checkForSQLColType.c_str();
+
+    sqlite3_stmt *statement;
+
+    dbConnection = sqlite3_prepare_v2(database, checkForSQLColTypeChar, -1, &statement, nullptr);
+    if (dbConnection != SQLITE_OK)
+    {
+      __throw_error_prepare_statement("check_col_type", database, dbConnection);
+    }
+
+    // Very hacky. ChatGPT really saved my ass. I have no idea what is going on until the strcmps
+    while (sqlite3_step(statement) == SQLITE_ROW)
+    {
+      const char *columnName = reinterpret_cast<const char *>(sqlite3_column_text(statement, 1));
+
+      if (columnName && colNameString == columnName)
+      {
+        const char *colType = reinterpret_cast<const char *>(sqlite3_column_text(statement, 2));
+        if (strcmp(colType, "TEXT") == 0)
+        {
+          return 5;
+        }
+        else if (strcmp(colType, "INTEGER") == 0)
+        {
+          return 6;
+        }
+        else if (strcmp(colType, "REAL") == 0)
+        {
+          return 7;
+        }
+        else if (strcmp(colType, "BOOLEAN") == 0)
+        {
+          return 8;
+        }
+        else if (strcmp(colType, "DATE") == 0)
+        {
+          return 9;
+        }
+        break;
+      }
+    }
+
+    sqlite3_finalize(statement);
+    sqlite3_close(database);
+  }
+
+  int show_all_roster_data(const char *rosterName)
+  {
+    string rosterNameString(rosterName);
+    sqlite3 *database;
+
+    int dbConnection = sqlite3_open(dbPath, &database);
+
+    if (dbConnection != SQLITE_OK)
+    {
+      __throw_error_opening_db("show_all_roster_data", database, dbConnection);
+    }
+
+    // Retrieve all data
+    string getAllDataSQL = "SELECT * FROM " + rosterNameString;
+    const char *allDataSQL = getAllDataSQL.c_str();
+
+    if (sqlite3_exec(database, allDataSQL, display_data_callback, 0, 0) != SQLITE_OK)
+    {
+      cerr << "Error executing SQL statement: " << sqlite3_errmsg(database) << endl;
+      sqlite3_close(database);
+      return -1; // Return an error code or handle it as appropriate
+    }
+
+    cout << endl;
+    sqlite3_close(database);
+    return 0; // Return an appropriate value or handle the query results as needed
+  }
+
+  int sort_alphabetically(const char *rosterName, const char *colName)
+  {
+    string rosterNameString(rosterName);
+    string colNameString(colName);
+    sqlite3 *database;
+
+    int dbConnection = sqlite3_open(dbPath, &database);
+
+    if (dbConnection != SQLITE_OK)
+    {
+      __throw_error_opening_db("sort_alphabetically", database, dbConnection);
+    }
+    string sortSQLColAlphabetically = "SELECT " + colNameString + "FROM " + rosterNameString + "ORDER BY " + colNameString + "ASC";
+
+    const char *sortSQL = sortSQLColAlphabetically.c_str();
+  }
+
+  int sort_reverse_alphabetically(const char *rosterName, const char *colName)
+  {
+  }
+
+  // todo might not use
+  int sort_by_length(const char *rosterName, const char *colName)
+  {
+  }
+
+  int sort_ascending(const char *rosterName, const char *colName)
+  {
+  }
+
+  int sort_descending(const char *rosterName, const char *colName)
+  {
+  }
+
+  int sort_true(const char *rosterName, const char *colName)
+  {
+  }
+
+  int sort_false(const char *rosterName, const char *colName)
+  {
   }
 
   /************************************************************************************

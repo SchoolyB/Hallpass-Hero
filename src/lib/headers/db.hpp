@@ -47,6 +47,9 @@ extern "C"
   int add_col_to_roster(const char *rosterName, const char *colName, const char *colType);
   int delete_col_from_roster(const char *rosterName, const char *colName);
   int check_if_col_exists(const char *rosterName, const char *colName);
+  int check_col_type(const char *rosterName, const char *colName);
+  int show_all_roster_data(const char *rosterName);
+  int sort_alphabetically(const char *rosterName, const char *colName);
   int drop_table(const char *tableName);
   int get_table_count(const char *path);
   int add_student_to_roster(const char *rosterName, const char *FirstName, const char *LastName, const char *StudentID);
