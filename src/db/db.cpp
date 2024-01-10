@@ -40,8 +40,8 @@ int __throw_error_opening_db(string functionName, sqlite3 *database, int param)
  ************************************************************************************/
 int __throw_error_exec_query(string functionName, sqlite3 *database, int param)
 {
-  CPP_UTILS_ERROR_LOGGER("Failed to execute query ", functionName.c_str(), CppErrorLevel::CRITICAL);
-  cerr << RED << "CRITICAL ERROR: Failed to execute query" << RESET << endl;
+  CPP_UTILS_ERROR_LOGGER("Failed to execute query. ", functionName.c_str(), CppErrorLevel::CRITICAL);
+  cerr << RED << "CRITICAL ERROR: Failed to execute query" << sqlite3_errmsg(database) << RESET << endl;
   sqlite3_close(database);
   return -2;
 }
@@ -53,7 +53,7 @@ int __throw_error_exec_query(string functionName, sqlite3 *database, int param)
 int __throw_error_prepare_statement(string functionName, sqlite3 *database, int param)
 {
   CPP_UTILS_ERROR_LOGGER("Failed to prepare SQL statement. ", functionName.c_str(), CppErrorLevel::CRITICAL);
-  cerr << RED << "CRITICAL ERROR: Failed to prepare SQL statement" << RESET << endl;
+  cerr << RED << "CRITICAL ERROR: Failed to prepare SQL statement" << sqlite3_errmsg(database) << RESET << endl;
   sqlite3_close(database);
   return -3;
 }
@@ -66,7 +66,7 @@ int __throw_error_prepare_statement(string functionName, sqlite3 *database, int 
 int __throw_error_statement_step(string functionName, sqlite3 *database, int param, sqlite3_stmt *statement)
 {
   CPP_UTILS_ERROR_LOGGER("Failed to execute SQL statement step. ", functionName.c_str(), CppErrorLevel::CRITICAL);
-  cerr << RED << "Error executing SQL statement: " << sqlite3_errmsg(database) << RESET << endl;
+  cerr << RED << "CRITICAL ERROR: Failed to execute SQL statement step: " << sqlite3_errmsg(database) << RESET << endl;
   sqlite3_close(database);
   return -4;
 }
@@ -95,8 +95,6 @@ int print_student_info_callback(void *data, int argc, char **argv, char **azColN
     printf(BOLD "| %-10s" RESET, argv[i] ? argv[i] : "NULL");
   }
   cout << "\n-------------------------------------------" << endl;
-
-  // printf("\n");
   return 0;
 }
 
@@ -104,23 +102,23 @@ int display_data_callback(void *data, int argc, char **argv, char **colNames)
 {
   if (argc <= 0)
   {
-    return FALSE; // No data, do nothing
+    // TODO need to handle this error better
+    return -1; // No data, do nothing
   }
 
   // Display data
+  printf("-------------------------------------------------------------------------------\n");
   for (int i = 0; i < argc; i++)
   {
     if (argv[i] != nullptr)
     {
-      printf("%-30s | ", argv[i]);
+      printf("%-15s | ", argv[i]);
     }
   }
   printf("\n");
+  printf("-------------------------------------------------------------------------------\n");
 
-  // Display footer
-  printf("=====================================================================================================================================\n");
-
-  return FALSE;
+  return 0;
 }
 /************************************************************************************
  * print_table_names_callback(): Callback function for sqlite3_exec()
@@ -140,7 +138,7 @@ int print_table_names_callback(void *data, int argc, char **argv, char **azColNa
 
   return 0;
 }
-
+// todo this is a duplicate of print_table_names_callback above. I need to remove this or that one and update the usage locations
 int callback(void *notUsed, int argc, char **argv, char **azColName)
 {
   // Print the table names directly
@@ -488,6 +486,10 @@ extern "C"
     sqlite3_close(database);
   }
 
+  /************************************************************************************
+   * show_all_roster_data(): Prints all data from the passed in roster
+   * Note: See function usage in  ../src/_manage_roster.c
+   ************************************************************************************/
   int show_all_roster_data(const char *rosterName)
   {
     string rosterNameString(rosterName);
@@ -500,7 +502,6 @@ extern "C"
       __throw_error_opening_db("show_all_roster_data", database, dbConnection);
     }
 
-    // Retrieve all data
     string getAllDataSQL = "SELECT * FROM " + rosterNameString;
     const char *allDataSQL = getAllDataSQL.c_str();
 
@@ -508,15 +509,15 @@ extern "C"
     {
       cerr << "Error executing SQL statement: " << sqlite3_errmsg(database) << endl;
       sqlite3_close(database);
-      return -1; // Return an error code or handle it as appropriate
+      return -1;
     }
 
     cout << endl;
     sqlite3_close(database);
-    return 0; // Return an appropriate value or handle the query results as needed
+    return 0;
   }
 
-  int sort_alphabetically(const char *rosterName, const char *colName)
+  int sort_ascending(const char *rosterName, const char *colName)
   {
     string rosterNameString(rosterName);
     string colNameString(colName);
@@ -533,28 +534,15 @@ extern "C"
     const char *sortSQL = sortSQLColAlphabetically.c_str();
   }
 
-  int sort_reverse_alphabetically(const char *rosterName, const char *colName)
-  {
-  }
-
-  // todo might not use
-  int sort_by_length(const char *rosterName, const char *colName)
-  {
-  }
-
-  int sort_ascending(const char *rosterName, const char *colName)
-  {
-  }
-
   int sort_descending(const char *rosterName, const char *colName)
   {
   }
 
-  int sort_true(const char *rosterName, const char *colName)
+  int sort_true_first(const char *rosterName, const char *colName)
   {
   }
 
-  int sort_false(const char *rosterName, const char *colName)
+  int sort_false_first(const char *rosterName, const char *colName)
   {
   }
 

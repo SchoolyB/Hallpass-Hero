@@ -44,6 +44,7 @@ int main(void)
   while (mainMenuProccess == TRUE)
   {
     /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-START OF MAIN MENU+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
+    system("clear");
     puts("Welcome to the Hallpass Hero main menu!");
     puts("Please select one of the options below:");
 
