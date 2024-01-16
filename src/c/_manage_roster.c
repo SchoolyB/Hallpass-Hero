@@ -123,12 +123,34 @@ int manage_roster(void)
 
             while (showingRosterData == TRUE)
             {
-              show_roster_data(rosterNameWithPrefix);
-              showingRosterData = FALSE;
+              show_roster_data_with_warning(rosterNameWithPrefix);
+              puts("What would you like to do?");
+              puts("Enter the corresponding number");
+              puts("1.Sort Roster");
+              puts("2.Go Back");
+              puts("3.Main Menu");
+              UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+              manageRosterInput.NumInput = atoi(manageRosterInput.StrInput);
+              switch (manageRosterInput.NumInput)
+              {
+              case 1:
+                system("clear");
+                show_roster_data_without_warning(rosterNameWithPrefix);
+                handle_col_sort_logic(rosterNameWithPrefix);
+              case 2:
+                manage_roster();
+              case 3:
+                return 0;
+              default:
+                system("clear");
+                puts("Please make a valid decision");
+                sleep(1);
+                system("clear");
+                showingRosterData = TRUE;
+              }
 
-              // todo might allow for updating/editing the roster from this menu. doubt it though
+              // todo need to ask user what they want to do. go back? main menu? sort?
             }
-            handle_col_sort_logic(rosterNameWithPrefix);
 
             break;
           default:
@@ -880,12 +902,12 @@ int handle_col_sort_logic(const char *rosterName)
   if (colExists == TRUE)
   {
     int result = check_roster_col_type(rosterName, manageRosterInput.StrInput);
-
+    strcpy(rosterColumn.ColumnName, manageRosterInput.StrInput);
     switch (result)
     {
-
     case 8: // boolean
       strcpy(rosterColumn.ColumnType, "BOOLEAN");
+      sample_func(rosterColumn.ColumnName);
       puts("1. True");
       puts("2. False");
       break;
@@ -894,8 +916,9 @@ int handle_col_sort_logic(const char *rosterName)
     case 7: // real
     case 9: // date
       strcpy(rosterColumn.ColumnType, "OTHER");
-      puts("1. Ascending");
-      puts("2. Descending");
+      sample_func(rosterColumn.ColumnName);
+      puts("1. Ascending Order");
+      puts("2. Descending Order");
       break;
     }
   }
@@ -915,7 +938,7 @@ void sample_func(const char *colName)
 
   puts("How would you like to sort this column?");
   puts("Enter the corresponding number for the sorting method.");
-  puts("You can cancel this operation by entering 'cancel'");
+  puts(YELLOW "You can cancel this operation by entering 'cancel'" RESET);
   UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(rosterColumn.ColumnSortingMethod);
   // todo handle canceling operation
   manageRosterInput.NumInput = atoi(rosterColumn.ColumnSortingMethod);
@@ -933,7 +956,6 @@ void sample_func(const char *colName)
       break;
     }
   }
-
   else if (strcmp(rosterColumn.ColumnType, "OTHER") == 0)
   {
     switch (manageRosterInput.NumInput)
@@ -948,14 +970,27 @@ void sample_func(const char *colName)
     }
   }
 }
+
 /************************************************************************************
- * show_roster_data(): Handles the bulk of the logic that shows an entire rosters data
+ * show_roster_data_without_warning(): Displays a rosters data without the warning
+ *                                     and without getting user confirmation.
  *
  * Note: see usage in
  ************************************************************************************/
-int show_roster_data(const char *rosterName)
+int show_roster_data_without_warning(const char *rosterName)
 {
   system("clear");
+  show_all_roster_data(rosterName);
+}
+
+/************************************************************************************
+ * show_roster_data_with_warning(): Warns the user about displaying a rosters data
+ *                                  and gets user confirmation to show said data.
+ *
+ * Note: see usage in
+ ************************************************************************************/
+int show_roster_data_with_warning(const char *rosterName)
+{
   printf(RED "WARNING: You are requesting to show all data in the roster: " BOLD "%s\n" RESET, rosterName);
   puts("Continuing with this operation may have the following affects:" RESET);
   puts("1: Some data may not be visible to you depending on the dimensions of your terminal" RESET);
@@ -983,10 +1018,9 @@ int show_roster_data(const char *rosterName)
     printf(YELLOW "Please enter a valid decision\n" RESET);
     sleep(2);
     system("clear");
-    show_roster_data(rosterName);
+    show_roster_data_without_warning(rosterName);
   }
 }
-
 /************************************************************************************
  * confirm_action(): Handles the logic for confirming an action.
  *
