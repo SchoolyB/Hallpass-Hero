@@ -125,7 +125,7 @@ int manage_roster(void)
             {
               show_roster_data_with_warning(rosterNameWithPrefix);
               puts("What would you like to do?");
-              puts("Enter the corresponding number");
+              printf("Enter the corresponding number.\n\n");
               puts("1.Sort Roster");
               puts("2.Go Back");
               puts("3.Main Menu");
@@ -134,24 +134,32 @@ int manage_roster(void)
               switch (manageRosterInput.NumInput)
               {
               case 1:
+                showingRosterData = FALSE;
                 system("clear");
                 show_roster_data_without_warning(rosterNameWithPrefix);
-                handle_col_sort_logic(rosterNameWithPrefix);
+                choose_which_col_to_sort(rosterNameWithPrefix);
               case 2:
+                showingRosterData = FALSE;
+                system("clear");
+                puts("Returning to previous menu");
+                sleep(1);
+                system("clear");
                 manage_roster();
               case 3:
+                showingRosterData = FALSE;
+                system("clear");
+                puts("Returning to main menu");
+                sleep(1);
+                system("clear");
                 return 0;
               default:
                 system("clear");
-                puts("Please make a valid decision");
+                puts("Invalid input please try again.");
                 sleep(1);
                 system("clear");
-                showingRosterData = TRUE;
+                showingRosterData = TRUE; 
               }
-
-              // todo need to ask user what they want to do. go back? main menu? sort?
             }
-
             break;
           default:
             system("clear");
@@ -893,7 +901,15 @@ const char check_roster_col_type(const char *rosterName, const char *colName)
     return 0;
   }
 }
-int handle_col_sort_logic(const char *rosterName)
+
+/************************************************************************************
+  * choose_which_col_to_sort(): Handles the logic for choosing which column to sort.
+  *   
+  * 
+  * 
+  * Note: see usage in manage_roster()
+ ************************************************************************************/
+int choose_which_col_to_sort(const char *rosterName)
 {
   puts("Which column would you like to sort?");
   UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
@@ -907,18 +923,14 @@ int handle_col_sort_logic(const char *rosterName)
     {
     case 8: // boolean
       strcpy(rosterColumn.ColumnType, "BOOLEAN");
-      sample_func(rosterColumn.ColumnName);
-      puts("1. True");
-      puts("2. False");
+      handle_col_sort_logic(rosterColumn.ColumnName);
       break;
     case 5: // text
     case 6: // integer
     case 7: // real
     case 9: // date
       strcpy(rosterColumn.ColumnType, "OTHER");
-      sample_func(rosterColumn.ColumnName);
-      puts("1. Ascending Order");
-      puts("2. Descending Order");
+      handle_col_sort_logic(rosterColumn.ColumnName);
       break;
     }
   }
@@ -929,53 +941,95 @@ int handle_col_sort_logic(const char *rosterName)
     sleep(2);
     system("clear");
     puts("Please try again");
-    handle_col_sort_logic(rosterName);
+    show_roster_data_without_warning(rosterName);
+    choose_which_col_to_sort(rosterName);
   }
 }
 
-void sample_func(const char *colName)
+/************************************************************************************
+ * handle_col_sort_logic(): Handles the logic for sorting a column.
+ * 
+ * 
+ * 
+ * Note: see usage in choose_which_col_to_sort()
+ ************************************************************************************/
+int handle_col_sort_logic(const char *colName)
 {
-
   puts("How would you like to sort this column?");
   puts("Enter the corresponding number for the sorting method.");
   puts(YELLOW "You can cancel this operation by entering 'cancel'" RESET);
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(rosterColumn.ColumnSortingMethod);
   // todo handle canceling operation
-  manageRosterInput.NumInput = atoi(rosterColumn.ColumnSortingMethod);
-
   if (strcmp(rosterColumn.ColumnType, "BOOLEAN") == 0)
   {
+    puts("1: True First");
+    puts("2: False First");
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(rosterColumn.ColumnSortingMethod);
+    manageRosterInput.NumInput = atoi(rosterColumn.ColumnSortingMethod);
+    if(INPUT_IS_CANCEL(rosterColumn.ColumnSortingMethod))
+    {
+      system("clear");
+      printf(YELLOW "Cancelling operation\n" RESET);
+      sleep(1);
+      system("clear");
+      return 0; // TODO come back to this. might call a function instead
+    }
     switch (manageRosterInput.NumInput)
     {
     case 1:
-      // sort by trues first
+      system("clear");
+      printf(GREEN "Now sorting column: " BOLD "%s" RESET GREEN" in roster: " BOLD "%s" RESET GREEN" with true values first.\n "RESET, colName, rosterNameWithPrefix);
+      sort_roster_col_ascending(rosterNameWithPrefix, colName);
+      wait_for_char_input();
       break;
     case 2:
-    // sort by falses first
+      system("clear");
+      printf(GREEN "Now sorting column: " BOLD "%s" RESET GREEN" in roster: " BOLD "%s" RESET GREEN" with false values first.\n "RESET, colName, rosterNameWithPrefix);
+      sort_roster_col_descending(rosterNameWithPrefix, colName);
+      wait_for_char_input();
+      break;
     default:
       break;
     }
   }
   else if (strcmp(rosterColumn.ColumnType, "OTHER") == 0)
   {
+    puts("1: Ascending Order");
+    puts("2: Descending Order");
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(rosterColumn.ColumnSortingMethod);
+    manageRosterInput.NumInput = atoi(rosterColumn.ColumnSortingMethod);
+    if(INPUT_IS_CANCEL(rosterColumn.ColumnSortingMethod))
+    {
+      system("clear");
+      printf(YELLOW "Cancelling operation\n" RESET);
+      sleep(1);
+      system("clear");
+      return 0; // TODO come back to this. might call a function instead if i do. make func type void
+    }
     switch (manageRosterInput.NumInput)
     {
     case 1:
-      // sort by ascending
+      system("clear");
+      printf(GREEN "Now sorting column: " BOLD "%s" RESET GREEN" in roster: " BOLD "%s" RESET GREEN" in ascending order.\n "RESET, colName, rosterNameWithPrefix);
+      sort_roster_col_ascending(rosterNameWithPrefix, colName);
+      wait_for_char_input();
       break;
     case 2:
-    // sort by descending
+      system("clear");
+      printf(GREEN "Now sorting column: " BOLD "%s" RESET GREEN" in roster: " BOLD "%s" RESET GREEN" in descending order.\n "RESET, colName, rosterNameWithPrefix);
+      sort_roster_col_descending(rosterNameWithPrefix, colName);
+      wait_for_char_input();
     default:
       break;
     }
   }
+  
 }
 
 /************************************************************************************
  * show_roster_data_without_warning(): Displays a rosters data without the warning
  *                                     and without getting user confirmation.
- *
- * Note: see usage in
+
+ * Note: see usage in manage_roster()
  ************************************************************************************/
 int show_roster_data_without_warning(const char *rosterName)
 {
@@ -987,7 +1041,7 @@ int show_roster_data_without_warning(const char *rosterName)
  * show_roster_data_with_warning(): Warns the user about displaying a rosters data
  *                                  and gets user confirmation to show said data.
  *
- * Note: see usage in
+ * Note: see usage in manage_roster()
  ************************************************************************************/
 int show_roster_data_with_warning(const char *rosterName)
 {
@@ -995,7 +1049,6 @@ int show_roster_data_with_warning(const char *rosterName)
   puts("Continuing with this operation may have the following affects:" RESET);
   puts("1: Some data may not be visible to you depending on the dimensions of your terminal" RESET);
   printf("2: Take several seconds to load all the data\n\n" RESET);
-
   puts("Are you sure that you'd like to continue with this operation?[y/n]");
   puts(YELLOW "To cancel this operation enter 'cancel'" RESET);
   UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
@@ -1010,7 +1063,8 @@ int show_roster_data_with_warning(const char *rosterName)
   else if (INPUT_IS_YES(manageRosterInput.StrInput))
   {
     system("clear");
-    show_all_roster_data(rosterName);
+    check_if_roster_has_data(rosterName);
+    
   }
   else
   {
@@ -1019,6 +1073,35 @@ int show_roster_data_with_warning(const char *rosterName)
     sleep(2);
     system("clear");
     show_roster_data_without_warning(rosterName);
+  }
+}
+
+/************************************************************************************
+ * check_if_roster_has_data(): Handles the logic for checking if a roster has data
+ *                             and displaying said data if it does.
+ * 
+ * Note: see usage in show_roster_data_with_warning()
+ ************************************************************************************/
+int check_if_roster_has_data(const char *rosterName)
+{
+int rosterHasData = check_for_data_in_roster(rosterNameWithPrefix); 
+  if(rosterHasData == TRUE)
+  {
+    show_all_roster_data(rosterName);
+  }
+  else if(rosterHasData == FALSE)
+  {
+    system("clear");
+    printf(YELLOW "The roster: " BOLD "%s" RESET YELLOW " does not have any data to display.\n" RESET, rosterName);
+    printf("Please add a student to the roster and try again.\n");
+    wait_for_char_input();
+    manage_roster();
+  }
+  else
+  {
+    UTILS_ERROR_LOGGER("Failed to check if roster has data.", "check_if_roster_has_data", MINOR);
+    printf(RED "Error: Failed to check if roster has data.\n" RESET);
+    //TODO do something here
   }
 }
 /************************************************************************************
