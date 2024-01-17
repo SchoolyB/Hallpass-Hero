@@ -14,15 +14,13 @@ Description : This source file contains the function used
 #include <stdint.h>
 #include <time.h>
 #include <ctype.h>
+#include "../lib/headers/c_files.h"
 #include "../lib/headers/utils.h"
 #include "../lib/headers/db.hpp"
-// #include "../lib/headers/c_files.h"
-// #include "../lib/Cuazar/lib/Cuazar.h"
 
-static char buffer[50];
-static uint8_t menuInput;
 static uint8_t mainMenuProccess;
 int addStudentMenuIsRunning;
+UserInput addStudentInput;
 Student NewStudent;
 /************************************************************************************
  * add_student_to_db(): This is the main function for adding a student
@@ -49,27 +47,27 @@ int add_student_to_db(void)
       printf("| %s %-90s\n", addStudentOptions[i], "");
     }
     puts("|===========================================================================================");
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-    menuInput = atoi(buffer);
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
+    addStudentInput.NumInput = atoi(addStudentInput.StrInput);
 
-    if (menuInput == 1 || strcmp(buffer, "add student") == 0 || strcmp(buffer, "add") == 0)
+    if (addStudentInput.NumInput == 1 || strcmp(addStudentInput.StrInput, "add student") == 0 || strcmp(addStudentInput.StrInput, "add") == 0)
     {
       system("clear");
       addStudentMenuIsRunning = FALSE;
       create_student_db_and_table();
       get_student_first_name();
     }
-    else if (menuInput == 2 || strcmp(buffer, "view students") == 0 || strcmp(buffer, "view") == 0)
+    else if (addStudentInput.NumInput == 2 || strcmp(addStudentInput.StrInput, "view students") == 0 || strcmp(addStudentInput.StrInput, "view") == 0)
     {
       addStudentMenuIsRunning = FALSE;
       system("clear");
       list_all_students();
     }
-    else if (menuInput == 3 || strcmp(buffer, "help") == 0)
+    else if (addStudentInput.NumInput == 3 || strcmp(addStudentInput.StrInput, "help") == 0)
     {
       // TODO help
     }
-    else if (menuInput == 4 || strcmp(buffer, "main menu") == 0 || strcmp(buffer, "main") == 0)
+    else if (addStudentInput.NumInput == 4 || strcmp(addStudentInput.StrInput, "main menu") == 0 || strcmp(addStudentInput.StrInput, "main") == 0)
     {
       system("clear");
       puts("Returning to main menu.");
@@ -97,12 +95,11 @@ int add_student_to_db(void)
 int get_student_first_name(void)
 {
   show_current_step("Enter Student First Name", 1, 7);
-  char buffer[30];
 
   puts("Please enter the students first name.");
   puts(YELLOW "You can cancel this operation by entering 'cancel." RESET);
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-  if (!has_one_non_space_char(buffer))
+  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
+  if (!has_one_non_space_char(addStudentInput.StrInput))
   {
     printf(YELLOW "The entered first name is too short. Please try again\n" RESET);
     sleep(1);
@@ -110,7 +107,7 @@ int get_student_first_name(void)
     UTILS_ERROR_LOGGER("The entered first name is too short", "get_student_first_name", MINOR);
     get_student_first_name();
   }
-  else if (strcmp(buffer, "cancel") == 0)
+  else if (strcmp(addStudentInput.StrInput, "cancel") == 0)
   {
     system("clear");
     puts(YELLOW "Canceling operation." RESET);
@@ -123,16 +120,16 @@ int get_student_first_name(void)
   {
     system("clear");
     show_current_step("Confirm Student First Name", 2, 7);
-    printf("You entered: " BOLD "%s" RESET " is that correct[y/n]\n", buffer);
+    printf("You entered: " BOLD "%s" RESET " is that correct[y/n]\n", addStudentInput.StrInput);
 
     /*Taking the entered value and
     assigning it to a variable.*/
     char setFirstName[30];
-    strcpy(setFirstName, buffer);
+    strcpy(setFirstName, addStudentInput.StrInput);
 
     /*Getting the confirmation*/
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-    if (INPUT_IS_YES(buffer))
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
+    if (INPUT_IS_YES(addStudentInput.StrInput))
     {
       /*Confirming the entered value and
       setting the struct members value to it */
@@ -146,7 +143,7 @@ int get_student_first_name(void)
         return 0;
       }
     }
-    else if (INPUT_IS_NO(buffer))
+    else if (INPUT_IS_NO(addStudentInput.StrInput))
     {
       system("clear");
       puts("Ok lets try again.");
@@ -178,13 +175,12 @@ int get_student_last_name(void)
   char setLastName[30];
   system("clear");
   show_current_step("Enter Student Last Name", 3, 7);
-  char buffer[30];
 
   puts("Please enter the students last name.");
   puts("If the student does not have a last name please enter 'none'.");
   puts(YELLOW "You can cancel this operation by entering 'cancel." RESET);
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-  if (!has_one_non_space_char(buffer))
+  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
+  if (!has_one_non_space_char(addStudentInput.StrInput))
   {
     printf(YELLOW "The entered last name is too short. Please try again\n" RESET);
     printf(YELLOW "If the student does not have a last name please enter 'none'.\n" RESET);
@@ -193,7 +189,7 @@ int get_student_last_name(void)
     UTILS_ERROR_LOGGER("The entered last name is too short", "get_student_last_name", MINOR);
     get_student_last_name();
   }
-  else if (strcmp(buffer, "cancel") == 0)
+  else if (strcmp(addStudentInput.StrInput, "cancel") == 0)
   {
     system("clear");
     puts(YELLOW "Canceling operation." RESET);
@@ -202,7 +198,7 @@ int get_student_last_name(void)
     addStudentMenuIsRunning = TRUE;
     return 0;
   }
-  else if (strcmp(buffer, "none") == 0)
+  else if (strcmp(addStudentInput.StrInput, "none") == 0)
   {
     system("clear");
     show_current_step("Confirm Student Last Name", 4, 7);
@@ -213,8 +209,8 @@ int get_student_last_name(void)
     strcpy(setLastName, "");
 
     /*Getting the confirmation*/
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-    if (INPUT_IS_YES(buffer))
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
+    if (INPUT_IS_YES(addStudentInput.StrInput))
     {
       /*Confirming the entered value and
       setting the struct members value to it */
@@ -222,7 +218,7 @@ int get_student_last_name(void)
       system("clear");
       ask_about_student_id();
     }
-    else if (INPUT_IS_NO(buffer))
+    else if (INPUT_IS_NO(addStudentInput.StrInput))
     {
       system("clear");
       puts("Ok lets try again.");
@@ -241,12 +237,12 @@ int get_student_last_name(void)
   }
   else
   {
-    strcpy(setLastName, buffer);
+    strcpy(setLastName, addStudentInput.StrInput);
     system("clear");
     show_current_step("Confirm Student Last Name", 4, 7);
     printf("You entered: " BOLD "%s" RESET " is that correct?[y/n]\n", setLastName);
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-    if (INPUT_IS_YES(buffer))
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
+    if (INPUT_IS_YES(addStudentInput.StrInput))
     {
       if (setLastName[0] != '\0')
       {
@@ -258,7 +254,7 @@ int get_student_last_name(void)
         ask_about_student_id();
       }
     }
-    else if (INPUT_IS_NO(buffer))
+    else if (INPUT_IS_NO(addStudentInput.StrInput))
     {
       system("clear");
       puts("Ok lets try again.");
@@ -281,7 +277,7 @@ int get_student_last_name(void)
  * Note: see usage in get_student_last_name()
  ************************************************************************************/
 // TODO might make an option in the future to enable or disable the need to do this
-int ask_about_student_id()
+int ask_about_student_id(void)
 {
   system("clear");
   puts("How would you like to assign the student ID?");
@@ -290,10 +286,10 @@ int ask_about_student_id()
   puts("1. Automatically generate an ID ");
   puts("2. Create your own");
 
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-  menuInput = atoi(buffer);
+  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
+  addStudentInput.NumInput = atoi(addStudentInput.StrInput);
 
-  if (strcmp(buffer, "cancel") == 0)
+  if (strcmp(addStudentInput.StrInput, "cancel") == 0)
   {
     system("clear");
     puts(YELLOW "Canceling operation." RESET);
@@ -303,12 +299,12 @@ int ask_about_student_id()
     return 0;
   }
 
-  if (menuInput == 1)
+  if (addStudentInput.NumInput == 1)
   {
     system("clear");
     generate_student_id(NewStudent.FirstName, NewStudent.LastName);
   }
-  else if (menuInput == 2)
+  else if (addStudentInput.NumInput == 2)
   {
     system("clear");
     manually_set_student_id();
@@ -326,7 +322,7 @@ int ask_about_student_id()
  * manually_set_student_id(): Allows the user to manually set a students id.
  * Note: see usage in ask_about_student_id()
  ************************************************************************************/
-void manually_set_student_id()
+void manually_set_student_id(void)
 {
   int gettingStudentId = TRUE;
 
@@ -339,9 +335,9 @@ void manually_set_student_id()
     puts(YELLOW "You can cancel this operation by entering 'cancel." RESET);
     gettingStudentId = FALSE;
   }
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
+  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
 
-  if (strcmp(buffer, "cancel") == 0)
+  if (strcmp(addStudentInput.StrInput, "cancel") == 0)
   {
     system("clear");
     puts(YELLOW "Canceling operation." RESET);
@@ -350,7 +346,7 @@ void manually_set_student_id()
     gettingStudentId == FALSE;
     addStudentMenuIsRunning = TRUE;
   }
-  else if (strlen(buffer) < 2)
+  else if (strlen(addStudentInput.StrInput) < 2)
   {
     gettingStudentId == FALSE;
     puts(YELLOW "The id you entered is too short. Please try again." RESET);
@@ -358,7 +354,7 @@ void manually_set_student_id()
     system("clear");
     manually_set_student_id();
   }
-  else if (strlen(buffer) > 15)
+  else if (strlen(addStudentInput.StrInput) > 15)
   {
     gettingStudentId == FALSE;
     puts(YELLOW "The id you entered is too long. Please try again." RESET);
@@ -371,7 +367,7 @@ void manually_set_student_id()
     gettingStudentId == FALSE;
     system("clear");
     char studentID[15];
-    strcpy(studentID, buffer);
+    strcpy(studentID, addStudentInput.StrInput);
     int result = check_if_student_id_exists(studentID);
     if (result == FALSE)
     {
@@ -431,8 +427,8 @@ int generate_student_id(char *FirstName, char *LastName)
                   " longer than 10 characters, this will be shortened to" BOLD " %s in the student ID \n" RESET,
            NewStudent.LastName, truncatedLastName);
     printf("Are you sure you want to continue with this students last name?[y/n]\n");
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-    if (INPUT_IS_YES(buffer))
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
+    if (INPUT_IS_YES(addStudentInput.StrInput))
     {
       system("clear");
       snprintf(setStudentID, sizeof(setStudentID), "%c%c%s%d%d%d", toupper(FirstName[0]), toupper(FirstName[1]), truncatedLastName, digit1, digit2, digit3);
@@ -454,7 +450,7 @@ int generate_student_id(char *FirstName, char *LastName)
         generate_student_id(FirstName, LastName);
       }
     }
-    else if (INPUT_IS_NO(buffer))
+    else if (INPUT_IS_NO(addStudentInput.StrInput))
     {
       handle_last_name_truncated_menu();
     }
@@ -503,11 +499,11 @@ int confirm_generated_student_id(char *studentID)
   {
     show_current_step("Confirm Student Id", 6, 7);
     printf("Is the ID: " BOLD "%s" RESET " for" BOLD " %s %s" RESET " satisfactory?[y/n]\n", studentID, NewStudent.FirstName, NewStudent.LastName);
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
     char setStudentID[15];
     strcpy(setStudentID, studentID);
 
-    if (INPUT_IS_YES(buffer))
+    if (INPUT_IS_YES(addStudentInput.StrInput))
     {
       confirmingStudentId = FALSE;
       show_current_step("Confirm Student Id", 6, 7);
@@ -516,7 +512,7 @@ int confirm_generated_student_id(char *studentID)
       ask_to_add_new_student_to_roster();
     }
 
-    else if (INPUT_IS_NO(buffer))
+    else if (INPUT_IS_NO(addStudentInput.StrInput))
     {
       confirmingStudentId = FALSE;
       system("clear");
@@ -549,11 +545,11 @@ int confirm_manually_entered_student_id(char *studentID)
   {
     show_current_step("Confirm Student Id", 6, 7);
     printf("You've entered: " BOLD "%s" RESET "is that correct?[y/n]\n", studentID);
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
     char setStudentID[15];
     strcpy(setStudentID, studentID);
 
-    if (INPUT_IS_YES(buffer))
+    if (INPUT_IS_YES(addStudentInput.StrInput))
     {
       confirmingStudentId = FALSE;
       show_current_step("Confirm Student Id", 6, 7);
@@ -562,7 +558,7 @@ int confirm_manually_entered_student_id(char *studentID)
       ask_to_add_new_student_to_roster();
     }
 
-    else if (INPUT_IS_NO(buffer))
+    else if (INPUT_IS_NO(addStudentInput.StrInput))
     {
       confirmingStudentId = FALSE;
       system("clear");
@@ -598,9 +594,9 @@ int ask_to_add_new_student_to_roster(void)
 
   puts("1: Yes");
   puts("2: No");
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-  menuInput = atoi(buffer);
-  if (menuInput == 1 || INPUT_IS_YES(buffer))
+  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
+  addStudentInput.NumInput = atoi(addStudentInput.StrInput);
+  if (addStudentInput.NumInput == 1 || INPUT_IS_YES(addStudentInput.StrInput))
   {
     ask_which_roster_to_add_newly_created_student();
     puts(GREEN "Adding new student to database..." RESET);
@@ -625,7 +621,7 @@ int ask_to_add_new_student_to_roster(void)
       return 0;
     }
   }
-  else if (menuInput == 2 || INPUT_IS_NO(buffer))
+  else if (addStudentInput.NumInput == 2 || INPUT_IS_NO(addStudentInput.StrInput))
   {
     int result = insert_student_into_db(NewStudent.FirstName, NewStudent.LastName, NewStudent.StudentID);
     if (result == 0)
@@ -660,12 +656,12 @@ int ask_to_add_new_student_to_roster(void)
  *
  * Note: see usage ask_to_add_new_student_to_roster()
  ************************************************************************************/
-int ask_which_roster_to_add_newly_created_student()
+int ask_which_roster_to_add_newly_created_student(void)
 {
-  char rosterNameWithPrefix[40];
+  char rosterNameWithPrefix[60];
   puts("Please enter the name of the roster you would like to add this student to.");
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-  sprintf(rosterNameWithPrefix, "Roster_%s", buffer);
+  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
+  sprintf(rosterNameWithPrefix, "Roster_%s", addStudentInput.StrInput);
 
   int rosterExists = check_if_table_exists(rosterNameWithPrefix);
   if (rosterExists == TRUE)
@@ -690,7 +686,7 @@ int ask_which_roster_to_add_newly_created_student()
   else if (rosterExists == FALSE)
   {
     system("clear");
-    printf(YELLOW "The entered name:" BOLD RESET YELLOW "%s does not exist. Please try again.\n" RESET);
+    printf(YELLOW "The entered name:" BOLD RESET YELLOW "%s does not exist. Please try again.\n" RESET, addStudentInput.StrInput);
     sleep(1);
     system("clear");
     ask_which_roster_to_add_newly_created_student();
@@ -711,19 +707,19 @@ int handle_last_name_truncated_menu(void)
   puts("1. Enter a new last name");
   puts("2. Manually set an ID");
   puts("3. Cancel");
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-  menuInput = atoi(buffer);
-  if (menuInput == 1)
+  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
+  addStudentInput.NumInput = atoi(addStudentInput.StrInput);
+  if (addStudentInput.NumInput == 1)
   {
     system("clear");
     get_student_last_name();
   }
-  else if (menuInput == 2)
+  else if (addStudentInput.NumInput == 2)
   {
     system("clear");
     manually_set_student_id();
   }
-  else if (menuInput == 3)
+  else if (addStudentInput.NumInput == 3)
   {
     system("clear");
     puts(YELLOW "Canceling operation." RESET);

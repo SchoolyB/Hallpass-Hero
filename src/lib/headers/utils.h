@@ -32,6 +32,7 @@ extern "C"
 {
 #endif
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-START MACROS+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
+
 // Booleans
 #define FALSE 0
 #define TRUE 1
@@ -56,12 +57,15 @@ extern "C"
     MODERATE, // 1
     CRITICAL  // 2
   };
-// Handling user confirmation for yes and no
+// Handling user confirmation for yes and no and cancel
 #define INPUT_IS_YES(param) (strcmp(param, "y") == 0 || strcmp(param, "Y") == 0 || \
                              strcmp(param, "yes") == 0 || strcmp(param, "Yes") == 0)
 
 #define INPUT_IS_NO(param) (strcmp(param, "n") == 0 || strcmp(param, "N") == 0 || \
                             strcmp(param, "no") == 0 || strcmp(param, "No") == 0)
+
+#define INPUT_IS_CANCEL(param) (strcmp(param, "c") == 0 || strcmp(param, "C") == 0 || \
+                                strcmp(param, "cancel") == 0 || strcmp(param, "Cancel") == 0)
   //--------------------------------------------------------------------------------//
 
 #define UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(param) (fgets(param, sizeof(param), stdin), UTILS_REMOVE_NEWLINE_CHAR(param))
@@ -70,7 +74,6 @@ extern "C"
   // Declaration of utility functions
 
   int UTILS_ERROR_LOGGER(char *error_message, char *function, enum ErrorLevel level);
-
   void UTILS_REMOVE_NEWLINE_CHAR(char *param);
   void UTILS_CLEAR_INPUT_BUFFER();
   void show_current_menu(char *str);
@@ -79,6 +82,13 @@ extern "C"
   int list_all_students(void);
   int search_for_student(void);
   int has_one_non_space_char(const char *str);
+
+  // this type allows the same input through each C source file. As opposed to constantly declaring char arrays
+  typedef struct
+  {
+    int NumInput;
+    char StrInput[50];
+  } UserInput;
   typedef struct
   {
     char RelationshipToStudent[20];
@@ -105,18 +115,20 @@ extern "C"
 
   } Student;
 
-  // typedef struct
-  // {
-  //   char AssignmentName[40]
+  typedef struct
+  {
+    char Str1[100];
+    char Str2[100];
 
-  //   } Assignment;
-  // typedef struct
-  // {
-  //   int DaysTardy;  // days late
-  //   int DaysAbsent; // days missed
-  //   char AssignmentsMissed
+  } GenericDataType;
 
-  // } RosterColumn;
+  typedef struct
+  {
+    char ColumnName[50];
+    char ColumnType[20];
+    char ColumnSortingMethod[20];
+
+  } Column;
 
 #ifdef __cplusplus
 } // extern "C"

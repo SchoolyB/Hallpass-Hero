@@ -20,8 +20,12 @@ using namespace std;
 
 int hasTables = FALSE;
 int studentIDExists = FALSE;
-const char *dbPath = dbPath;
+const char *dbPath = "../build/db.sqlite";
 
+/************************************************************************************
+ * __throw_error_opening_db(): Handles errors and error logging in the event
+ *                             the db cant be found.
+ ************************************************************************************/
 int __throw_error_opening_db(string functionName, sqlite3 *database, int param)
 {
   CPP_UTILS_ERROR_LOGGER("Failed to open SQLite3 database. ", functionName.c_str(), CppErrorLevel::CRITICAL);
@@ -30,27 +34,39 @@ int __throw_error_opening_db(string functionName, sqlite3 *database, int param)
   return -1;
 }
 
+/************************************************************************************
+ * __throw_error_exec_query(): Handles errors and error logging in the event
+ *                             that the a SQL query is not successfully executed.
+ ************************************************************************************/
 int __throw_error_exec_query(string functionName, sqlite3 *database, int param)
 {
-  CPP_UTILS_ERROR_LOGGER("Failed to execute query ", functionName.c_str(), CppErrorLevel::CRITICAL);
-  cerr << RED << "CRITICAL ERROR: Failed to execute query" << RESET << endl;
+  CPP_UTILS_ERROR_LOGGER("Failed to execute query. ", functionName.c_str(), CppErrorLevel::CRITICAL);
+  cerr << RED << "CRITICAL ERROR: Failed to execute query" << sqlite3_errmsg(database) << RESET << endl;
   sqlite3_close(database);
   return -2;
 }
 
+/************************************************************************************
+ * __throw_error_prepare_statement(): Handles errors and error logging in the event
+ *                                    that the prepare statement is not successful.
+ ************************************************************************************/
 int __throw_error_prepare_statement(string functionName, sqlite3 *database, int param)
 {
   CPP_UTILS_ERROR_LOGGER("Failed to prepare SQL statement. ", functionName.c_str(), CppErrorLevel::CRITICAL);
-  cerr << RED << "CRITICAL ERROR: Failed to prepare SQL statement" << RESET << endl;
+  cerr << RED << "CRITICAL ERROR: Failed to prepare SQL statement" << sqlite3_errmsg(database) << RESET << endl;
   sqlite3_close(database);
   return -3;
 }
 
+/************************************************************************************
+ * __throw_error_statement_step(): Handles errors and error logging in the event
+ *                                 that the statement step is not successful.
+ ************************************************************************************/
+
 int __throw_error_statement_step(string functionName, sqlite3 *database, int param, sqlite3_stmt *statement)
 {
   CPP_UTILS_ERROR_LOGGER("Failed to execute SQL statement step. ", functionName.c_str(), CppErrorLevel::CRITICAL);
-  cerr << RED << "Error executing SQL statement: " << sqlite3_errmsg(database) << endl;
-  sqlite3_finalize(statement);
+  cerr << RED << "CRITICAL ERROR: Failed to execute SQL statement step: " << sqlite3_errmsg(database) << RESET << endl;
   sqlite3_close(database);
   return -4;
 }
@@ -79,11 +95,31 @@ int print_student_info_callback(void *data, int argc, char **argv, char **azColN
     printf(BOLD "| %-10s" RESET, argv[i] ? argv[i] : "NULL");
   }
   cout << "\n-------------------------------------------" << endl;
-
-  // printf("\n");
   return 0;
 }
 
+int display_data_callback(void *data, int argc, char **argv, char **colNames)
+{
+  if (argc <= 0)
+  {
+    // TODO need to handle this error better
+    return -1; // No data, do nothing
+  }
+
+  // Display data
+  printf("-------------------------------------------------------------------------------\n");
+  for (int i = 0; i < argc; i++)
+  {
+    if (argv[i] != nullptr)
+    {
+      printf("%-15s | ", argv[i]);
+    }
+  }
+  printf("\n");
+  printf("-------------------------------------------------------------------------------\n");
+
+  return 0;
+}
 /************************************************************************************
  * print_table_names_callback(): Callback function for sqlite3_exec()
  * Note: This callback function is used to print the names of all tables
@@ -102,18 +138,7 @@ int print_table_names_callback(void *data, int argc, char **argv, char **azColNa
 
   return 0;
 }
-
-// todo come back to this and use it when showing all of a roster's data
-int show_table_data_callback(void *data, int argc, char **argv, char **azColName)
-{
-  for (int i = 0; i < argc; i++)
-  {
-    printf(BOLD "| %-10s" RESET, argv[i] ? argv[i] : "NULL");
-  }
-  printf("\n");
-  return 0;
-}
-
+// todo this is a duplicate of print_table_names_callback above. I need to remove this or that one and update the usage locations
 int callback(void *notUsed, int argc, char **argv, char **azColName)
 {
   // Print the table names directly
@@ -161,16 +186,6 @@ int check_if_table_exists(const char *rosterName)
   }
 }
 
-/************************************************************************************
- * refresh_table_count(): This helper function resets the hasTables flag to FALSE
- * Note: See function usage in the drop_table() function
- ************************************************************************************/
-// todo do I need this??? cant i just the 'hasTables' reset variable value whenever this function is called?
-int refresh_table_count(void)
-{
-  hasTables = FALSE;
-  return 0;
-}
 /*Simple helper that prints a heading when showing the student list*/
 int print_student_list_heading(void)
 {
@@ -245,10 +260,6 @@ extern "C"
     sqlite3_close(database);
 
     return 0;
-
-    // If you want to get the count of tables, you can call your get_table_count function here
-    // int tableCountResult = get_table_count(dbPath);
-    // return tableCountResult;
   }
   /************************************************************************************
    * rename_roster(): Renames a roster in the db.sqlite database
@@ -289,6 +300,7 @@ extern "C"
    * add_col_to_roster(): Adds the passed in col name to the passed in roster
    * Note: See function usage in  ../src/_manage_roster.c
    ************************************************************************************/
+  // todo marshall you are working on checking existing column types. you made a function called int check_col_type below. you need to use this func here as an example...
   int add_col_to_roster(const char *rosterName, const char *colName, const char *colType)
   {
     string rosterNameString(rosterName);
@@ -319,6 +331,10 @@ extern "C"
     return 0;
   }
 
+  /************************************************************************************
+   * delete_col_from_roster(): Deletes the passed in col name to the passed in roster
+   * Note: See function usage in  ../src/_manage_roster.c
+   ************************************************************************************/
   int delete_col_from_roster(const char *rosterName, const char *colName)
   {
     string rosterNameString(rosterName);
@@ -351,8 +367,12 @@ extern "C"
     return 0;
   }
 
+  /************************************************************************************
+   * check_if_col_exists(): Checks if the passed in col name exists in the passed
+   *                        in roster.
+   * Note: See function usage in  ../src/_manage_roster.c
+   ************************************************************************************/
   // man idk. Shout out to ChatGPT for this function...What the fuck
-
   int check_if_col_exists(const char *rosterName, const char *colName)
   {
     string rosterNameString(rosterName);
@@ -378,21 +398,152 @@ extern "C"
       __throw_error_prepare_statement("check_if_col_exists", database, dbConnection);
     }
 
-    bool colExists = false;
+    int colExists = FALSE;
 
     while (sqlite3_step(statement) == SQLITE_ROW)
     {
+      // Dont ask me what the fuck is going on here.
       const char *columnName = reinterpret_cast<const char *>(sqlite3_column_text(statement, 1));
       if (strcmp(columnName, colName) == 0)
       {
-        colExists = true;
+        colExists = TRUE;
         break; // break out of the loop if the column is found
       }
     }
     sqlite3_finalize(statement);
     sqlite3_close(database);
 
-    return colExists ? 0 : 1;
+    /* The ternary operator threw me off a bit.
+      while debugging I noticed that the value of colExists
+      was always 0. I had true and false in the wrong order.
+      - Marshall Burns
+
+      returns 1 if the column exists, 0 if it does not
+   */
+    return colExists ? TRUE : FALSE;
+  }
+
+  /************************************************************************************
+   * check_col_type(): Checks the type of the passed in column
+   * Note: See function usage in  ../src/_manage_roster.c
+   ************************************************************************************/
+  int check_col_type(const char *rosterName, const char *colName)
+  {
+    string rosterNameString(rosterName);
+    string colNameString(colName);
+
+    sqlite3 *database;
+    int dbConnection = sqlite3_open(dbPath, &database);
+
+    if (dbConnection != SQLITE_OK)
+    {
+      __throw_error_opening_db("check_col_type", database, dbConnection);
+    }
+    string checkForSQLColType = "PRAGMA table_info(" + rosterNameString + ")";
+    const char *checkForSQLColTypeChar = checkForSQLColType.c_str();
+
+    sqlite3_stmt *statement;
+
+    dbConnection = sqlite3_prepare_v2(database, checkForSQLColTypeChar, -1, &statement, nullptr);
+    if (dbConnection != SQLITE_OK)
+    {
+      __throw_error_prepare_statement("check_col_type", database, dbConnection);
+    }
+
+    // Very hacky. ChatGPT really saved my ass. I have no idea what is going on until the strcmps
+    while (sqlite3_step(statement) == SQLITE_ROW)
+    {
+      const char *columnName = reinterpret_cast<const char *>(sqlite3_column_text(statement, 1));
+
+      if (columnName && colNameString == columnName)
+      {
+        const char *colType = reinterpret_cast<const char *>(sqlite3_column_text(statement, 2));
+        if (strcmp(colType, "TEXT") == 0)
+        {
+          return 5;
+        }
+        else if (strcmp(colType, "INTEGER") == 0)
+        {
+          return 6;
+        }
+        else if (strcmp(colType, "REAL") == 0)
+        {
+          return 7;
+        }
+        else if (strcmp(colType, "BOOLEAN") == 0)
+        {
+          return 8;
+        }
+        else if (strcmp(colType, "DATE") == 0)
+        {
+          return 9;
+        }
+        break;
+      }
+    }
+
+    sqlite3_finalize(statement);
+    sqlite3_close(database);
+  }
+
+  /************************************************************************************
+   * show_all_roster_data(): Prints all data from the passed in roster
+   * Note: See function usage in  ../src/_manage_roster.c
+   ************************************************************************************/
+  int show_all_roster_data(const char *rosterName)
+  {
+    string rosterNameString(rosterName);
+    sqlite3 *database;
+
+    int dbConnection = sqlite3_open(dbPath, &database);
+
+    if (dbConnection != SQLITE_OK)
+    {
+      __throw_error_opening_db("show_all_roster_data", database, dbConnection);
+    }
+
+    string getAllDataSQL = "SELECT * FROM " + rosterNameString;
+    const char *allDataSQL = getAllDataSQL.c_str();
+
+    if (sqlite3_exec(database, allDataSQL, display_data_callback, 0, 0) != SQLITE_OK)
+    {
+      cerr << "Error executing SQL statement: " << sqlite3_errmsg(database) << endl;
+      sqlite3_close(database);
+      return -1;
+    }
+
+    cout << endl;
+    sqlite3_close(database);
+    return 0;
+  }
+
+  int sort_ascending(const char *rosterName, const char *colName)
+  {
+    string rosterNameString(rosterName);
+    string colNameString(colName);
+    sqlite3 *database;
+
+    int dbConnection = sqlite3_open(dbPath, &database);
+
+    if (dbConnection != SQLITE_OK)
+    {
+      __throw_error_opening_db("sort_alphabetically", database, dbConnection);
+    }
+    string sortSQLColAlphabetically = "SELECT " + colNameString + "FROM " + rosterNameString + "ORDER BY " + colNameString + "ASC";
+
+    const char *sortSQL = sortSQLColAlphabetically.c_str();
+  }
+
+  int sort_descending(const char *rosterName, const char *colName)
+  {
+  }
+
+  int sort_true_first(const char *rosterName, const char *colName)
+  {
+  }
+
+  int sort_false_first(const char *rosterName, const char *colName)
+  {
   }
 
   /************************************************************************************
@@ -491,15 +642,12 @@ extern "C"
 
     dbConnection = sqlite3_step(statement);
 
-    sqlite3_finalize(statement);
-    sqlite3_close(database);
-
     if (dbConnection != SQLITE_DONE)
     {
-      // Handle the error
-      CPP_UTILS_ERROR_LOGGER("Execution failed: ", "add_student_to_roster", CppErrorLevel::CRITICAL);
-      return -2;
+      __throw_error_statement_step("add_student_to_roster", database, dbConnection, statement);
     }
+    sqlite3_finalize(statement);
+    sqlite3_close(database);
 
     return TRUE; // Success...this just makes more sense to me than returning 0. The frontend wants 1
   }
@@ -543,7 +691,8 @@ extern "C"
   }
 
   /************************************************************************************
-   *  create_student_db_and_table();: Begins the process of adding a student to the db.sqlite database
+   *  create_student_db_and_table(): Begins the process of adding a student to the
+   *                                  db.sqlite database
    * Note: See function usage in  ../src/_add_student.c
    * Note: THis function relies on the following helper functions:
    ************************************************************************************/
@@ -555,10 +704,7 @@ extern "C"
 
     if (dbConnection != SQLITE_OK)
     {
-      sqlite3_close(database);
-      CPP_UTILS_ERROR_LOGGER("Failed to open SQLite3 database: ", "add_student_to_student_db", CppErrorLevel::CRITICAL);
-      cerr << RED "Failed to open SQLite3 database" RESET << endl;
-      return 1;
+      __throw_error_opening_db("create_student_db_and_table", database, dbConnection);
     }
     const char *addStudentToSQLTable = "CREATE TABLE IF NOT EXISTS students (id INTEGER PRIMARY KEY AUTOINCREMENT, FirstName, LastName,StudentID INTEGER)";
 
@@ -566,10 +712,7 @@ extern "C"
 
     if (dbConnection != SQLITE_OK)
     {
-      sqlite3_close(database);
-      CPP_UTILS_ERROR_LOGGER("Failed to add student to database: ", "add_student_to_student_db", CppErrorLevel::CRITICAL);
-      cerr << RED "Failed to add student to database" RESET << endl;
-      return 1;
+      __throw_error_exec_query("create_student_db_and_table", database, dbConnection);
     }
 
     sqlite3_close(database);
@@ -577,7 +720,8 @@ extern "C"
   }
 
   /************************************************************************************
-   *  insert_student_into_db();: Inserts a student into the db.sqlite database using the data from the student struct
+   * insert_student_into_db(): Inserts a student into the db.sqlite database using the
+   *                           data from the student struct.
    * Note: See function usage in  ../src/_add_student.c
    ************************************************************************************/
   int insert_student_into_db(const char *FirsName, const char *LastName, const char *StudentID)
@@ -587,10 +731,7 @@ extern "C"
 
     if (dbConnection != SQLITE_OK)
     {
-      sqlite3_close(database);
-      CPP_UTILS_ERROR_LOGGER("Failed to open SQLite3 database: ", "insert_student_into_db", CppErrorLevel::CRITICAL);
-      cerr << RED "Failed to open SQLite3 database" RESET << endl;
-      return 1;
+      __throw_error_opening_db("insert_student_into_db", database, dbConnection);
     }
 
     const char *insertStudentToSQLTable = "INSERT INTO students (FirstName, LastName, StudentID) VALUES (?, ?, ?)";
@@ -600,9 +741,7 @@ extern "C"
     dbConnection = sqlite3_prepare_v2(database, insertStudentToSQLTable, -1, &statement, nullptr);
     if (dbConnection != SQLITE_OK)
     {
-      CPP_UTILS_ERROR_LOGGER("Can't prepare SQL statement", "insert_student_into_db", CppErrorLevel::CRITICAL);
-      sqlite3_close(database);
-      return 1;
+      __throw_error_prepare_statement("insert_student_into_db", database, dbConnection);
     }
 
     // Bind the value
@@ -611,6 +750,10 @@ extern "C"
     sqlite3_bind_text(statement, 3, StudentID, -1, SQLITE_STATIC);
 
     dbConnection = sqlite3_step(statement);
+    if (dbConnection != SQLITE_DONE)
+    {
+      __throw_error_statement_step("insert_student_into_db", database, dbConnection, statement);
+    }
     return 0;
   }
 
@@ -637,6 +780,8 @@ extern "C"
     if (dbConnection != SQLITE_OK)
     {
       __throw_error_exec_query("show_students_in_db", database, dbConnection);
+      cout << YELLOW << "It is possible that there are no students in the student database." << RESET << endl;
+      cout << "Try adding a student to the student database first then try again." << endl;
     }
 
     // Close the database

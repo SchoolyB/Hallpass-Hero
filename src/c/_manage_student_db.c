@@ -16,11 +16,11 @@ Description : This source file contains the function used
 #include "../lib/headers/db.hpp"
 #include "../lib/headers/c_files.h"
 
-static char buffer[50];
-static uint8_t menuInput;
 static uint8_t mainMenuProccess;
 int manageStudentDBMenuIsRunning;
+UserInput manageStudentDBInput;
 Student CurrentStudent;
+
 int manage_student_db(void)
 {
   system("clear");
@@ -40,20 +40,20 @@ int manage_student_db(void)
     {
       printf("%d. %s\n", i + 1, manageStudentDBMenu[i]);
     }
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
-    menuInput = atoi(buffer);
-    if (menuInput == 1 || strcmp(buffer, "list") == 0)
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageStudentDBInput.StrInput);
+    manageStudentDBInput.NumInput = atoi(manageStudentDBInput.StrInput);
+    if (manageStudentDBInput.NumInput == 1 || strcmp(manageStudentDBInput.StrInput, "list") == 0)
     {
       manageStudentDBMenuIsRunning = FALSE;
       system("clear");
       list_all_students();
       manageStudentDBMenuIsRunning = TRUE;
     }
-    else if (menuInput == 2 || strcmp(buffer, "update") == 0)
+    else if (manageStudentDBInput.NumInput == 2 || strcmp(manageStudentDBInput.StrInput, "update") == 0)
     {
       search_for_student();
     }
-    else if (menuInput == 3 || strcmp(buffer, "delete") == 0)
+    else if (manageStudentDBInput.NumInput == 3 || strcmp(manageStudentDBInput.StrInput, "delete") == 0)
     {
       manageStudentDBMenuIsRunning = FALSE;
       system("clear");
@@ -62,9 +62,9 @@ int manage_student_db(void)
       puts("Which student would you like to delete from the database?");
       puts(RED "WARNING: This action cannot be undone!" RESET);
       puts(YELLOW "You can cancel this operation by entering 'cancel'." RESET);
-      UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
+      UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageStudentDBInput.StrInput);
 
-      if (strcmp(buffer, "cancel") == 0)
+      if (strcmp(manageStudentDBInput.StrInput, "cancel") == 0)
       {
         system("clear");
         puts(YELLOW "Cancelling operation" RESET);
@@ -72,9 +72,8 @@ int manage_student_db(void)
         system("clear");
         manageStudentDBMenuIsRunning = TRUE;
       }
-
     }
-    else if (menuInput == 4 || strcmp(buffer, "main") == 0)
+    else if (manageStudentDBInput.NumInput == 4 || strcmp(manageStudentDBInput.StrInput, "main") == 0)
     {
       system("clear");
       manageStudentDBMenuIsRunning = FALSE;
@@ -91,11 +90,6 @@ int manage_student_db(void)
     }
   }
   return 0;
-}
-
-int delete_student_from_db()
-{
-  
 }
 
 int update_student_info(void)
