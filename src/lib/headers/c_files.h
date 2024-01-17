@@ -29,6 +29,12 @@ int ask_which_roster_and_preform_action(char *action);
 int create_col(const char *rosterName, const char *colType);
 int delete_col(const char *rosterName);
 int choose_col_type(const char *rosterName);
+int check_if_roster_has_data(const char *rosterName);
+int choose_which_col_to_sort(const char *rosterName);
+int handle_col_sort_logic(const char *colName);
+int show_roster_data_without_warning(const char *rosterName);
+int show_roster_data_with_warning(const char *rosterName);
+int check_if_roster_has_data(const char *rosterName);
 int confirm_action(const char *action, ...);
 
 /*_manage_student_db.c*/

@@ -41,6 +41,7 @@ extern "C"
   int print_student_list_heading(void);
   int create_new_roster_table(const char *rosterName);
   int show_tables(void);
+  int check_for_data_in_roster(const char *rosterName);
   int rename_roster(const char *oldRosterName, const char *rosterName);
   int set_col_type(const char *rosterName, const char *colName, const char *colType);
   int rename_roster_column(const char *rosterName, const char *oldColName, const char *newColName);
@@ -49,7 +50,8 @@ extern "C"
   int check_if_col_exists(const char *rosterName, const char *colName);
   int check_col_type(const char *rosterName, const char *colName);
   int show_all_roster_data(const char *rosterName);
-  int sort_alphabetically(const char *rosterName, const char *colName);
+  int sort_roster_col_ascending(const char *rosterName, const char *colName);
+  int sort_roster_col_descending(const char *rosterName, const char *colName);
   int drop_table(const char *tableName);
   int get_table_count(const char *path);
   int add_student_to_roster(const char *rosterName, const char *FirstName, const char *LastName, const char *StudentID);
