@@ -261,6 +261,46 @@ extern "C"
 
     return 0;
   }
+
+  /************************************************************************************
+   * check_for_data_in_roster(): Checks if the passed in roster has any data
+   * Note: See function usage in ../src/_manage_roster.c
+   ************************************************************************************/
+  int check_for_data_in_roster(const char *rosterName)
+  {
+    string rosterNameString(rosterName);
+    sqlite3 *database;
+    int dbConnection = sqlite3_open(dbPath, &database);
+    if (dbConnection != SQLITE_OK)
+    {
+      __throw_error_opening_db("check_for_data_in_roster", database, dbConnection);
+    }
+
+    string checkForDataSQL = "SELECT * FROM " + rosterNameString;
+    const char *checkForDataSQLChar = checkForDataSQL.c_str();
+
+    sqlite3_stmt *statement;
+    dbConnection = sqlite3_prepare_v2(database, checkForDataSQLChar, -1, &statement, nullptr);
+    if (dbConnection != SQLITE_OK)
+    {
+      __throw_error_prepare_statement("check_for_data_in_roster", database, dbConnection);
+    }
+
+    dbConnection = sqlite3_step(statement);
+    if (dbConnection != SQLITE_ROW)
+    {
+      sqlite3_finalize(statement);
+      sqlite3_close(database);
+      return FALSE;
+    }
+    else
+    {
+      sqlite3_finalize(statement);
+      sqlite3_close(database);
+      return TRUE;
+    }
+  }
+
   /************************************************************************************
    * rename_roster(): Renames a roster in the db.sqlite database
    * Note: See function usage in ../src/_manage_roster.c
@@ -517,7 +557,14 @@ extern "C"
     return 0;
   }
 
-  int sort_ascending(const char *rosterName, const char *colName)
+  /************************************************************************************
+   * sort_roster_col_ascending(): Sorts the passed in roster by the passed in column
+   *                              in ascending order
+   *
+   * Note: See function usage in  ../src/_manage_roster.c
+   * Note: When using this to sort BOOLEANS, this will sort the FALSE values first
+   ************************************************************************************/
+  int sort_roster_col_ascending(const char *rosterName, const char *colName)
   {
     string rosterNameString(rosterName);
     string colNameString(colName);
@@ -527,23 +574,53 @@ extern "C"
 
     if (dbConnection != SQLITE_OK)
     {
-      __throw_error_opening_db("sort_alphabetically", database, dbConnection);
+      __throw_error_opening_db("sort_roster_col_ascending", database, dbConnection);
     }
-    string sortSQLColAlphabetically = "SELECT " + colNameString + "FROM " + rosterNameString + "ORDER BY " + colNameString + "ASC";
+    string sortSQLColumnAscending = "SELECT * FROM " + rosterNameString + " ORDER BY " + colNameString + " ASC";
 
-    const char *sortSQL = sortSQLColAlphabetically.c_str();
+    const char *sortSQL = sortSQLColumnAscending.c_str();
+
+    if (sqlite3_exec(database, sortSQL, display_data_callback, 0, 0) != SQLITE_OK)
+    {
+      __throw_error_exec_query("sort_roster_col_ascending", database, dbConnection);
+    }
+
+    cout << endl;
+    sqlite3_close(database);
+    return 0;
   }
 
-  int sort_descending(const char *rosterName, const char *colName)
+  /************************************************************************************
+   * sort_roster_col_descending(): Sorts the passed in roster by the passed in column
+   *                               in descending order
+   *
+   * Note: See function usage in  ../src/_manage_roster.c
+   * Note: When using this to sort BOOLEANS, this will sort the TRUE values first
+   ************************************************************************************/
+  int sort_roster_col_descending(const char *rosterName, const char *colName)
   {
-  }
+    string rosterNameString(rosterName);
+    string colNameString(colName);
+    sqlite3 *database;
 
-  int sort_true_first(const char *rosterName, const char *colName)
-  {
-  }
+    int dbConnection = sqlite3_open(dbPath, &database);
 
-  int sort_false_first(const char *rosterName, const char *colName)
-  {
+    if (dbConnection != SQLITE_OK)
+    {
+      __throw_error_opening_db("sort_roster_col_descending", database, dbConnection);
+    }
+    string sortSQLColumnDescending = "SELECT * FROM " + rosterNameString + " ORDER BY " + colNameString + " DESC";
+
+    const char *sortSQL = sortSQLColumnDescending.c_str();
+
+    if (sqlite3_exec(database, sortSQL, display_data_callback, 0, 0) != SQLITE_OK)
+    {
+      __throw_error_exec_query("sort_roster_col_descending", database, dbConnection);
+    }
+
+    cout << endl;
+    sqlite3_close(database);
+    return 0;
   }
 
   /************************************************************************************
