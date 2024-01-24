@@ -20,7 +20,6 @@ using namespace std;
 
 int hasTables = FALSE;
 int studentIDExists = FALSE;
-const char *dbPath = "../build/db.sqlite";
 
 /************************************************************************************
  * __throw_error_opening_db(): Handles errors and error logging in the event
@@ -731,17 +730,68 @@ extern "C"
 
     return TRUE; // Success...this just makes more sense to me than returning 0. The frontend wants 1
   }
-  /***************!EVERYTHING BELOW HERE IS FOR THE STUDENTS DATABASE!***************/
-  /***************!EVERYTHING BELOW HERE IS FOR THE STUDENTS DATABASE!***************/
-  /***************!EVERYTHING BELOW HERE IS FOR THE STUDENTS DATABASE!***************/
-  /***************!EVERYTHING BELOW HERE IS FOR THE STUDENTS DATABASE!***************/
 
-  int check_if_student_id_exists(const char *ID)
+  /************************************************************************************
+   *  delete_student_from_table(): Useful for deleting a student from the student db
+   *                               or a roster using the studentID
+   *
+   * Note: See function usage in _manage_student_db.c & _manage_roster.c
+   ************************************************************************************/
+  int delete_student_from_table(const char *studentID, const char *tableName)
+  {
+    string studentIDString(studentID);
+    string tableNameString(tableName);
+
+    sqlite3 *database;
+    int dbConnection = sqlite3_open(dbPath, &database);
+    if (dbConnection != SQLITE_OK)
+    {
+      __throw_error_opening_db("delete_student_from_table", database, dbConnection);
+    }
+
+    string deleteStudentFromSQLTable = "DELETE FROM " + tableNameString + " WHERE StudentID = '" + studentIDString + "'";
+
+    sqlite3_stmt *statement;
+    dbConnection = sqlite3_prepare_v2(database, deleteStudentFromSQLTable.c_str(), -1, &statement, nullptr);
+
+    if (dbConnection != SQLITE_OK)
+    {
+      __throw_error_prepare_statement("delete_student_from_table", database, dbConnection);
+    }
+
+    // Execute the statement
+    dbConnection = sqlite3_step(statement);
+
+    if (dbConnection != SQLITE_DONE)
+    {
+      __throw_error_statement_step("delete_student_from_table", database, dbConnection, statement);
+    }
+
+    sqlite3_finalize(statement);
+    sqlite3_close(database);
+
+    return 0;
+  }
+
+  /************************************************************************************
+   *  check_if_student_id_exists(): Checks if the passed in studentID exists in the
+   *                                 student db or a roster
+   *
+   * Note: See function usage in _manage_student_db.c & _manage_roster.c
+   ************************************************************************************/
+  int check_if_student_id_exists(const char *ID, const char *tableName)
   {
     studentIDExists = FALSE;
     string cppString(ID);
-
+    string tableNameString(tableName);
     sqlite3 *database;
+
+    // this should allow me to use this function for both the student db and the roster db
+    if (globalTrigger.isTriggered == TRUE)
+    {
+      tableNameString = "students";
+    }
+
     int dbConnection = sqlite3_open(dbPath, &database);
 
     if (dbConnection != SQLITE_OK)
@@ -751,7 +801,7 @@ extern "C"
       return 1;
     }
 
-    string SQLStudentIDExistsCheck = "SELECT * FROM students WHERE StudentID  ='" + cppString + "'";
+    string SQLStudentIDExistsCheck = "SELECT * FROM " + tableNameString + " WHERE StudentID  ='" + cppString + "'";
     dbConnection = sqlite3_exec(database, SQLStudentIDExistsCheck.c_str(), student_id_exists_callback, &studentIDExists, nullptr);
 
     if (dbConnection != SQLITE_OK)
@@ -769,6 +819,11 @@ extern "C"
       return FALSE;
     }
   }
+
+  /******************************!EVERYTHING BELOW HERE IS FOR THE STUDENTS DATABASE!******************************/
+  /******************************!EVERYTHING BELOW HERE IS FOR THE STUDENTS DATABASE!******************************/
+  /******************************!EVERYTHING BELOW HERE IS FOR THE STUDENTS DATABASE!******************************/
+  /******************************!EVERYTHING BELOW HERE IS FOR THE STUDENTS DATABASE!******************************/
 
   /************************************************************************************
    *  create_student_db_and_table(): Begins the process of adding a student to the
@@ -871,11 +926,11 @@ extern "C"
 }
 
 /************************************************************************************
- *  query_db_for_student_name(): Takes in a string from the frontend and queries
+ *  query_student_db(): Takes in a string from the frontend and queries
  *                                      the db.sqlite database for a match
  * Note: See function usage in  ../src/_manage_student.c & ../src/_search.c
  ************************************************************************************/
-int query_db_for_student_name(const char *searchParam)
+int query_student_db(const char *searchParam)
 {
   sqlite3 *database;
   sqlite3_stmt *statement;
@@ -883,7 +938,7 @@ int query_db_for_student_name(const char *searchParam)
 
   if (dbConnection != SQLITE_OK)
   {
-    __throw_error_opening_db("query_db_for_student_name", database, dbConnection);
+    __throw_error_opening_db("query_student_db", database, dbConnection);
   }
 
   const char *sql = "SELECT * FROM students WHERE FirstName = ? OR LastName = ? OR StudentID = ?";
@@ -909,6 +964,7 @@ int query_db_for_student_name(const char *searchParam)
   }
   else
   {
+    // todo update this error handling here
     cerr << "Failed to prepare the statement: " << sqlite3_errmsg(database) << endl;
     sqlite3_close(database);
     return -1;

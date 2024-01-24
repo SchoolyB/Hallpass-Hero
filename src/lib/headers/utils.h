@@ -50,6 +50,7 @@ extern "C"
 #define UNDERLINE "\x1B[4m"
 
   //--------------------------------------------------------------------------------//
+  extern const char *dbPath;
 
   enum ErrorLevel
   {

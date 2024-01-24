@@ -59,9 +59,8 @@ int manage_student_db(void)
       system("clear");
       show_current_menu("Delete Student From Database");
       show_students_in_db("../build/db.sqlite");
-      puts("Which student would you like to delete from the database?");
-      puts(RED "WARNING: This action cannot be undone!" RESET);
-      puts(YELLOW "You can cancel this operation by entering 'cancel'." RESET);
+      printf("Enter the StudentID of the student you would like to delete.\n");
+      printf(YELLOW "Enter 'cancel' to cancel this operation.\n" RESET);
       UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageStudentDBInput.StrInput);
 
       if (strcmp(manageStudentDBInput.StrInput, "cancel") == 0)
@@ -71,6 +70,48 @@ int manage_student_db(void)
         sleep(1);
         system("clear");
         manageStudentDBMenuIsRunning = TRUE;
+      }
+      else
+      {
+        // TODO NEW: Jan 24th 2024 Need to add a check that says something like "the entered student is aldo in roster 'name of roster' preforming this action will also delete the student from the roster. are you sure you want to continue?"
+        strcpy(CurrentStudent.StudentID, manageStudentDBInput.StrInput);
+        int studentExists = check_if_student_id_exists(CurrentStudent.StudentID, "students");
+        if (studentExists == TRUE)
+        {
+          system("clear");
+          printf(RED "WARNING: This action cannot be undone\n" RESET);
+          puts("Are you sure you want to delete this student?[y/n]");
+          UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageStudentDBInput.StrInput);
+          if (INPUT_IS_CANCEL(manageStudentDBInput.StrInput) || INPUT_IS_NO(manageStudentDBInput.StrInput))
+          {
+            system("clear");
+            puts(YELLOW "Cancelling operation" RESET);
+            sleep(1);
+            system("clear");
+            manageStudentDBMenuIsRunning = TRUE;
+          }
+          else if (INPUT_IS_YES(manageStudentDBInput.StrInput))
+          {
+            delete_student_from_table(CurrentStudent.StudentID, "students");
+          }
+          else
+          {
+            system("clear");
+            puts(RED "Invalid input, please try again." RESET);
+            sleep(1);
+            system("clear");
+            manageStudentDBMenuIsRunning = TRUE;
+          }
+        }
+        else if (studentExists == FALSE)
+        {
+          system("clear");
+          printf("Student with ID: %s does not exist.\n", CurrentStudent.StudentID);
+          sleep(1);
+          system("clear");
+          puts("Please try again.");
+          manageStudentDBMenuIsRunning = TRUE;
+        }
       }
     }
     else if (manageStudentDBInput.NumInput == 4 || strcmp(manageStudentDBInput.StrInput, "main") == 0)

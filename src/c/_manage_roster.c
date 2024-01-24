@@ -277,7 +277,7 @@ int manage_roster(void)
         wait_for_char_input();
       }
     }
-    else if (manageRosterInput.NumInput == 5 || strcmp(manageRosterInput.StrInput, "remove student") == 0 || strcmp(manageRosterInput.StrInput, "remove") == 0)
+    else if (manageRosterInput.NumInput == 5 || strcmp(manageRosterInput.StrInput, "remove student from roster") == 0 || strcmp(manageRosterInput.StrInput, "remove") == 0)
     {
       manageRosterMenuIsOpen = FALSE;
       system("clear");
@@ -613,7 +613,7 @@ int ask_which_roster_and_preform_action(char *action)
         switch (manageRosterInput.NumInput)
         {
         case 1:
-          // use search function from _search_student.c
+          // todo use search function from _search_student.c
           break;
         case 2:
           system("clear");
@@ -637,13 +637,39 @@ int ask_which_roster_and_preform_action(char *action)
       }
     }
   }
-  else if (strcmp(action, "remove a student from a roster") == 0)
+  else if (strcmp(action, "remove student from roster") == 0)
   {
-    // do stuff
-    return 0;
+    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+    if (INPUT_IS_CANCEL(manageRosterInput.StrInput))
+    {
+      system("clear");
+      printf(YELLOW "Cancelling operation\n" RESET);
+      sleep(1);
+      system("clear");
+      return 0; // TODO come back to this. might call a function instead
+    }
+
+    sprintf(roster.rosterNameWithPrefix, "Roster_%s", manageRosterInput.StrInput);
+    int rosterExists = check_if_table_exists(roster.rosterNameWithPrefix);
+    if (rosterExists == FALSE)
+    {
+      system("clear");
+      sleep(1);
+      printf(YELLOW "The entered roster: " BOLD "%s" RESET YELLOW " does not exist please try again. \n" RESET, roster.rosterNameWithPrefix);
+      sleep(2);
+      system("clear");
+      ask_which_roster_and_preform_action("remove student from roster");
+    }
+    else if (rosterExists == TRUE)
+    {
+      system("clear");
+      sleep(1);
+      // do stuff
+      globalTrigger.isTriggered = TRUE;
+      handle_student_deletion_logic(roster.rosterNameWithPrefix);
+    }
   }
   else if (strcmp(action, "Create a column") == 0)
-
   {
     UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
     if (INPUT_IS_CANCEL(manageRosterInput.StrInput))
@@ -1148,6 +1174,73 @@ int check_if_roster_has_data(const char *rosterName)
     UTILS_ERROR_LOGGER("Failed to check if roster has data.", "check_if_roster_has_data", MINOR);
     printf(RED "Error: Failed to check if roster has data.\n" RESET);
     // TODO do something here
+  }
+}
+
+/************************************************************************************
+ * handle_student_deletion_logic(): Handles the logic for deleting a student from a
+ *                                  roster.
+ *
+ * Note: see usage in ask_which_roster_and_preform_action()
+ ************************************************************************************/
+int handle_student_deletion_logic(const char *rosterName)
+{
+  show_all_roster_data(rosterName);
+  puts("Enter the StudentID of the student that you would like to remove from the roster.");
+  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+
+  Student student;
+  strcpy(student.StudentID, manageRosterInput.StrInput);
+  int studentExists = check_if_student_id_exists(student.StudentID, rosterName);
+  if (studentExists == FALSE)
+  {
+    system("clear");
+    printf(YELLOW "The entered studentID: " BOLD "%s" RESET YELLOW " does not exist in roster: " BOLD "%s\n" RESET, student.StudentID, rosterName);
+    sleep(2);
+    system("clear");
+    puts("Please try again");
+    sleep(1);
+    system("clear");
+    show_roster_data_without_warning(rosterName);
+    handle_student_deletion_logic(rosterName);
+  }
+  else if (studentExists == TRUE)
+  {
+    int confirmation = confirm_action("remove student from roster", rosterName);
+    if (confirmation == 1)
+    {
+      int result = delete_student_from_table(student.StudentID, rosterName);
+      if (result == 0)
+      {
+        system("clear");
+        printf(GREEN "Successfully deleted student: " BOLD "%s" RESET GREEN " from roster: " BOLD "%s\n" RESET, student.StudentID, rosterName);
+        sleep(1);
+        system("clear");
+        manage_roster();
+      }
+      else
+      {
+        printf(RED "ERROR: Unable to delete student: " BOLD "%s" RESET RED " from roster: " BOLD "%s\n" RESET, student.StudentID, rosterName);
+        puts("Please try again.");
+        return 0;
+      }
+    }
+    else if (confirmation == 0)
+    {
+      system("clear");
+      puts("Ok lets try again.");
+      sleep(1);
+      system("clear");
+      handle_student_deletion_logic(rosterName);
+    }
+    else
+    {
+      system("clear");
+      puts("Please enter a valid decision.");
+      sleep(1);
+      system("clear");
+      handle_student_deletion_logic(rosterName);
+    }
   }
 }
 

@@ -14,6 +14,8 @@ Description : This source file contains the main function for the Hallpass Hero 
 #include "../lib/headers/utils.h"
 #include "../lib/headers/c_files.h"
 
+const char *dbPath = "../build/db.sqlite";
+
 GlobalTrigger globalTrigger = {FALSE};
 UserInput mainMenuInput;
 uint8_t mainMenuProccess = FALSE;
