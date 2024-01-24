@@ -233,7 +233,10 @@ extern "C"
 
   /************************************************************************************
    * show_tables(): Prints all rosters currently in the db.sqlite database
-   * Note: See function usage in ../src/_create_roster.c & ../src/_manage_roster.c
+   * Note: See function usage in:
+   *  _create_roster.c
+   *  _manage_roster.c
+   *  _add_student.c
    ************************************************************************************/
   int show_tables(void)
   {

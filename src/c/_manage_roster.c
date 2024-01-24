@@ -20,8 +20,9 @@ Description : This source file contains all functions used
 
 Column rosterColumn;
 UserInput manageRosterInput;
+Roster roster;
 static uint8_t mainMenuProccess;
-char rosterNameWithPrefix[60];
+
 /************************************************************************************
  * manage_roster(): Handles the logic for managing a roster.
  * Note: see usage in ./main.c
@@ -106,8 +107,8 @@ int manage_roster(void)
             return 0; // TODO come back to this. might call a function instead
           }
 
-          sprintf(rosterNameWithPrefix, "Roster_%s", manageRosterInput.StrInput);
-          int rosterExists = check_if_table_exists(rosterNameWithPrefix);
+          sprintf(roster.rosterNameWithPrefix, "Roster_%s", manageRosterInput.StrInput);
+          int rosterExists = check_if_table_exists(roster.rosterNameWithPrefix);
           switch (rosterExists)
           {
           case 0:
@@ -123,7 +124,7 @@ int manage_roster(void)
 
             while (showingRosterData == TRUE)
             {
-              show_roster_data_with_warning(rosterNameWithPrefix);
+              show_roster_data_with_warning(roster.rosterNameWithPrefix);
               puts("What would you like to do?");
               printf("Enter the corresponding number.\n\n");
               puts("1.Sort Roster");
@@ -136,8 +137,8 @@ int manage_roster(void)
               case 1:
                 showingRosterData = FALSE;
                 system("clear");
-                show_roster_data_without_warning(rosterNameWithPrefix);
-                choose_which_col_to_sort(rosterNameWithPrefix);
+                show_roster_data_without_warning(roster.rosterNameWithPrefix);
+                choose_which_col_to_sort(roster.rosterNameWithPrefix);
               case 2:
                 showingRosterData = FALSE;
                 system("clear");
@@ -157,7 +158,7 @@ int manage_roster(void)
                 puts("Invalid input please try again.");
                 sleep(1);
                 system("clear");
-                showingRosterData = TRUE; 
+                showingRosterData = TRUE;
               }
             }
             break;
@@ -415,8 +416,8 @@ int ask_which_roster_and_preform_action(char *action)
       return 0; // TODO come back to this. might call a function instead
     }
     strcpy(oldRosterName, manageRosterInput.StrInput);
-    sprintf(rosterNameWithPrefix, "Roster_%s", oldRosterName);
-    int rosterExists = check_if_table_exists(rosterNameWithPrefix);
+    sprintf(roster.rosterNameWithPrefix, "Roster_%s", oldRosterName);
+    int rosterExists = check_if_table_exists(roster.rosterNameWithPrefix);
     if (rosterExists == FALSE)
     {
       system("clear");
@@ -452,7 +453,7 @@ int ask_which_roster_and_preform_action(char *action)
           switch (confirmation)
           {
           case 1:
-            int retValue = rename_roster(rosterNameWithPrefix, newRosterName);
+            int retValue = rename_roster(roster.rosterNameWithPrefix, newRosterName);
             if (retValue == 0)
             {
               system("clear");
@@ -495,8 +496,8 @@ int ask_which_roster_and_preform_action(char *action)
       system("clear");
       return 0; // TODO come back to this. might call a function instead
     }
-    sprintf(rosterNameWithPrefix, "Roster_%s", manageRosterInput.StrInput);
-    int rosterExists = check_if_table_exists(rosterNameWithPrefix);
+    sprintf(roster.rosterNameWithPrefix, "Roster_%s", manageRosterInput.StrInput);
+    int rosterExists = check_if_table_exists(roster.rosterNameWithPrefix);
     if (rosterExists == FALSE)
     {
       system("clear");
@@ -522,7 +523,7 @@ int ask_which_roster_and_preform_action(char *action)
         switch (confirmation)
         {
         case 1:
-          int retValue = drop_table(rosterNameWithPrefix);
+          int retValue = drop_table(roster.rosterNameWithPrefix);
           if (retValue == 0)
           {
             system("clear");
@@ -571,8 +572,8 @@ int ask_which_roster_and_preform_action(char *action)
       system("clear");
       return 0; // TODO come back to this. might call a function instead
     }
-    sprintf(rosterNameWithPrefix, "Roster_%s", manageRosterInput.StrInput);
-    int rosterExists = check_if_table_exists(rosterNameWithPrefix);
+    sprintf(roster.rosterNameWithPrefix, "Roster_%s", manageRosterInput.StrInput);
+    int rosterExists = check_if_table_exists(roster.rosterNameWithPrefix);
     if (rosterExists == FALSE)
     {
       system("clear");
@@ -584,10 +585,56 @@ int ask_which_roster_and_preform_action(char *action)
     }
     else if (rosterExists == TRUE)
     {
+
       system("clear");
       sleep(1);
       // do stuff
-      // todo Marsh, the problem to come back to... there are a couple things that need to happen for this action. 1. We need to search for the student. 2. handle multiple results in the event that there are people with the same name. one way to do that might be to do a for loop. add a number too each entry in the query then let the user enter the number associated with the query.  3. Then take that students firstName, lastName, and studentID and copy it into the new roster. 4. prob more complicated than this idk lol. Have fun
+      // todo OLD:  Marsh, the problem to come back to... there are a couple things that need to happen for this action. 1. We need to search for the student. 2. handle multiple results in the event that there are people with the same name. one way to do that might be to do a for loop. add a number too each entry in the query then let the user enter the number associated with the query.  3. Then take that students firstName, lastName, and studentID and copy it into the new roster. 4. prob more complicated than this idk lol. Have fun
+      int showingHowToAddStudentMenu = TRUE;
+
+      while (showingHowToAddStudentMenu == TRUE)
+      {
+        printf("How would you like to add a student to roster: " BOLD "%s?\n" RESET, roster.rosterNameWithPrefix);
+        puts("Enter the corresponding number.");
+        puts(YELLOW "To cancel this operation enter" BOLD " 'cancel'.\n" RESET);
+        puts("1. Search the student database for a student");
+        puts("2. Manually add a student");
+        puts("3. Use the bulk data loader to add multiple students");
+        UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+        manageRosterInput.NumInput = atoi(manageRosterInput.StrInput);
+        if (INPUT_IS_CANCEL(manageRosterInput.StrInput))
+        {
+          system("clear");
+          printf(YELLOW "Cancelling operation\n" RESET);
+          sleep(1);
+          system("clear");
+          return 0; // TODO come back to this. might call a function instead
+        }
+        switch (manageRosterInput.NumInput)
+        {
+        case 1:
+          // use search function from _search_student.c
+          break;
+        case 2:
+          system("clear");
+          globalTrigger.isTriggered = TRUE;
+          get_student_first_name();
+          skip_and_add_to_roster(roster.rosterNameWithPrefix);
+          globalTrigger.isTriggered = FALSE;
+          break;
+        case 3:
+          // todo add bulk data loader stuff
+          system("clear");
+          puts(YELLOW "THIS FEATURE IS NOT YET IMPLEMENTED" RESET);
+          sleep(2);
+          system("clear");
+          exit(0);
+          break;
+        default:
+          break;
+        }
+        showingHowToAddStudentMenu == FALSE;
+      }
     }
   }
   else if (strcmp(action, "remove a student from a roster") == 0)
@@ -607,8 +654,8 @@ int ask_which_roster_and_preform_action(char *action)
       system("clear");
       return 0; // TODO come back to this. might call a function instead
     }
-    sprintf(rosterNameWithPrefix, "Roster_%s", manageRosterInput.StrInput);
-    int rosterExists = check_if_table_exists(rosterNameWithPrefix);
+    sprintf(roster.rosterNameWithPrefix, "Roster_%s", manageRosterInput.StrInput);
+    int rosterExists = check_if_table_exists(roster.rosterNameWithPrefix);
     if (rosterExists == FALSE)
     {
       system("clear");
@@ -622,7 +669,7 @@ int ask_which_roster_and_preform_action(char *action)
     {
       system("clear");
       sleep(1);
-      choose_col_type(rosterNameWithPrefix);
+      choose_col_type(roster.rosterNameWithPrefix);
     }
   }
   else if (strcmp(action, "delete a column") == 0)
@@ -636,8 +683,8 @@ int ask_which_roster_and_preform_action(char *action)
       system("clear");
       return 0; // TODO come back to this. might call a function instead
     }
-    sprintf(rosterNameWithPrefix, "Roster_%s", manageRosterInput.StrInput);
-    int rosterExists = check_if_table_exists(rosterNameWithPrefix);
+    sprintf(roster.rosterNameWithPrefix, "Roster_%s", manageRosterInput.StrInput);
+    int rosterExists = check_if_table_exists(roster.rosterNameWithPrefix);
     if (rosterExists == FALSE)
     {
       system("clear");
@@ -651,7 +698,7 @@ int ask_which_roster_and_preform_action(char *action)
     {
       system("clear");
       sleep(1);
-      delete_col(rosterNameWithPrefix);
+      delete_col(roster.rosterNameWithPrefix);
     }
   }
   else
@@ -882,6 +929,7 @@ int choose_col_type(const char *rosterName)
  * Note: see usage in
  ************************************************************************************/
 const char check_roster_col_type(const char *rosterName, const char *colName)
+// todo make this function better. make type an int
 {
 
   int colTypeReturnValue = check_col_type(rosterName, colName);
@@ -903,11 +951,11 @@ const char check_roster_col_type(const char *rosterName, const char *colName)
 }
 
 /************************************************************************************
-  * choose_which_col_to_sort(): Handles the logic for choosing which column to sort.
-  *   
-  * 
-  * 
-  * Note: see usage in manage_roster()
+ * choose_which_col_to_sort(): Handles the logic for choosing which column to sort.
+ *
+ *
+ *
+ * Note: see usage in manage_roster()
  ************************************************************************************/
 int choose_which_col_to_sort(const char *rosterName)
 {
@@ -948,9 +996,9 @@ int choose_which_col_to_sort(const char *rosterName)
 
 /************************************************************************************
  * handle_col_sort_logic(): Handles the logic for sorting a column.
- * 
- * 
- * 
+ *
+ *
+ *
  * Note: see usage in choose_which_col_to_sort()
  ************************************************************************************/
 int handle_col_sort_logic(const char *colName)
@@ -965,7 +1013,7 @@ int handle_col_sort_logic(const char *colName)
     puts("2: False First");
     UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(rosterColumn.ColumnSortingMethod);
     manageRosterInput.NumInput = atoi(rosterColumn.ColumnSortingMethod);
-    if(INPUT_IS_CANCEL(rosterColumn.ColumnSortingMethod))
+    if (INPUT_IS_CANCEL(rosterColumn.ColumnSortingMethod))
     {
       system("clear");
       printf(YELLOW "Cancelling operation\n" RESET);
@@ -977,14 +1025,14 @@ int handle_col_sort_logic(const char *colName)
     {
     case 1:
       system("clear");
-      printf(GREEN "Now sorting column: " BOLD "%s" RESET GREEN" in roster: " BOLD "%s" RESET GREEN" with true values first.\n "RESET, colName, rosterNameWithPrefix);
-      sort_roster_col_ascending(rosterNameWithPrefix, colName);
+      printf(GREEN "Now sorting column: " BOLD "%s" RESET GREEN " in roster: " BOLD "%s" RESET GREEN " with true values first.\n " RESET, colName, roster.rosterNameWithPrefix);
+      sort_roster_col_ascending(roster.rosterNameWithPrefix, colName); // sql interprets true as 1 and false as 0 so we can just sort ascending to show true first
       wait_for_char_input();
       break;
     case 2:
       system("clear");
-      printf(GREEN "Now sorting column: " BOLD "%s" RESET GREEN" in roster: " BOLD "%s" RESET GREEN" with false values first.\n "RESET, colName, rosterNameWithPrefix);
-      sort_roster_col_descending(rosterNameWithPrefix, colName);
+      printf(GREEN "Now sorting column: " BOLD "%s" RESET GREEN " in roster: " BOLD "%s" RESET GREEN " with false values first.\n " RESET, colName, roster.rosterNameWithPrefix);
+      sort_roster_col_descending(roster.rosterNameWithPrefix, colName); // sql interprets true as 1 and false as 0 so we can just sort descending to show false first
       wait_for_char_input();
       break;
     default:
@@ -997,7 +1045,7 @@ int handle_col_sort_logic(const char *colName)
     puts("2: Descending Order");
     UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(rosterColumn.ColumnSortingMethod);
     manageRosterInput.NumInput = atoi(rosterColumn.ColumnSortingMethod);
-    if(INPUT_IS_CANCEL(rosterColumn.ColumnSortingMethod))
+    if (INPUT_IS_CANCEL(rosterColumn.ColumnSortingMethod))
     {
       system("clear");
       printf(YELLOW "Cancelling operation\n" RESET);
@@ -1009,20 +1057,19 @@ int handle_col_sort_logic(const char *colName)
     {
     case 1:
       system("clear");
-      printf(GREEN "Now sorting column: " BOLD "%s" RESET GREEN" in roster: " BOLD "%s" RESET GREEN" in ascending order.\n "RESET, colName, rosterNameWithPrefix);
-      sort_roster_col_ascending(rosterNameWithPrefix, colName);
+      printf(GREEN "Now sorting column: " BOLD "%s" RESET GREEN " in roster: " BOLD "%s" RESET GREEN " in ascending order.\n " RESET, colName, roster.rosterNameWithPrefix);
+      sort_roster_col_ascending(roster.rosterNameWithPrefix, colName);
       wait_for_char_input();
       break;
     case 2:
       system("clear");
-      printf(GREEN "Now sorting column: " BOLD "%s" RESET GREEN" in roster: " BOLD "%s" RESET GREEN" in descending order.\n "RESET, colName, rosterNameWithPrefix);
-      sort_roster_col_descending(rosterNameWithPrefix, colName);
+      printf(GREEN "Now sorting column: " BOLD "%s" RESET GREEN " in roster: " BOLD "%s" RESET GREEN " in descending order.\n " RESET, colName, roster.rosterNameWithPrefix);
+      sort_roster_col_descending(roster.rosterNameWithPrefix, colName);
       wait_for_char_input();
     default:
       break;
     }
   }
-  
 }
 
 /************************************************************************************
@@ -1064,7 +1111,6 @@ int show_roster_data_with_warning(const char *rosterName)
   {
     system("clear");
     check_if_roster_has_data(rosterName);
-    
   }
   else
   {
@@ -1072,24 +1118,24 @@ int show_roster_data_with_warning(const char *rosterName)
     printf(YELLOW "Please enter a valid decision\n" RESET);
     sleep(2);
     system("clear");
-    show_roster_data_without_warning(rosterName);
+    show_roster_data_with_warning(rosterName);
   }
 }
 
 /************************************************************************************
  * check_if_roster_has_data(): Handles the logic for checking if a roster has data
  *                             and displaying said data if it does.
- * 
+ *
  * Note: see usage in show_roster_data_with_warning()
  ************************************************************************************/
 int check_if_roster_has_data(const char *rosterName)
 {
-int rosterHasData = check_for_data_in_roster(rosterNameWithPrefix); 
-  if(rosterHasData == TRUE)
+  int rosterHasData = check_for_data_in_roster(roster.rosterNameWithPrefix);
+  if (rosterHasData == TRUE)
   {
     show_all_roster_data(rosterName);
   }
-  else if(rosterHasData == FALSE)
+  else if (rosterHasData == FALSE)
   {
     system("clear");
     printf(YELLOW "The roster: " BOLD "%s" RESET YELLOW " does not have any data to display.\n" RESET, rosterName);
@@ -1101,9 +1147,10 @@ int rosterHasData = check_for_data_in_roster(rosterNameWithPrefix);
   {
     UTILS_ERROR_LOGGER("Failed to check if roster has data.", "check_if_roster_has_data", MINOR);
     printf(RED "Error: Failed to check if roster has data.\n" RESET);
-    //TODO do something here
+    // TODO do something here
   }
 }
+
 /************************************************************************************
  * confirm_action(): Handles the logic for confirming an action.
  *

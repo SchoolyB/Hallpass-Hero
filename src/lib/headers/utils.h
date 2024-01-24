@@ -130,6 +130,18 @@ extern "C"
 
   } Column;
 
+  typedef struct
+  {
+    char rosterName[50];
+    char rosterNameWithPrefix[60];
+  } Roster;
+
+  typedef struct
+  {
+    int isTriggered;
+  } GlobalTrigger;
+
+  extern GlobalTrigger globalTrigger; // initialized in main.c
 #ifdef __cplusplus
 } // extern "C"
 #endif

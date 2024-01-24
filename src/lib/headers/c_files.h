@@ -18,6 +18,7 @@ int confirm_manually_entered_student_id(char *studentID);
 int ask_to_add_new_student_to_roster(void);
 int ask_which_roster_to_add_newly_created_student(void);
 int handle_last_name_truncated_menu(void);
+int skip_and_add_to_roster(const char *rosterName);
 
 /*_create_roster.c*/
 int create_new_roster(void);
