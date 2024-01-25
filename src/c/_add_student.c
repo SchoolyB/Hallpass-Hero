@@ -98,7 +98,7 @@ int get_student_first_name(void)
   show_current_step("Enter Student First Name", 1, 7);
 
   puts("Please enter the students first name.");
-  puts(YELLOW "You can cancel this operation by entering 'cancel." RESET);
+  puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
   UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
   if (!has_one_non_space_char(addStudentInput.StrInput))
   {
@@ -111,7 +111,8 @@ int get_student_first_name(void)
   else if (strcmp(addStudentInput.StrInput, "cancel") == 0)
   {
     system("clear");
-    puts(YELLOW "Canceling operation." RESET);
+    puts(YELLOW "Cancelling operation." RESET);
+    globalTrigger.studentCreationInterrupted = TRUE;
     sleep(1);
     system("clear");
     addStudentMenuIsRunning = TRUE;
@@ -179,7 +180,7 @@ int get_student_last_name(void)
 
   puts("Please enter the students last name.");
   puts("If the student does not have a last name please enter 'none'.");
-  puts(YELLOW "You can cancel this operation by entering 'cancel." RESET);
+  puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
   UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
   if (!has_one_non_space_char(addStudentInput.StrInput))
   {
@@ -193,7 +194,8 @@ int get_student_last_name(void)
   else if (strcmp(addStudentInput.StrInput, "cancel") == 0)
   {
     system("clear");
-    puts(YELLOW "Canceling operation." RESET);
+    puts(YELLOW "Cancelling operation." RESET);
+    globalTrigger.studentCreationInterrupted = TRUE;
     sleep(1);
     system("clear");
     addStudentMenuIsRunning = TRUE;
@@ -283,7 +285,7 @@ int ask_about_student_id(void)
   system("clear");
   puts("How would you like to assign the student ID?");
   puts("Please enter either '1' or '2'.");
-  puts(YELLOW "To cancel this operation enter 'cancel'" RESET);
+  puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
   puts("1. Automatically generate an ID ");
   puts("2. Create your own");
 
@@ -293,7 +295,8 @@ int ask_about_student_id(void)
   if (strcmp(addStudentInput.StrInput, "cancel") == 0)
   {
     system("clear");
-    puts(YELLOW "Canceling operation." RESET);
+    puts(YELLOW "Cancelling operation." RESET);
+    globalTrigger.studentCreationInterrupted = TRUE;
     sleep(1);
     system("clear");
     addStudentMenuIsRunning = TRUE;
@@ -341,7 +344,9 @@ void manually_set_student_id(void)
   if (strcmp(addStudentInput.StrInput, "cancel") == 0)
   {
     system("clear");
-    puts(YELLOW "Canceling operation." RESET);
+    puts(YELLOW "Cancelling operation." RESET);
+
+    globalTrigger.studentCreationInterrupted = TRUE;
     sleep(1);
     system("clear");
     gettingStudentId == FALSE;
@@ -746,7 +751,8 @@ int handle_last_name_truncated_menu(void)
   else if (addStudentInput.NumInput == 3)
   {
     system("clear");
-    puts(YELLOW "Canceling operation." RESET);
+    puts(YELLOW "Cancelling operation" RESET);
+    globalTrigger.studentCreationInterrupted = TRUE;
     sleep(1);
     system("clear");
     add_student_to_db();

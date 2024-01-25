@@ -59,13 +59,13 @@ int manage_roster(void)
         "5. Remove student from roster",
         "6. Create a column",
         "7. Delete a column",
-        "99. Help",
-        "100. Main menu"};
+        "8. Help",
+        "9. Main menu"};
 
-    show_current_menu("Manage Roster");
+    show_current_menu("Manage Existing Rosters");
     puts("What would you like to do?");
     puts("|===========================================================================================");
-    for (int i = 0; i < 8; ++i)
+    for (int i = 0; i < 9; ++i)
     {
       printf("| %s %-90s\n", manageRosterOptions[i], "");
     }
@@ -191,6 +191,8 @@ int manage_roster(void)
     {
       manageRosterMenuIsOpen = FALSE;
       system("clear");
+      show_current_step("Rename roster", 1, 2);
+
       int tableExists = get_table_count("../build/db.sqlite");
       if (tableExists == TRUE)
       {
@@ -221,6 +223,8 @@ int manage_roster(void)
     {
       manageRosterMenuIsOpen = FALSE;
       system("clear");
+      show_current_step("Delete roster", 1, 2);
+
       int tableExists = get_table_count("../build/db.sqlite");
       if (tableExists == TRUE)
       {
@@ -251,6 +255,7 @@ int manage_roster(void)
     {
       manageRosterMenuIsOpen = FALSE;
       system("clear");
+      show_current_step("Add student to roster", 1, 2);
       int tableExists = get_table_count("../build/db.sqlite");
       if (tableExists == TRUE)
       {
@@ -281,6 +286,7 @@ int manage_roster(void)
     {
       manageRosterMenuIsOpen = FALSE;
       system("clear");
+      show_current_step("Remove students from roster", 1, 2);
       int tableExists = get_table_count("../build/db.sqlite");
       if (tableExists == TRUE)
       {
@@ -311,6 +317,7 @@ int manage_roster(void)
     {
       manageRosterMenuIsOpen = FALSE;
       system("clear");
+      show_current_step("Create a column", 1, 3);
       int tableExists = get_table_count("../build/db.sqlite");
       if (tableExists == TRUE)
       {
@@ -343,6 +350,7 @@ int manage_roster(void)
 
       manageRosterMenuIsOpen = FALSE;
       system("clear");
+      show_current_step("Delete a column", 1, 2);
       int tableExists = get_table_count("../build/db.sqlite");
       if (tableExists == TRUE)
       {
@@ -370,11 +378,11 @@ int manage_roster(void)
       }
     }
 
-    else if (manageRosterInput.NumInput == 99 || strcmp(manageRosterInput.StrInput, "help") == 0)
+    else if (manageRosterInput.NumInput == 8 || strcmp(manageRosterInput.StrInput, "help") == 0)
     {
       // manageRosterMenuIsOpen = FALSE;
     }
-    else if (manageRosterInput.NumInput == 100 || strcmp(manageRosterInput.StrInput, "main menu") == 0 || strcmp(manageRosterInput.StrInput, "main") == 0)
+    else if (manageRosterInput.NumInput == 9 || strcmp(manageRosterInput.StrInput, "main menu") == 0 || strcmp(manageRosterInput.StrInput, "main") == 0)
     {
       manageRosterMenuIsOpen = FALSE;
       system("clear");
@@ -402,8 +410,7 @@ int ask_which_roster_and_preform_action(char *action)
 
   char oldRosterName[30];
   printf("Enter the name of the roster that you would like to %s?\n", action);
-  puts(YELLOW "To cancel this operation enter 'cancel'" RESET);
-  // TODO handle canceling operation printf(YELLOW "To cancel this operation enter" BOLD " 'cancel'. \n" RESET);
+  puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
   if (strcmp(action, "rename") == 0)
   {
     UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
@@ -425,16 +432,26 @@ int ask_which_roster_and_preform_action(char *action)
       printf(YELLOW "The entered roster: " BOLD "%s" RESET YELLOW " does not exist please try again. \n" RESET, oldRosterName);
       sleep(2);
       system("clear");
-      ask_which_roster_and_preform_action("rename");
-    }
 
+      int tableExists = get_table_count("../build/db.sqlite");
+      if (tableExists == TRUE)
+      {
+        int showingFoundRosters = TRUE;
+        while (showingFoundRosters == TRUE)
+        {
+          ask_which_roster_and_preform_action("rename");
+          showingFoundRosters = FALSE;
+        }
+      }
+    }
     else if (rosterExists == TRUE)
     {
       char newRosterName[30];
       system("clear");
       sleep(1);
+      show_current_step("Rename roster", 2, 2);
       printf("Enter the new name for the roster: %s\n", oldRosterName);
-      printf(YELLOW "To cancel this operation enter" BOLD " 'cancel'.\n" RESET);
+      puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
       UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(newRosterName);
       if (INPUT_IS_CANCEL(newRosterName))
       {
@@ -457,7 +474,7 @@ int ask_which_roster_and_preform_action(char *action)
             if (retValue == 0)
             {
               system("clear");
-              printf(GREEN "Successfully renamed roster:" BOLD " %s" RESET GREEN " to" BOLD " %s\n" RESET, oldRosterName, newRosterName);
+              printf(GREEN "Successfully renamed roster:" BOLD " %s" RESET GREEN " to" BOLD " %s\n" RESET, oldRosterName, roster.rosterNameWithPrefix);
               sleep(2);
               system("clear");
             }
@@ -480,7 +497,8 @@ int ask_which_roster_and_preform_action(char *action)
         {
           system("clear");
           printf(YELLOW "The entered roster name: " BOLD " %s" RESET YELLOW " is too short please try again.\n" RESET, newRosterName);
-          ask_which_roster_and_preform_action("rename");
+          sleep(2);
+          system("clear");
         }
       }
     }
@@ -505,7 +523,17 @@ int ask_which_roster_and_preform_action(char *action)
       printf(YELLOW "The entered roster: " BOLD "%s" RESET YELLOW " does not exist please try again. \n" RESET, manageRosterInput.StrInput);
       sleep(2);
       system("clear");
-      ask_which_roster_and_preform_action("delete");
+
+      int tableExists = get_table_count("../build/db.sqlite");
+      if (tableExists == TRUE)
+      {
+        int showingFoundRosters = TRUE;
+        while (showingFoundRosters == TRUE)
+        {
+          ask_which_roster_and_preform_action("delete");
+          showingFoundRosters = FALSE;
+        }
+      }
     }
 
     else if (rosterExists == TRUE)
@@ -513,9 +541,11 @@ int ask_which_roster_and_preform_action(char *action)
       char confirmation[30];
       system("clear");
       sleep(1);
+      show_current_step("Rename roster", 2, 2);
       printf(RED "WARNING: You are about to delete the roster:" BOLD " %s.\n" RESET, manageRosterInput.StrInput);
       printf(RED "This action is IRREVERSIBLE.\n" RESET);
       printf("Do you understand that this cannot be undone? [y/n]\n");
+      puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
       UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(confirmation);
       if (INPUT_IS_YES(confirmation))
       {
@@ -527,7 +557,7 @@ int ask_which_roster_and_preform_action(char *action)
           if (retValue == 0)
           {
             system("clear");
-            printf(GREEN "Successfully deleted roster:" BOLD " %s\n" RESET, manageRosterInput.StrInput);
+            printf(GREEN "Successfully deleted roster:" BOLD " %s\n" RESET, roster.rosterNameWithPrefix);
             sleep(2);
             system("clear");
           }
@@ -546,9 +576,13 @@ int ask_which_roster_and_preform_action(char *action)
         default:
         }
       }
-      else if (INPUT_IS_NO(confirmation))
+      else if (INPUT_IS_NO(confirmation) || INPUT_IS_CANCEL(confirmation))
       {
-        // todo handle this
+        system("clear");
+        printf(YELLOW "Cancelling operation\n" RESET);
+        sleep(1);
+        system("clear");
+        return 0; // TODO come back to this. might call a function instead
       }
       else
       {
@@ -581,7 +615,17 @@ int ask_which_roster_and_preform_action(char *action)
       printf(YELLOW "The entered roster: " BOLD "%s" RESET YELLOW " does not exist please try again. \n" RESET, manageRosterInput.StrInput);
       sleep(2);
       system("clear");
-      ask_which_roster_and_preform_action("add student to roster");
+
+      int tableExists = get_table_count("../build/db.sqlite");
+      if (tableExists == TRUE)
+      {
+        int showingFoundRosters = TRUE;
+        while (showingFoundRosters == TRUE)
+        {
+          ask_which_roster_and_preform_action("add student to roster");
+          showingFoundRosters = FALSE;
+        }
+      }
     }
     else if (rosterExists == TRUE)
     {
@@ -594,9 +638,12 @@ int ask_which_roster_and_preform_action(char *action)
 
       while (showingHowToAddStudentMenu == TRUE)
       {
+        create_student_db_and_table();
+        show_current_step("Add student to roster", 2, 2);
         printf("How would you like to add a student to roster: " BOLD "%s?\n" RESET, roster.rosterNameWithPrefix);
         puts("Enter the corresponding number.");
-        puts(YELLOW "To cancel this operation enter" BOLD " 'cancel'.\n" RESET);
+        puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
+        printf("\n");
         puts("1. Search the student database for a student");
         puts("2. Manually add a student");
         puts("3. Use the bulk data loader to add multiple students");
@@ -618,10 +665,23 @@ int ask_which_roster_and_preform_action(char *action)
         case 2:
           system("clear");
           globalTrigger.isTriggered = TRUE;
+          globalTrigger.studentCreationInterrupted = FALSE;
           get_student_first_name();
-          skip_and_add_to_roster(roster.rosterNameWithPrefix);
-          globalTrigger.isTriggered = FALSE;
-          break;
+          if (globalTrigger.studentCreationInterrupted == FALSE)
+          {
+            skip_and_add_to_roster(roster.rosterNameWithPrefix);
+            globalTrigger.isTriggered = FALSE;
+            break;
+          }
+          else
+          {
+            system("clear");
+            printf(RED "Failed to add student to roster: " BOLD "%s\n" RESET, roster.rosterNameWithPrefix);
+            sleep(1);
+            system("clear");
+            break;
+          }
+          // todo need to create a trigger of some sort that will not run the next function if the previous function does not finish executing
         case 3:
           // todo add bulk data loader stuff
           system("clear");
@@ -650,6 +710,7 @@ int ask_which_roster_and_preform_action(char *action)
     }
 
     sprintf(roster.rosterNameWithPrefix, "Roster_%s", manageRosterInput.StrInput);
+
     int rosterExists = check_if_table_exists(roster.rosterNameWithPrefix);
     if (rosterExists == FALSE)
     {
@@ -658,7 +719,16 @@ int ask_which_roster_and_preform_action(char *action)
       printf(YELLOW "The entered roster: " BOLD "%s" RESET YELLOW " does not exist please try again. \n" RESET, roster.rosterNameWithPrefix);
       sleep(2);
       system("clear");
-      ask_which_roster_and_preform_action("remove student from roster");
+      int tableExists = get_table_count("../build/db.sqlite");
+      if (tableExists == TRUE)
+      {
+        int showingFoundRosters = TRUE;
+        while (showingFoundRosters == TRUE)
+        {
+          ask_which_roster_and_preform_action("remove student from roster");
+          showingFoundRosters = FALSE;
+        }
+      }
     }
     else if (rosterExists == TRUE)
     {
@@ -666,6 +736,8 @@ int ask_which_roster_and_preform_action(char *action)
       sleep(1);
       // do stuff
       globalTrigger.isTriggered = TRUE;
+
+      show_current_step("Remove student from roster", 2, 2);
       handle_student_deletion_logic(roster.rosterNameWithPrefix);
     }
   }
@@ -689,12 +761,23 @@ int ask_which_roster_and_preform_action(char *action)
       printf(YELLOW "The entered roster: " BOLD "%s" RESET YELLOW " does not exist please try again. \n" RESET, manageRosterInput.StrInput);
       sleep(2);
       system("clear");
-      ask_which_roster_and_preform_action("create a column");
+
+      int tableExists = get_table_count("../build/db.sqlite");
+      if (tableExists == TRUE)
+      {
+        int showingFoundRosters = TRUE;
+        while (showingFoundRosters == TRUE)
+        {
+          ask_which_roster_and_preform_action("Create a column");
+          showingFoundRosters = FALSE;
+        }
+      }
     }
     else if (rosterExists == TRUE)
     {
       system("clear");
       sleep(1);
+
       choose_col_type(roster.rosterNameWithPrefix);
     }
   }
@@ -718,7 +801,16 @@ int ask_which_roster_and_preform_action(char *action)
       printf(YELLOW "The entered roster: " BOLD "%s" RESET YELLOW " does not exist please try again. \n" RESET, manageRosterInput.StrInput);
       sleep(2);
       system("clear");
-      ask_which_roster_and_preform_action("delete a column");
+      int tableExists = get_table_count("../build/db.sqlite");
+      if (tableExists == TRUE)
+      {
+        int showingFoundRosters = TRUE;
+        while (showingFoundRosters == TRUE)
+        {
+          ask_which_roster_and_preform_action("delete a column");
+          showingFoundRosters = FALSE;
+        }
+      }
     }
     else if (rosterExists == TRUE)
     {
@@ -744,7 +836,6 @@ int ask_which_roster_and_preform_action(char *action)
 int create_col(const char *rosterName, const char *colType)
 {
   char colName[20];
-  system("clear");
   puts("Enter a name for the new column");
   puts("Note: The column name must be atleast one character long");
   puts(YELLOW "To cancel this operation enter 'cancel'" RESET);
@@ -772,6 +863,7 @@ int create_col(const char *rosterName, const char *colType)
         {
           system("clear");
           printf(GREEN "Successfully added a new column to " BOLD "%s.\n" RESET, rosterName);
+          sleep(2);
         }
         else
         {
@@ -814,13 +906,15 @@ int create_col(const char *rosterName, const char *colType)
  *
  * Note: see usage in ask_which_roster_and_preform_action()
  ************************************************************************************/
+// TODO need to build a function that lists all the columns in a roster except for the ones that cannot be deleted: FirstName, LastName, StudentID
 int delete_col(const char *rosterName)
 {
   char colName[20];
   system("clear");
-  puts("Enter a name for the column that you would like to delete");
-  puts("Note: The column name must be atleast one character long");
-  puts(YELLOW "To cancel this operation enter 'cancel'" RESET);
+  show_current_step("Delete a column", 2, 2);
+  puts("Enter the name of the column that you would like to delete");
+  puts(YELLOW "You CANNOT delete the FirstName, LastName, or StudentID columns" RESET);
+  puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
   UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
   strcpy(colName, manageRosterInput.StrInput);
 
@@ -846,11 +940,13 @@ int delete_col(const char *rosterName)
         {
           system("clear");
           printf(GREEN "Successfully deleted column: " BOLD "%s" RESET GREEN " from roster: " BOLD "%s\n" RESET, colName, rosterName);
+          sleep(2);
         }
         else
         {
           printf(RED "ERROR: Unable to delete column: " BOLD "%s" RESET RED " from roster: " BOLD "%s\n" RESET, colName, rosterName);
           puts("Please try again.");
+          sleep(2);
           return 0;
         }
       }
@@ -896,8 +992,9 @@ int choose_col_type(const char *rosterName)
   while (showingColSelectionMenu == TRUE)
   {
     system("clear");
-    puts("Enter the number for the type of data this column will hold?");
-    puts(YELLOW "Enter 'cancel' to cancel this operation" RESET);
+    show_current_step("Create a column", 2, 3);
+    puts("Enter the corresponding number for the type of data this column will hold?");
+    puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
     puts("1. Text");
     puts("2. Whole Numbers");
     puts("3. Decimals");
@@ -920,22 +1017,32 @@ int choose_col_type(const char *rosterName)
     case 1:
     case 6: // in the event the user doesn't know. We just store it as TEXT
       strcpy(colType, "TEXT");
+      system("clear");
+      show_current_step("Add student to roster", 3, 3);
       create_col(rosterName, colType);
       break;
     case 2:
       strcpy(colType, "INTEGER");
+      system("clear");
+      show_current_step("Add student to roster", 3, 3);
       create_col(rosterName, colType);
       break;
     case 3:
       strcpy(colType, "REAL"); // the REAL data type is used to store floating-point values
+      system("clear");
+      show_current_step("Add student to roster", 3, 3);
       create_col(rosterName, colType);
       break;
     case 4:
       strcpy(colType, "BOOLEAN");
+      system("clear");
+      show_current_step("Add student to roster", 3, 3);
       create_col(rosterName, colType);
       break;
     case 5:
       strcpy(colType, "DATE");
+      system("clear");
+      show_current_step("Add student to roster", 3, 3);
       create_col(rosterName, colType);
       break;
     default:
@@ -1031,7 +1138,7 @@ int handle_col_sort_logic(const char *colName)
 {
   puts("How would you like to sort this column?");
   puts("Enter the corresponding number for the sorting method.");
-  puts(YELLOW "You can cancel this operation by entering 'cancel'" RESET);
+  puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
   // todo handle canceling operation
   if (strcmp(rosterColumn.ColumnType, "BOOLEAN") == 0)
   {
@@ -1123,7 +1230,7 @@ int show_roster_data_with_warning(const char *rosterName)
   puts("1: Some data may not be visible to you depending on the dimensions of your terminal" RESET);
   printf("2: Take several seconds to load all the data\n\n" RESET);
   puts("Are you sure that you'd like to continue with this operation?[y/n]");
-  puts(YELLOW "To cancel this operation enter 'cancel'" RESET);
+  puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
   UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
   if (INPUT_IS_CANCEL(manageRosterInput.StrInput) || INPUT_IS_NO(manageRosterInput.StrInput))
   {
@@ -1201,7 +1308,10 @@ int handle_student_deletion_logic(const char *rosterName)
     puts("Please try again");
     sleep(1);
     system("clear");
+    globalTrigger.isTriggered = TRUE;
     show_roster_data_without_warning(rosterName);
+    system("clear"); // Super hacky way to not show data twice
+    show_current_step("Remove student from roster", 2, 2);
     handle_student_deletion_logic(rosterName);
   }
   else if (studentExists == TRUE)
@@ -1253,7 +1363,6 @@ int confirm_action(const char *action, ...)
 {
   va_list args;
   va_start(args, action);
-
   char *rosterName = va_arg(args, char *);
   va_end(args);
 

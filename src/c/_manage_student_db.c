@@ -58,9 +58,9 @@ int manage_student_db(void)
       manageStudentDBMenuIsRunning = FALSE;
       system("clear");
       show_current_menu("Delete Student From Database");
-      show_students_in_db("../build/db.sqlite");
+      show_all_students_in_student_db("../build/db.sqlite");
       printf("Enter the StudentID of the student you would like to delete.\n");
-      printf(YELLOW "Enter 'cancel' to cancel this operation.\n" RESET);
+      puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
       UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageStudentDBInput.StrInput);
 
       if (strcmp(manageStudentDBInput.StrInput, "cancel") == 0)

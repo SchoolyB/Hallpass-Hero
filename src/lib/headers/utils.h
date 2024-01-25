@@ -139,6 +139,7 @@ extern "C"
 
   typedef struct
   {
+    int studentCreationInterrupted;
     int isTriggered;
   } GlobalTrigger;
 

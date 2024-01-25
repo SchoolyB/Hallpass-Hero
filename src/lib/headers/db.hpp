@@ -66,7 +66,7 @@ extern "C"
   // ALL FUNCTIONS BELOW THIS LINE ARE FOR THE STUDENT DATABASE
   int create_student_db_and_table(void);
   int insert_student_into_db(const char *FirstName, const char *LastName, const char *StudentID);
-  int show_students_in_db(const char *path);
+  int show_all_students_in_student_db(const char *path);
   int query_student_db(const char *searchParam);
 #ifdef __cplusplus
 } // extern "C"
