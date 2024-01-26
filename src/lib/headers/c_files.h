@@ -45,4 +45,8 @@ int update_student_info(void);
 
 /*_search.c*/
 int search_for_student(void);
+
+/*_settings.c*/
+int show_settings_menu(void);
+int handle_runtime_logging_logic(void);
 #endif

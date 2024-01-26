@@ -47,18 +47,18 @@ int CPP_UTILS_ERROR_LOGGER(const char *message, const char *function, const CppE
   {
   case CppErrorLevel::MINOR:
     errorLog << "Logged @ " << timeString << endl;
-    errorLog << "Minor Error: " << message << " in function " << function << endl;
+    errorLog << "Minor Error: " << message << " in function call" << function << endl;
     errorLog << "=============================================================" << endl;
     break;
   case CppErrorLevel::MODERATE:
     errorLog << "Logged @ " << timeString << endl;
-    errorLog << "Moderate Error: " << message << " in function " << function << endl;
+    errorLog << "Moderate Error: " << message << " in function call " << function << endl;
     errorLog << "=============================================================" << endl;
     break;
   case CppErrorLevel::CRITICAL:
     errorLog << "Logged @ " << timeString << endl;
     errorLog << "=============================================================" << endl;
-    errorLog << "CRITICAL ERROR: " << message << " in function " << function << endl;
+    errorLog << "CRITICAL ERROR: " << message << " in function call" << function << endl;
     break;
   default:
     break;

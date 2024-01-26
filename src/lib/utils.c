@@ -56,6 +56,24 @@ int UTILS_ERROR_LOGGER(char *errorMessage, char *function, enum ErrorLevel level
   }
 }
 /************************************************************************************
+ * UTILS_RUNTIME_LOGGER(): Logs runtime activity
+ *
+ ************************************************************************************/
+int UTILS_RUNTIME_LOGGER(char *action, char *functionName)
+{
+  FILE *runtimeLog = fopen("../logs/runtime.log", "a");
+  time_t currentTime;
+  time(&currentTime);
+
+  fprintf(runtimeLog, "Logged @ %s", ctime(&currentTime));
+
+  fprintf(runtimeLog, "User Action: %s, in function call: %s()\n", action, functionName);
+
+  fprintf(runtimeLog, "======================================================================================\n\n");
+  fflush(runtimeLog);
+}
+
+/************************************************************************************
  * show_current_menu(): Simply shows the current menu the user is in to prevent confusion
  ************************************************************************************/
 void show_current_menu(char *str)

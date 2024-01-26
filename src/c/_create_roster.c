@@ -215,8 +215,7 @@ int get_and_confirm_roster_name(void)
     {
       system("clear");
       sprintf(rosterNameWithPrefix, "Roster_%s", rosterNameInput);
-      printf("Checking if " BOLD "%s" RESET " exists...\n", rosterNameInput);
-      sleep(1);
+
       int table_exists = check_if_table_exists(rosterNameWithPrefix);
       if (table_exists == FALSE)
       {

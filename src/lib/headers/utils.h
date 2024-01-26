@@ -75,6 +75,7 @@ extern "C"
   // Declaration of utility functions
 
   int UTILS_ERROR_LOGGER(char *error_message, char *function, enum ErrorLevel level);
+  int UTILS_RUNTIME_LOGGER(char *action, char *functionName);
   void UTILS_REMOVE_NEWLINE_CHAR(char *param);
   void UTILS_CLEAR_INPUT_BUFFER();
   void show_current_menu(char *str);
@@ -143,7 +144,13 @@ extern "C"
     int isTriggered;
   } GlobalTrigger;
 
-  extern GlobalTrigger globalTrigger; // initialized in main.c
+  typedef struct
+  {
+    int runtimeLoggingEnabled;
+  } ProgramSettings;
+
+  extern ProgramSettings programSettings; // initialized in main.c
+  extern GlobalTrigger globalTrigger;     // initialized in main.c
 #ifdef __cplusplus
 } // extern "C"
 #endif
