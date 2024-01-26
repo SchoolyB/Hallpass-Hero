@@ -70,6 +70,7 @@ void show_current_menu(char *str)
 void show_current_step(char *str, int currentStep, int totalSteps)
 {
   printf(BOLD "%s" RESET " Step: %d/%d\n", str, currentStep, totalSteps);
+  printf("--------------------------------------------------\n");
 }
 
 void UTILS_REMOVE_NEWLINE_CHAR(char *param)
@@ -97,7 +98,7 @@ void UTILS_CLEAR_INPUT_BUFFER()
 int list_all_students(void)
 {
 
-  int result = show_students_in_db("../build/db.sqlite");
+  int result = show_all_students_in_student_db("../build/db.sqlite");
   if (result == 0)
   {
     int showingStudents = TRUE;

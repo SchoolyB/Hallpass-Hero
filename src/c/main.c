@@ -12,9 +12,11 @@ Description : This source file contains the main function for the Hallpass Hero 
 #include <stdlib.h>
 #include <stdint.h>
 #include "../lib/headers/utils.h"
-// #include "../lib/headers/db.hpp"
 #include "../lib/headers/c_files.h"
 
+const char *dbPath = "../build/db.sqlite";
+
+GlobalTrigger globalTrigger = {FALSE};
 UserInput mainMenuInput;
 uint8_t mainMenuProccess = FALSE;
 char MainMenuOptions[7][50] = {
@@ -108,7 +110,6 @@ int main(void)
       puts("Please try again");
       system("clear");
     }
-
     /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-END OF MAIN MENU+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
   }
   return 0;

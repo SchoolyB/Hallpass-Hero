@@ -22,6 +22,7 @@ static uint8_t mainMenuProccess;
 int addStudentMenuIsRunning;
 UserInput addStudentInput;
 Student NewStudent;
+Roster destinationRoster;
 /************************************************************************************
  * add_student_to_db(): This is the main function for adding a student
  * to the database.
@@ -97,7 +98,7 @@ int get_student_first_name(void)
   show_current_step("Enter Student First Name", 1, 7);
 
   puts("Please enter the students first name.");
-  puts(YELLOW "You can cancel this operation by entering 'cancel." RESET);
+  puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
   UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
   if (!has_one_non_space_char(addStudentInput.StrInput))
   {
@@ -110,7 +111,8 @@ int get_student_first_name(void)
   else if (strcmp(addStudentInput.StrInput, "cancel") == 0)
   {
     system("clear");
-    puts(YELLOW "Canceling operation." RESET);
+    puts(YELLOW "Cancelling operation." RESET);
+    globalTrigger.studentCreationInterrupted = TRUE;
     sleep(1);
     system("clear");
     addStudentMenuIsRunning = TRUE;
@@ -178,7 +180,7 @@ int get_student_last_name(void)
 
   puts("Please enter the students last name.");
   puts("If the student does not have a last name please enter 'none'.");
-  puts(YELLOW "You can cancel this operation by entering 'cancel." RESET);
+  puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
   UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
   if (!has_one_non_space_char(addStudentInput.StrInput))
   {
@@ -192,7 +194,8 @@ int get_student_last_name(void)
   else if (strcmp(addStudentInput.StrInput, "cancel") == 0)
   {
     system("clear");
-    puts(YELLOW "Canceling operation." RESET);
+    puts(YELLOW "Cancelling operation." RESET);
+    globalTrigger.studentCreationInterrupted = TRUE;
     sleep(1);
     system("clear");
     addStudentMenuIsRunning = TRUE;
@@ -282,7 +285,7 @@ int ask_about_student_id(void)
   system("clear");
   puts("How would you like to assign the student ID?");
   puts("Please enter either '1' or '2'.");
-  puts(YELLOW "To cancel this operation enter 'cancel'" RESET);
+  puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
   puts("1. Automatically generate an ID ");
   puts("2. Create your own");
 
@@ -292,7 +295,8 @@ int ask_about_student_id(void)
   if (strcmp(addStudentInput.StrInput, "cancel") == 0)
   {
     system("clear");
-    puts(YELLOW "Canceling operation." RESET);
+    puts(YELLOW "Cancelling operation." RESET);
+    globalTrigger.studentCreationInterrupted = TRUE;
     sleep(1);
     system("clear");
     addStudentMenuIsRunning = TRUE;
@@ -340,7 +344,9 @@ void manually_set_student_id(void)
   if (strcmp(addStudentInput.StrInput, "cancel") == 0)
   {
     system("clear");
-    puts(YELLOW "Canceling operation." RESET);
+    puts(YELLOW "Cancelling operation." RESET);
+
+    globalTrigger.studentCreationInterrupted = TRUE;
     sleep(1);
     system("clear");
     gettingStudentId == FALSE;
@@ -368,7 +374,7 @@ void manually_set_student_id(void)
     system("clear");
     char studentID[15];
     strcpy(studentID, addStudentInput.StrInput);
-    int result = check_if_student_id_exists(studentID);
+    int result = check_if_student_id_exists(studentID, dbPath);
     if (result == FALSE)
     {
       confirm_manually_entered_student_id(studentID);
@@ -432,7 +438,7 @@ int generate_student_id(char *FirstName, char *LastName)
     {
       system("clear");
       snprintf(setStudentID, sizeof(setStudentID), "%c%c%s%d%d%d", toupper(FirstName[0]), toupper(FirstName[1]), truncatedLastName, digit1, digit2, digit3);
-      int result = check_if_student_id_exists(setStudentID);
+      int result = check_if_student_id_exists(setStudentID, dbPath);
       if (result == FALSE)
       {
         puts(GREEN "ID successfully generated!" RESET);
@@ -467,7 +473,7 @@ int generate_student_id(char *FirstName, char *LastName)
   {
     snprintf(setStudentID, sizeof(setStudentID), "%c%c%s%d%d%d", toupper(FirstName[0]), toupper(FirstName[1]), LastName, digit1, digit2, digit3);
     // printf("%s\n", setStudentID);
-    int result = check_if_student_id_exists(setStudentID);
+    int result = check_if_student_id_exists(setStudentID, dbPath);
     if (result == FALSE)
     {
       puts(GREEN "ID successfully generated!" RESET);
@@ -509,7 +515,18 @@ int confirm_generated_student_id(char *studentID)
       show_current_step("Confirm Student Id", 6, 7);
       strcpy(NewStudent.StudentID, setStudentID);
       system("clear");
-      ask_to_add_new_student_to_roster();
+      /*Doing this allows me to use the full or part of
+      functions from this file in other places in the project.
+      I could modify what I Wanted to show depending on the
+      global trigger value. - Marshall Burns Jan 24 2024*/
+      if (globalTrigger.isTriggered == FALSE)
+      {
+        ask_to_add_new_student_to_roster();
+      }
+      else
+      {
+        return 0;
+      }
     }
 
     else if (INPUT_IS_NO(addStudentInput.StrInput))
@@ -555,9 +572,20 @@ int confirm_manually_entered_student_id(char *studentID)
       show_current_step("Confirm Student Id", 6, 7);
       strcpy(NewStudent.StudentID, setStudentID);
       system("clear");
-      ask_to_add_new_student_to_roster();
-    }
 
+      /*Doing this allows me to use the full or part of
+      functions from this file in other places in the project.
+      I could modify what I Wanted to show depending on the
+      global trigger value. - Marshall Burns Jan 24 2024*/
+      if (globalTrigger.isTriggered == FALSE)
+      {
+        ask_to_add_new_student_to_roster();
+      }
+      else
+      {
+        return 0;
+      }
+    }
     else if (INPUT_IS_NO(addStudentInput.StrInput))
     {
       confirmingStudentId = FALSE;
@@ -587,6 +615,7 @@ int confirm_manually_entered_student_id(char *studentID)
  ************************************************************************************/
 int ask_to_add_new_student_to_roster(void)
 {
+
   system("clear");
   show_current_step("Add Student To Roster", 7, 7);
   puts("Would you like to add this student to a roster?");
@@ -658,16 +687,16 @@ int ask_to_add_new_student_to_roster(void)
  ************************************************************************************/
 int ask_which_roster_to_add_newly_created_student(void)
 {
-  char rosterNameWithPrefix[60];
   puts("Please enter the name of the roster you would like to add this student to.");
+  system("clear");
+  show_tables();
   UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
-  sprintf(rosterNameWithPrefix, "Roster_%s", addStudentInput.StrInput);
-
-  int rosterExists = check_if_table_exists(rosterNameWithPrefix);
+  sprintf(destinationRoster.rosterNameWithPrefix, "Roster_%s", addStudentInput.StrInput);
+  int rosterExists = check_if_table_exists(destinationRoster.rosterNameWithPrefix);
   if (rosterExists == TRUE)
   {
     puts("Table exists");
-    int addedToRoster = add_student_to_roster(rosterNameWithPrefix, NewStudent.FirstName, NewStudent.LastName, NewStudent.StudentID);
+    int addedToRoster = add_student_to_roster(destinationRoster.rosterNameWithPrefix, NewStudent.FirstName, NewStudent.LastName, NewStudent.StudentID);
     if (addedToRoster == TRUE)
     {
       system("clear");
@@ -722,7 +751,8 @@ int handle_last_name_truncated_menu(void)
   else if (addStudentInput.NumInput == 3)
   {
     system("clear");
-    puts(YELLOW "Canceling operation." RESET);
+    puts(YELLOW "Cancelling operation" RESET);
+    globalTrigger.studentCreationInterrupted = TRUE;
     sleep(1);
     system("clear");
     add_student_to_db();
@@ -734,4 +764,44 @@ int handle_last_name_truncated_menu(void)
     handle_last_name_truncated_menu();
   }
   return 0;
+}
+
+/************************************************************************************
+ * skip_and_add_to_roster(): Helper used to skip the process of adding a student
+ *                           to a roster.
+ *
+ * Note: see usage in _manage_roster.c
+ ************************************************************************************/
+int skip_and_add_to_roster(const char *rosterName)
+{
+  int result = add_student_to_roster(rosterName, NewStudent.FirstName, NewStudent.LastName, NewStudent.StudentID);
+  if (result == TRUE)
+  {
+    int addedToStudentDB = insert_student_into_db(NewStudent.FirstName, NewStudent.LastName, NewStudent.StudentID);
+    if (addedToStudentDB == 0)
+    {
+      printf(GREEN "Student successfully added to roster" BOLD " %s.\n" RESET, rosterName);
+      sleep(1);
+      puts(GREEN "Student successfully added to database." RESET);
+      sleep(1);
+      system("clear");
+      addStudentMenuIsRunning = TRUE;
+      return 0;
+    }
+    else if (addedToStudentDB == 1)
+    {
+      puts(RED "Please try again." RESET);
+      sleep(1);
+      system("clear");
+      addStudentMenuIsRunning = TRUE;
+      return 0;
+    }
+    return 0;
+  }
+  else
+  {
+    system("clear");
+    printf(RED "Failed to add student to roster. Please try again.\n" RESET);
+    UTILS_ERROR_LOGGER("Failed to add student to roster", "skip_and_add_to_roster", MINOR);
+  }
 }

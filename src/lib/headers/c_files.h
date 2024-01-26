@@ -18,6 +18,7 @@ int confirm_manually_entered_student_id(char *studentID);
 int ask_to_add_new_student_to_roster(void);
 int ask_which_roster_to_add_newly_created_student(void);
 int handle_last_name_truncated_menu(void);
+int skip_and_add_to_roster(const char *rosterName);
 
 /*_create_roster.c*/
 int create_new_roster(void);
@@ -35,6 +36,7 @@ int handle_col_sort_logic(const char *colName);
 int show_roster_data_without_warning(const char *rosterName);
 int show_roster_data_with_warning(const char *rosterName);
 int check_if_roster_has_data(const char *rosterName);
+int handle_student_deletion_logic(const char *rosterName);
 int confirm_action(const char *action, ...);
 
 /*_manage_student_db.c*/

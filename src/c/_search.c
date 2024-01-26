@@ -27,7 +27,7 @@ int search_for_student(void)
   printf("This is not case sensitive");
   UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(searchInput.StrInput);
   searchInput.StrInput[0] = toupper(searchInput.StrInput[0]);
-  int result = query_db_for_student_name(searchInput.StrInput);
+  int result = query_student_db(searchInput.StrInput);
 
   if (result == 0)
   {

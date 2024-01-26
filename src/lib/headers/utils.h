@@ -50,6 +50,7 @@ extern "C"
 #define UNDERLINE "\x1B[4m"
 
   //--------------------------------------------------------------------------------//
+  extern const char *dbPath;
 
   enum ErrorLevel
   {
@@ -130,6 +131,19 @@ extern "C"
 
   } Column;
 
+  typedef struct
+  {
+    char rosterName[50];
+    char rosterNameWithPrefix[60];
+  } Roster;
+
+  typedef struct
+  {
+    int studentCreationInterrupted;
+    int isTriggered;
+  } GlobalTrigger;
+
+  extern GlobalTrigger globalTrigger; // initialized in main.c
 #ifdef __cplusplus
 } // extern "C"
 #endif

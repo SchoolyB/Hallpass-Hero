@@ -170,8 +170,8 @@ int get_and_confirm_roster_name(void)
   char rosterNameWithPrefix[60];
   // getting initial input
   puts("What would you like to name your new roster?");
-  puts("Hint: Roster names can be no less the 1 character and no more then 30 characters.");
-  puts("Hint: You can cancel this operation at any time by typing 'cancel'.");
+  puts("Roster names can be no less the 1 character and no more then 30 characters.");
+  puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
 
   UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(createRosterInput.StrInput);
   strcpy(rosterNameInput, createRosterInput.StrInput);
@@ -196,7 +196,7 @@ int get_and_confirm_roster_name(void)
   else if (strcmp(rosterNameInput, "cancel") == 0)
   {
     system("clear");
-    printf(YELLOW "Canceling roster creation\n" RESET);
+    puts(YELLOW "Cancelling operation" RESET);
     sleep(1);
     system("clear");
     create_new_roster();
@@ -221,6 +221,8 @@ int get_and_confirm_roster_name(void)
       if (table_exists == FALSE)
       {
         int result = create_new_roster_table(rosterNameWithPrefix);
+        printf("%d\n", result);
+        sleep(10);
         if (result == 0)
         {
           printf("Creating new roster:" BOLD " %s.\n" RESET, rosterNameInput);
@@ -229,14 +231,14 @@ int get_and_confirm_roster_name(void)
           system("clear");
           create_new_roster();
         }
-        else
-        {
-          printf(RED "Error: Failed to create new roster: %s\n" RESET, rosterNameInput);
-          puts("Please try again");
-          sleep(3);
-          system("clear");
-          create_new_roster();
-        }
+        // else
+        // {
+        //   printf(RED "Error: Failed to create new roster: %s\n" RESET, rosterNameInput);
+        //   puts("Please try again");
+        //   sleep(3);
+        //   system("clear");
+        //   create_new_roster();
+        // }
       }
       else if (table_exists == TRUE)
       {
