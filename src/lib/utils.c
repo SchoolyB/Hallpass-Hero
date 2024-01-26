@@ -16,10 +16,10 @@ Description : This source file contains several utility functions that are used
 #include "headers/utils.h"
 #include "headers/db.hpp"
 /************************************************************************************
- * UTILS_ERROR_LOGGER(): Logs errors errors that occur specifically in 'C' files
- * Note: For 'C++' code error logging see CPP_UTILS_ERROR_LOGGER in utils.cpp
+ * __utils_error_logger(): Logs errors errors that occur specifically in 'C' files
+ * Note: For 'C++' code error logging see cpp_utils_error_logger in utils.cpp
  ************************************************************************************/
-int UTILS_ERROR_LOGGER(char *errorMessage, char *function, enum ErrorLevel level)
+int __utils_error_logger(char *errorMessage, char *function, enum ErrorLevel level)
 {
 
   FILE *errorLog = fopen("../logs/errors.log", "a");
@@ -56,18 +56,23 @@ int UTILS_ERROR_LOGGER(char *errorMessage, char *function, enum ErrorLevel level
   }
 }
 /************************************************************************************
- * UTILS_RUNTIME_LOGGER(): Logs runtime activity
+ * __utils_runtime_logger(): Logs runtime activity
  *
  ************************************************************************************/
-int UTILS_RUNTIME_LOGGER(char *action, char *functionName)
+int __utils_runtime_logger(char *action, char *functionName)
 {
+  if (programSettings.runtimeLoggingEnabled == FALSE)
+  {
+    return 0;
+  }
+
   FILE *runtimeLog = fopen("../logs/runtime.log", "a");
   time_t currentTime;
   time(&currentTime);
 
   fprintf(runtimeLog, "Logged @ %s", ctime(&currentTime));
 
-  fprintf(runtimeLog, "User Action: %s, in function call: %s()\n", action, functionName);
+  fprintf(runtimeLog, "User Action: User %s, in function call: %s()\n", action, functionName);
 
   fprintf(runtimeLog, "======================================================================================\n\n");
   fflush(runtimeLog);
@@ -91,7 +96,7 @@ void show_current_step(char *str, int currentStep, int totalSteps)
   printf("--------------------------------------------------\n");
 }
 
-void UTILS_REMOVE_NEWLINE_CHAR(char *param)
+void __utils_remove_newline_char(char *param)
 {
   size_t len = strlen(param);
   if (len > 0 && param[len - 1] == '\n')
@@ -101,9 +106,9 @@ void UTILS_REMOVE_NEWLINE_CHAR(char *param)
 }
 
 /************************************************************************************
- * UTILS_CLEAR_INPUT_BUFFER(): Clears the input buffer to prevent unwanted behavior
+ * __utils_clear_input_buffer(): Clears the input buffer to prevent unwanted behavior
  ************************************************************************************/
-void UTILS_CLEAR_INPUT_BUFFER()
+void __utils_clear_input_buffer()
 {
   int c;
   while ((c = getchar()) != '\n' && c != EOF)
@@ -130,7 +135,7 @@ int list_all_students(void)
   }
   else if (result == 1)
   {
-    UTILS_ERROR_LOGGER("Could not find students in database or table: 'students' does not exist", "list_all_students()", MODERATE);
+    __utils_error_logger("Could not find students in database or table: 'students' does not exist", "list_all_students()", MODERATE);
     puts(RED "Error: Could not find students in database or table: 'students' does not exist " RESET);
     puts("May need to add a student to the database then try this action again.");
     wait_for_char_input();

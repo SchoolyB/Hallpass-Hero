@@ -25,10 +25,10 @@ prefixing them all with 'std::'
 using namespace std;
 
 /************************************************************************************
- * CPP_UTILS_ERROR_LOGGER(): Logs errors errors that occur specifically in 'C++' files
- * Note: For 'C' code error logging see UTILS_ERROR_LOGGER in utils.c
+ * cpp_utils_error_logger(): Logs errors errors that occur specifically in 'C++' files
+ * Note: For 'C' code error logging see __utils_error_logger in utils.c
  ************************************************************************************/
-int CPP_UTILS_ERROR_LOGGER(const char *message, const char *function, const CppErrorLevel level)
+int cpp_utils_error_logger(const char *message, const char *function, const CppErrorLevel level)
 {
   fstream errorLog;
 

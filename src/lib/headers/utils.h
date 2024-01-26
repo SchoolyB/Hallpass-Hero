@@ -69,15 +69,15 @@ extern "C"
                                 strcmp(param, "cancel") == 0 || strcmp(param, "Cancel") == 0)
   //--------------------------------------------------------------------------------//
 
-#define UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(param) (fgets(param, sizeof(param), stdin), UTILS_REMOVE_NEWLINE_CHAR(param))
+#define UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(param) (fgets(param, sizeof(param), stdin), __utils_remove_newline_char(param))
   //--------------------------------------------------------------------------------//
 
   // Declaration of utility functions
 
-  int UTILS_ERROR_LOGGER(char *error_message, char *function, enum ErrorLevel level);
-  int UTILS_RUNTIME_LOGGER(char *action, char *functionName);
-  void UTILS_REMOVE_NEWLINE_CHAR(char *param);
-  void UTILS_CLEAR_INPUT_BUFFER();
+  int __utils_error_logger(char *error_message, char *function, enum ErrorLevel level);
+  int __utils_runtime_logger(char *action, char *functionName);
+  void __utils_remove_newline_char(char *param);
+  void __utils_clear_input_buffer();
   void show_current_menu(char *str);
   void show_current_step(char *str, int currentStep, int totalSteps);
   int wait_for_char_input(void);
