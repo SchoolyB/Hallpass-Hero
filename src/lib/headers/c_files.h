@@ -49,4 +49,6 @@ int search_for_student(void);
 /*_settings.c*/
 int show_settings_menu(void);
 int handle_runtime_logging_logic(void);
+int handle_rename_db_logic(const char *currentDBName);
+int confirm_db_rename(const char *newDBName);
 #endif

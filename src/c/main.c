@@ -16,10 +16,10 @@ Description : This source file contains the main function for the Hallpass Hero 
 
 GlobalTrigger globalTrigger = {FALSE};
 ProgramSettings programSettings = {FALSE};
+DatabaseInfo databaseInfo = {FALSE};
 
 // default db path can be changed in settings menu
-char dbName[];
-char dbPath[] = "../build/%s.db", dbName;
+// const char *dbPath = "../build/db.sqlite";
 
 UserInput mainMenuInput;
 uint8_t mainMenuProccess = FALSE;
@@ -35,6 +35,8 @@ char MainMenuOptions[8][50] = {
 
 int main(void)
 {
+  // strcpy(databaseInfo.currentDBName, add name here )
+  strcpy(databaseInfo.dbPath, "../build/db.sqlite");
 
   time_t currentTime;
   time(&currentTime);

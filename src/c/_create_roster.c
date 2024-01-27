@@ -71,7 +71,7 @@ int create_new_roster(void)
       newRosterMenuIsRunning = FALSE;
       system("clear");
 
-      int tablesExists = get_table_count("../build/db.sqlite");
+      int tablesExists = get_table_count(databaseInfo.dbPath);
 
       if (tablesExists == TRUE)
       {
@@ -226,8 +226,6 @@ int get_and_confirm_roster_name(void)
       if (table_exists == FALSE)
       {
         int result = create_new_roster_table(rosterNameWithPrefix);
-        printf("%d\n", result);
-        sleep(10);
         if (result == 0)
         {
           printf("Creating new roster:" BOLD " %s.\n" RESET, rosterNameInput);

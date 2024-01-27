@@ -165,7 +165,7 @@ int check_if_table_exists(const char *rosterName)
   hasTables = FALSE;
   string cppString(rosterName);
   sqlite3 *database;
-  int dbConnection = sqlite3_open(dbPath, &database);
+  int dbConnection = sqlite3_open(databaseInfo.dbPath, &database);
 
   if (dbConnection != SQLITE_OK)
   {
@@ -209,7 +209,7 @@ extern "C"
     string cppString(rosterName);
     sqlite3 *database;
 
-    int dbConnection = sqlite3_open(dbPath, &database);
+    int dbConnection = sqlite3_open(databaseInfo.dbPath, &database);
     if (dbConnection != SQLITE_OK)
     {
       __throw_error_opening_db("create_new_roster_table", database, dbConnection);
@@ -248,7 +248,7 @@ extern "C"
   int show_tables(void)
   {
     sqlite3 *database;
-    int dbConnection = sqlite3_open(dbPath, &database);
+    int dbConnection = sqlite3_open(databaseInfo.dbPath, &database);
     if (dbConnection != SQLITE_OK)
     {
       __throw_error_opening_db("show_tables", database, dbConnection);
@@ -284,7 +284,7 @@ extern "C"
   {
     string rosterNameString(rosterName);
     sqlite3 *database;
-    int dbConnection = sqlite3_open(dbPath, &database);
+    int dbConnection = sqlite3_open(databaseInfo.dbPath, &database);
     if (dbConnection != SQLITE_OK)
     {
       __throw_error_opening_db("check_for_data_in_roster", database, dbConnection);
@@ -326,7 +326,7 @@ extern "C"
     string oldRosterNameString(oldRosterName);
     string newRosterNameString(newRosterName);
     sqlite3 *database;
-    int dbConnection = sqlite3_open(dbPath, &database);
+    int dbConnection = sqlite3_open(databaseInfo.dbPath, &database);
     if (dbConnection != SQLITE_OK)
     {
       __throw_error_opening_db("rename_roster", database, dbConnection);
@@ -364,7 +364,7 @@ extern "C"
   {
     string rosterNameString(rosterName);
     sqlite3 *database;
-    int dbConnection = sqlite3_open(dbPath, &database);
+    int dbConnection = sqlite3_open(databaseInfo.dbPath, &database);
     if (dbConnection != SQLITE_OK)
     {
       __throw_error_opening_db("add_col_to_roster", database, dbConnection);
@@ -401,7 +401,7 @@ extern "C"
   {
     string rosterNameString(rosterName);
     sqlite3 *database;
-    int dbConnection = sqlite3_open(dbPath, &database);
+    int dbConnection = sqlite3_open(databaseInfo.dbPath, &database);
     if (dbConnection != SQLITE_OK)
     {
       __throw_error_opening_db("", database, dbConnection);
@@ -444,7 +444,7 @@ extern "C"
 
     sqlite3 *database;
 
-    int dbConnection = sqlite3_open(dbPath, &database);
+    int dbConnection = sqlite3_open(databaseInfo.dbPath, &database);
 
     if (dbConnection != SQLITE_OK)
     {
@@ -500,7 +500,7 @@ extern "C"
     string colNameString(colName);
 
     sqlite3 *database;
-    int dbConnection = sqlite3_open(dbPath, &database);
+    int dbConnection = sqlite3_open(databaseInfo.dbPath, &database);
 
     if (dbConnection != SQLITE_OK)
     {
@@ -564,7 +564,7 @@ extern "C"
     string rosterNameString(rosterName);
     sqlite3 *database;
 
-    int dbConnection = sqlite3_open(dbPath, &database);
+    int dbConnection = sqlite3_open(databaseInfo.dbPath, &database);
 
     if (dbConnection != SQLITE_OK)
     {
@@ -600,7 +600,7 @@ extern "C"
     string colNameString(colName);
     sqlite3 *database;
 
-    int dbConnection = sqlite3_open(dbPath, &database);
+    int dbConnection = sqlite3_open(databaseInfo.dbPath, &database);
 
     if (dbConnection != SQLITE_OK)
     {
@@ -635,7 +635,7 @@ extern "C"
     string colNameString(colName);
     sqlite3 *database;
 
-    int dbConnection = sqlite3_open(dbPath, &database);
+    int dbConnection = sqlite3_open(databaseInfo.dbPath, &database);
 
     if (dbConnection != SQLITE_OK)
     {
@@ -665,7 +665,7 @@ extern "C"
   {
     string tableNameString(tableName);
     sqlite3 *database;
-    int dbConnection = sqlite3_open(dbPath, &database);
+    int dbConnection = sqlite3_open(databaseInfo.dbPath, &database);
     if (dbConnection != SQLITE_OK)
     {
       __throw_error_opening_db("drop_table", database, dbConnection);
@@ -732,7 +732,7 @@ extern "C"
 
     sqlite3 *database;
 
-    int dbConnection = sqlite3_open(dbPath, &database);
+    int dbConnection = sqlite3_open(databaseInfo.dbPath, &database);
 
     if (dbConnection != SQLITE_OK)
     {
@@ -782,7 +782,7 @@ extern "C"
     string tableNameString(tableName);
 
     sqlite3 *database;
-    int dbConnection = sqlite3_open(dbPath, &database);
+    int dbConnection = sqlite3_open(databaseInfo.dbPath, &database);
     if (dbConnection != SQLITE_OK)
     {
       __throw_error_opening_db("delete_student_from_table", database, dbConnection);
@@ -834,7 +834,7 @@ extern "C"
       tableNameString = "students";
     }
 
-    int dbConnection = sqlite3_open(dbPath, &database);
+    int dbConnection = sqlite3_open(databaseInfo.dbPath, &database);
 
     if (dbConnection != SQLITE_OK)
     {
@@ -877,7 +877,7 @@ extern "C"
   {
 
     sqlite3 *database;
-    int dbConnection = sqlite3_open(dbPath, &database);
+    int dbConnection = sqlite3_open(databaseInfo.dbPath, &database);
 
     if (dbConnection != SQLITE_OK)
     {
@@ -906,7 +906,7 @@ extern "C"
   int insert_student_into_db(const char *FirsName, const char *LastName, const char *StudentID)
   {
     sqlite3 *database;
-    int dbConnection = sqlite3_open(dbPath, &database);
+    int dbConnection = sqlite3_open(databaseInfo.dbPath, &database);
 
     if (dbConnection != SQLITE_OK)
     {
@@ -982,7 +982,7 @@ int query_student_db(const char *searchParam)
 {
   sqlite3 *database;
   sqlite3_stmt *statement;
-  int dbConnection = sqlite3_open(dbPath, &database);
+  int dbConnection = sqlite3_open(databaseInfo.dbPath, &database);
 
   if (dbConnection != SQLITE_OK)
   {

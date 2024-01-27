@@ -4,11 +4,16 @@
 #include "../lib/headers/utils.h"
 #include "../lib/headers/c_files.h"
 
+// TODOs: Need to first read the name of the current db in the directory, then rename it, then update the global dbpath variable with that name
+
 UserInput settingsInput;
 int settingsMenuRunning = TRUE;
 
+// sprintf(newDBPath, "../build/%s.sqlite", newDBName);
+
 int show_settings_menu(void)
 {
+  settingsMenuRunning = TRUE;
   while (settingsMenuRunning == TRUE)
   {
     show_current_menu("Settings Menu");
@@ -28,8 +33,8 @@ int show_settings_menu(void)
     handle_runtime_logging_logic();
     break;
   case 2:
-    __utils_runtime_logger("user entered the customize database path menu", "show_settings_menu");
-    // do stuff
+    __utils_runtime_logger("chose to rename the database", "show_settings_menu");
+    handle_rename_db_logic(databaseInfo.currentDBName);
     break;
   case 3:
     __utils_runtime_logger("user entered the enable/disable color menu", "show_settings_menu");
@@ -49,33 +54,34 @@ int show_settings_menu(void)
     system("clear");
     puts("Please try again.");
     show_settings_menu();
+    ;
   }
 }
 
 int handle_rename_db_logic(const char *currentDBName)
 {
   system("clear");
-  printf("Currently the database is named: " BOLD "%s" RESET "\n", currentDBName);
+  show_current_step("Change database name", 1, 1);
+  printf("Currently the database is named: " BOLD "%s" RESET "\n", databaseInfo.currentDBName);
   puts("Would you like to rename the database?[y/n]");
   puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
 
   __utils_fgets_and_remove_newline(settingsInput.StrInput);
   if (INPUT_IS_YES(settingsInput.StrInput))
   {
-    __utils_clear_input_buffer(settingsInput.StrInput);
     system("clear");
     puts("Enter enter the new name for the database.");
     puts("Note: The name cannot contain any special characters.");
     puts("Note: The file extension will be added automatically.");
     __utils_fgets_and_remove_newline(settingsInput.StrInput);
-    char newDBName[20];
+
     if (strlen(settingsInput.StrInput) < 1)
     {
       system("clear");
       puts(YELLOW "The entered name is too short. Please try again." RESET);
       sleep(1);
       system("clear");
-      handle_rename_db_logic(currentDBName);
+      handle_rename_db_logic(databaseInfo.currentDBName);
     }
     else if (strlen(settingsInput.StrInput) > 20)
     {
@@ -83,7 +89,7 @@ int handle_rename_db_logic(const char *currentDBName)
       puts(YELLOW "The entered name is too long. Please try again." RESET);
       sleep(1);
       system("clear");
-      handle_rename_db_logic(currentDBName);
+      handle_rename_db_logic(databaseInfo.currentDBName);
     }
     else
     {
@@ -91,9 +97,11 @@ int handle_rename_db_logic(const char *currentDBName)
       switch (hasSpecialChars)
       {
       case 0: // false
-        int confirmed = confirm_db_rename(newDBName);
+        int confirmed = confirm_db_rename(databaseInfo.newDBName);
         if (confirmed == TRUE)
         {
+          strcpy(databaseInfo.newDBName, settingsInput.StrInput);
+          rename(databaseInfo.currentDBName, databaseInfo.newDBName);
           __utils_runtime_logger("confirmed database renaming", "handle_rename_db_logic");
         }
         else if (confirmed == FALSE)
@@ -103,7 +111,7 @@ int handle_rename_db_logic(const char *currentDBName)
           puts("Returning to settings menu...");
           sleep(1);
           system("clear");
-          settingsMenuRunning = TRUE;
+          show_settings_menu();
         }
         else
         {
@@ -115,10 +123,11 @@ int handle_rename_db_logic(const char *currentDBName)
       case 1: // true
         system("clear");
         __utils_runtime_logger("entered a name with special characters", "handle_rename_db_logic");
-        puts("The entered name contains special characters. Please try again.");
+        puts(YELLOW "The entered name contains special characters. Please try again." RESET);
         sleep(1);
         system("clear");
-        handle_rename_db_logic(currentDBName);
+
+        handle_rename_db_logic(databaseInfo.currentDBName);
         break;
       default:
         __utils_error_logger("Error occurred when checking for special characters", "handle_rename_db_logic", MODERATE);
@@ -126,11 +135,63 @@ int handle_rename_db_logic(const char *currentDBName)
       }
     }
   }
+  else if (INPUT_IS_NO(settingsInput.StrInput))
+  {
+    system("clear");
+    __utils_runtime_logger("chose not to rename the database", "handle_rename_db_logic");
+    puts("Returning to settings menu...");
+    sleep(1);
+    system("clear");
+    show_settings_menu();
+  }
+  else if (INPUT_IS_CANCEL(settingsInput.StrInput))
+  {
+    system("clear");
+    __utils_runtime_logger("cancelled operation", "handle_rename_db_logic");
+    puts(YELLOW "Cancelling operation..." RESET);
+    sleep(1);
+    system("clear");
+    return -1;
+  }
+  else
+  {
+    system("clear");
+    puts("Please enter a valid input");
+    sleep(1);
+    system("clear");
+    // handle_rename_db_logic(currentDBName);
+  }
 }
-int confirm_db_rename()
+
+int confirm_db_rename(const char *newDBName)
 {
-  // too build this func
+  system("clear");
+  printf("Are you sure you want to rename the database to " BOLD "%s" RESET "?[y/n]\n", newDBName);
+  puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
+  __utils_fgets_and_remove_newline(settingsInput.StrInput);
+
+  if (INPUT_IS_CANCEL(settingsInput.StrInput))
+  {
+  }
+  else if (INPUT_IS_NO(settingsInput.StrInput))
+  {
+    __utils_runtime_logger("chose not to rename the database", "confirm_db_rename");
+    return 0;
+  }
+  else if (INPUT_IS_YES(settingsInput.StrInput))
+  {
+    system("clear");
+    __utils_runtime_logger("confirmed database renaming", "confirm_db_rename");
+    puts("Renaming database...");
+    return 1;
+  }
+
+  else
+  {
+    __utils_error_logger("Error occurred when renaming database", "confirm_db_rename", MODERATE);
+  }
 }
+
 int handle_runtime_logging_logic(void)
 {
   if (programSettings.runtimeLoggingEnabled == TRUE)
@@ -172,7 +233,7 @@ int handle_runtime_logging_logic(void)
       puts("Returning to settings menu...");
       sleep(1);
       system("clear");
-      settingsMenuRunning = TRUE;
+      show_settings_menu();
     }
   }
   else if (programSettings.runtimeLoggingEnabled == FALSE)
@@ -218,7 +279,7 @@ int handle_runtime_logging_logic(void)
       puts("Returning to settings menu...");
       sleep(1);
       system("clear");
-      settingsMenuRunning = TRUE;
+      show_settings_menu();
     }
   }
   else

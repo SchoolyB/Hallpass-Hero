@@ -50,7 +50,6 @@ extern "C"
 #define UNDERLINE "\x1B[4m"
 
   //--------------------------------------------------------------------------------//
-  extern const char *dbPath;
 
   enum ErrorLevel
   {
@@ -150,6 +149,16 @@ extern "C"
     int runtimeLoggingEnabled;
   } ProgramSettings;
 
+  typedef struct
+  {
+    char dbPath[50];
+    char newDBPath[50];
+
+    char currentDBName[20];
+    char newDBName[20];
+  } DatabaseInfo;
+
+  extern DatabaseInfo databaseInfo;       // initialized in main.c
   extern ProgramSettings programSettings; // initialized in main.c
   extern GlobalTrigger globalTrigger;     // initialized in main.c
 #ifdef __cplusplus
