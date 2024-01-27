@@ -93,21 +93,21 @@ int main(void)
     // to create a new roster
     if (mainMenuInput.NumInput == 1 || strcmp(buffer, "new roster") == 0)
     {
-      UTILS_RUNTIME_LOGGER("User entered the create new roster menu", "main");
+      __utils_runtime_logger("entered the create new roster menu", "main");
       system("clear");
       create_new_roster();
     }
     // to manage an existing roster
     else if (mainMenuInput.NumInput == 2 || strcmp(buffer, "manage roster") == 0)
     {
-      UTILS_RUNTIME_LOGGER("User entered the manage roster menu", "main");
+      __utils_runtime_logger("entered the manage roster menu", "main");
       system("clear");
       manage_roster();
     }
     // to add a student to the student database
     else if (mainMenuInput.NumInput == 3 || strcmp(buffer, "add student") == 0)
     {
-      UTILS_RUNTIME_LOGGER("User entered the add student menu", "main");
+      __utils_runtime_logger("entered the add student menu", "main");
       system("clear");
       system("clear");
       add_student_to_db();
@@ -115,26 +115,26 @@ int main(void)
     // to view and manage the student database
     else if (mainMenuInput.NumInput == 4 || strcmp(buffer, "manage student database") == 0)
     {
-      UTILS_RUNTIME_LOGGER("User entered the manage student database menu", "main");
+      __utils_runtime_logger("entered the manage student database menu", "main");
       system("clear");
       manage_student_db();
     }
     // to search for a student
     else if (mainMenuInput.NumInput == 5 || strcmp(buffer, "search student") == 0)
     {
-      UTILS_RUNTIME_LOGGER("User entered the search student menu", "main");
+      __utils_runtime_logger("entered the search student menu", "main");
       system("clear");
       // do stuff
     }
     else if (mainMenuInput.NumInput == 6 || strcmp(buffer, "help") == 0)
     {
-      UTILS_RUNTIME_LOGGER("User entered the main menu's help menu", "main");
+      __utils_runtime_logger("entered the main menu's help menu", "main");
       system("clear");
       // do stuff
     }
     else if (mainMenuInput.NumInput == 7 || strcmp(buffer, "settings") == 0)
     {
-      UTILS_RUNTIME_LOGGER("User entered the settings menu", "main");
+      __utils_runtime_logger("entered the settings menu", "main");
       system("clear");
       show_settings_menu();
     }
@@ -142,12 +142,12 @@ int main(void)
     {
       system("clear");
       puts("See you soon!");
-      UTILS_RUNTIME_LOGGER("User exited the program", "main");
+      __utils_runtime_logger("exited the program", "main");
       mainMenuProccess = FALSE;
     }
     else
     {
-      UTILS_ERROR_LOGGER("Invalid decision made on while on main menu", "main", MINOR);
+      __utils_error_logger("Invalid decision made on while on main menu", "main", MINOR);
       puts("Sorry, I didn't understand that.");
       puts("Please try again");
       system("clear");

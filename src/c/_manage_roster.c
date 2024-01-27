@@ -182,7 +182,7 @@ int manage_roster(void)
       }
       else
       {
-        UTILS_ERROR_LOGGER("Failed to get roster table count.", "manage_roster", MINOR);
+        __utils_error_logger("Failed to get roster table count.", "manage_roster", MINOR);
         printf(RED "Error: Failed to get roster table count.\n" RESET);
         wait_for_char_input();
       }
@@ -214,7 +214,7 @@ int manage_roster(void)
       }
       else
       {
-        UTILS_ERROR_LOGGER("Failed to get roster table count.", "manage_roster", MINOR);
+        __utils_error_logger("Failed to get roster table count.", "manage_roster", MINOR);
         printf(RED "Error: Failed to get roster table count.\n" RESET);
         wait_for_char_input();
       }
@@ -246,7 +246,7 @@ int manage_roster(void)
       }
       else
       {
-        UTILS_ERROR_LOGGER("Failed to get roster table count.", "manage_roster", MINOR);
+        __utils_error_logger("Failed to get roster table count.", "manage_roster", MINOR);
         printf(RED "Error: Failed to get roster table count.\n" RESET);
         wait_for_char_input();
       }
@@ -277,7 +277,7 @@ int manage_roster(void)
       }
       else
       {
-        UTILS_ERROR_LOGGER("Failed to get roster table count.", "manage_roster", MINOR);
+        __utils_error_logger("Failed to get roster table count.", "manage_roster", MINOR);
         printf(RED "Error: Failed to get roster table count.\n" RESET);
         wait_for_char_input();
       }
@@ -308,7 +308,7 @@ int manage_roster(void)
       }
       else
       {
-        UTILS_ERROR_LOGGER("Failed to get roster table count.", "manage_roster", MINOR);
+        __utils_error_logger("Failed to get roster table count.", "manage_roster", MINOR);
         printf(RED "Error: Failed to get roster table count.\n" RESET);
         wait_for_char_input();
       }
@@ -339,7 +339,7 @@ int manage_roster(void)
       }
       else
       {
-        UTILS_ERROR_LOGGER("Failed to get roster table count.", "manage_roster", MINOR);
+        __utils_error_logger("Failed to get roster table count.", "manage_roster", MINOR);
         printf(RED "Error: Failed to get roster table count.\n" RESET);
         wait_for_char_input();
       }
@@ -372,7 +372,7 @@ int manage_roster(void)
       }
       else
       {
-        UTILS_ERROR_LOGGER("Failed to get roster table count.", "manage_roster", MINOR);
+        __utils_error_logger("Failed to get roster table count.", "manage_roster", MINOR);
         printf(RED "Error: Failed to get roster table count.\n" RESET);
         wait_for_char_input();
       }
@@ -1278,7 +1278,7 @@ int check_if_roster_has_data(const char *rosterName)
   }
   else
   {
-    UTILS_ERROR_LOGGER("Failed to check if roster has data.", "check_if_roster_has_data", MINOR);
+    __utils_error_logger("Failed to check if roster has data.", "check_if_roster_has_data", MINOR);
     printf(RED "Error: Failed to check if roster has data.\n" RESET);
     // TODO do something here
   }

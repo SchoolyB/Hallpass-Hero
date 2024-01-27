@@ -36,7 +36,7 @@ int search_for_student(void)
   else
   {
     printf(RED "Unable to query student data base for search:" BOLD "%s" RESET RED ".Please try again\n" RESET, searchInput.StrInput);
-    UTILS_ERROR_LOGGER("Error occurred when trying to query student data base", "search_for_student", CRITICAL);
+    __utils_error_logger("Error occurred when trying to query student data base", "search_for_student", CRITICAL);
   }
   return 0;
 }

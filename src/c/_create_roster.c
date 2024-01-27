@@ -33,7 +33,7 @@ int create_new_roster(void)
   uint8_t showingFoundRosters = FALSE;
   uint8_t menuWidth = 70;
   uint8_t menuHeight = 10;
-
+  __utils_runtime_logger("User entered the create new roster menu", "create_new_roster");
   while (newRosterMenuIsRunning == TRUE)
   {
     mainMenuProccess = FALSE;
@@ -128,7 +128,7 @@ int create_new_roster(void)
       }
       else
       {
-        UTILS_ERROR_LOGGER("Failed to get table count", "create_new_roster", MINOR);
+        __utils_error_logger("Failed to get table count", "create_new_roster", MINOR);
         printf(RED "Error: Failed to get table count\n" RESET);
         wait_for_char_input();
       }
@@ -180,8 +180,8 @@ int get_and_confirm_roster_name(void)
     printf(YELLOW "Sorry that name is too long please try again.\n" RESET);
     sleep(1);
     system("clear");
-    UTILS_ERROR_LOGGER("Entered roster name is too long", "get_and_confirm_roster_name", MINOR);
-    UTILS_CLEAR_INPUT_BUFFER();
+    __utils_error_logger("Entered roster name is too long", "get_and_confirm_roster_name", MINOR);
+    __utils_clear_input_buffer();
     get_and_confirm_roster_name();
   }
   else if (!has_one_non_space_char(rosterNameInput))
@@ -189,11 +189,11 @@ int get_and_confirm_roster_name(void)
     printf(YELLOW "Sorry that name is too short please try again.\n" RESET);
     sleep(1);
     system("clear");
-    UTILS_ERROR_LOGGER("Entered roster name is too short", "get_and_confirm_roster_name", MINOR);
+    __utils_error_logger("Entered roster name is too short", "get_and_confirm_roster_name", MINOR);
     // No need to clear input createRosterInput.StrInput here because the user didn't enter anything
     get_and_confirm_roster_name();
   }
-  else if (strcmp(rosterNameInput, "cancel") == 0)
+  else if (INPUT_IS_CANCEL(rosterNameInput))
   {
     system("clear");
     puts(YELLOW "Cancelling operation" RESET);
@@ -294,7 +294,7 @@ int get_and_confirm_roster_name(void)
       {
         puts("Invalid input please try again.");
         sleep(1);
-        UTILS_ERROR_LOGGER("Entered invalid input", "get_and_confirm_roster_name", MINOR);
+        __utils_error_logger("Entered invalid input", "get_and_confirm_roster_name", MINOR);
         system("clear");
         get_and_confirm_roster_name();
       }
@@ -303,7 +303,7 @@ int get_and_confirm_roster_name(void)
     {
       puts("I did'nt understand that please try again");
       sleep(1);
-      UTILS_ERROR_LOGGER("Input entered was neither yes nor no", "get_and_confirm_roster_name", MINOR);
+      __utils_error_logger("Input entered was neither yes nor no", "get_and_confirm_roster_name", MINOR);
       system("clear");
       get_and_confirm_roster_name();
     }

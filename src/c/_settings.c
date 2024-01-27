@@ -22,6 +22,7 @@ int show_settings_menu(void)
   switch (settingsInput.NumInput)
   {
   case 1:
+    __utils_runtime_logger("User entered the enable/disable runtime logging menu", "settings");
     handle_runtime_logging_logic();
     break;
   case 2:
