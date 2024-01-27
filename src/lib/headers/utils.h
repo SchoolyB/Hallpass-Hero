@@ -69,7 +69,7 @@ extern "C"
                                 strcmp(param, "cancel") == 0 || strcmp(param, "Cancel") == 0)
   //--------------------------------------------------------------------------------//
 
-#define UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(param) (fgets(param, sizeof(param), stdin), __utils_remove_newline_char(param))
+#define __utils_fgets_and_remove_newline(param) (fgets(param, sizeof(param), stdin), __utils_remove_newline_char(param))
   //--------------------------------------------------------------------------------//
 
   // Declaration of utility functions
@@ -146,6 +146,7 @@ extern "C"
 
   typedef struct
   {
+    int colorEnabled;
     int runtimeLoggingEnabled;
   } ProgramSettings;
 

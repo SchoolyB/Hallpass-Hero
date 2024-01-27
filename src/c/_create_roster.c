@@ -54,7 +54,7 @@ int create_new_roster(void)
       printf("| %-90s\n", "");
     }
     puts("|===========================================================================================");
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(createRosterInput.StrInput);
+    __utils_fgets_and_remove_newline(createRosterInput.StrInput);
     menuInput = atoi(createRosterInput.StrInput);
     if (menuInput == 1 || strcmp(createRosterInput.StrInput, "new roster") == 0 || strcmp(createRosterInput.StrInput, "new") == 0)
     {
@@ -88,7 +88,7 @@ int create_new_roster(void)
           puts("1: Back");
           puts("2: Main Menu");
 
-          UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(createRosterInput.StrInput);
+          __utils_fgets_and_remove_newline(createRosterInput.StrInput);
           menuInput = atoi(createRosterInput.StrInput);
           if (menuInput == 1 || strcmp(createRosterInput.StrInput, "back") == 0)
           {
@@ -178,7 +178,7 @@ int get_and_confirm_roster_name(void)
   puts("Roster names can be no less the 1 character and no more then 30 characters.");
   puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
 
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(createRosterInput.StrInput);
+  __utils_fgets_and_remove_newline(createRosterInput.StrInput);
   strcpy(rosterNameInput, createRosterInput.StrInput);
   if (strlen(rosterNameInput) > 30)
   {
@@ -214,7 +214,7 @@ int get_and_confirm_roster_name(void)
     printf("You have decided to name your new roster:" BOLD "%s " RESET ".\nIs that correct?[y/n]\n", rosterNameInput);
 
     // confirming input
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(createRosterInput.StrInput);
+    __utils_fgets_and_remove_newline(createRosterInput.StrInput);
     char confirmation[20];
     strcpy(confirmation, createRosterInput.StrInput);
     __utils_runtime_logger("confirmed roster name", "get_and_confirm_roster_name");
@@ -267,7 +267,7 @@ int get_and_confirm_roster_name(void)
       puts("3: Back");
       puts("4: Main Menu");
 
-      UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(createRosterInput.StrInput);
+      __utils_fgets_and_remove_newline(createRosterInput.StrInput);
       menuInput = atoi(createRosterInput.StrInput);
       if (menuInput == 1 || strcmp(createRosterInput.StrInput, "try again") == 0)
       {

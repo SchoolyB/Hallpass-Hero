@@ -143,6 +143,19 @@ int list_all_students(void)
 
   return 0;
 }
+// todo need to check to see if this even works.
+int check_for_special_chars(const char *str)
+{
+  while (*str)
+  {
+    if (*str == '!' || *str == '@' || *str == '#' || *str == '$' || *str == '%' || *str == '^' || *str == '&' || *str == '*' || *str == '(' || *str == ')' || *str == '-' || *str == '_' || *str == '=' || *str == '+' || *str == '[' || *str == ']' || *str == '{' || *str == '}' || *str == '|' || *str == ';' || *str == ':' || *str == '"' || *str == '\'' || *str == '<' || *str == '>' || *str == ',' || *str == '.' || *str == '/' || *str == '?' || *str == '`' || *str == '~')
+    {
+      return TRUE; // Special character found
+    }
+    str++;
+  }
+  return FALSE; // No special characters found
+}
 
 /*Helper function that takes in a string/input.
 Checks if the string has at least one non-space character

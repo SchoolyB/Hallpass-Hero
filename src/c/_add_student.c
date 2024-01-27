@@ -48,7 +48,7 @@ int add_student_to_db(void)
       printf("| %s %-90s\n", addStudentOptions[i], "");
     }
     puts("|===========================================================================================");
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
+    __utils_fgets_and_remove_newline(addStudentInput.StrInput);
     addStudentInput.NumInput = atoi(addStudentInput.StrInput);
 
     if (addStudentInput.NumInput == 1 || strcmp(addStudentInput.StrInput, "add student") == 0 || strcmp(addStudentInput.StrInput, "add") == 0)
@@ -98,7 +98,7 @@ int get_student_first_name(void)
   show_current_step("Enter Student First Name", 1, 7);
   puts("Please enter the students first name.");
   puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
+  __utils_fgets_and_remove_newline(addStudentInput.StrInput);
   __utils_runtime_logger("entered a students first name", "get_student_first_name");
   if (!has_one_non_space_char(addStudentInput.StrInput))
   {
@@ -131,7 +131,7 @@ int get_student_first_name(void)
     strcpy(setFirstName, addStudentInput.StrInput);
 
     /*Getting the confirmation*/
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
+    __utils_fgets_and_remove_newline(addStudentInput.StrInput);
     if (INPUT_IS_YES(addStudentInput.StrInput))
     {
       /*Confirming the entered value and
@@ -184,7 +184,7 @@ int get_student_last_name(void)
   puts("Please enter the students last name.");
   puts("If the student does not have a last name please enter 'none'.");
   puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
+  __utils_fgets_and_remove_newline(addStudentInput.StrInput);
   __utils_runtime_logger("entered a students last name", "get_student_last_name");
 
   if (!has_one_non_space_char(addStudentInput.StrInput))
@@ -219,7 +219,7 @@ int get_student_last_name(void)
     strcpy(setLastName, "");
 
     /*Getting the confirmation*/
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
+    __utils_fgets_and_remove_newline(addStudentInput.StrInput);
     if (INPUT_IS_YES(addStudentInput.StrInput))
     {
       /*Confirming the entered value and
@@ -253,7 +253,7 @@ int get_student_last_name(void)
     system("clear");
     show_current_step("Confirm Student Last Name", 4, 7);
     printf("You entered: " BOLD "%s" RESET " is that correct?[y/n]\n", setLastName);
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
+    __utils_fgets_and_remove_newline(addStudentInput.StrInput);
     if (INPUT_IS_YES(addStudentInput.StrInput))
     {
       if (setLastName[0] != '\0')
@@ -299,7 +299,7 @@ int ask_about_student_id(void)
   puts("1. Automatically generate an ID ");
   puts("2. Create your own");
 
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
+  __utils_fgets_and_remove_newline(addStudentInput.StrInput);
   addStudentInput.NumInput = atoi(addStudentInput.StrInput);
 
   if (INPUT_IS_CANCEL(addStudentInput.StrInput))
@@ -352,7 +352,7 @@ void manually_set_student_id(void)
     puts(YELLOW "You can cancel this operation by entering 'cancel." RESET);
     gettingStudentId = FALSE;
   }
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
+  __utils_fgets_and_remove_newline(addStudentInput.StrInput);
   __utils_runtime_logger("entered a students id", "manually_set_student_id");
 
   if (INPUT_IS_CANCEL(addStudentInput.StrInput))
@@ -448,7 +448,7 @@ int generate_student_id(char *FirstName, char *LastName)
                   " longer than 10 characters, this will be shortened to" BOLD " %s in the student ID \n" RESET,
            NewStudent.LastName, truncatedLastName);
     printf("Are you sure you want to continue with this students last name?[y/n]\n");
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
+    __utils_fgets_and_remove_newline(addStudentInput.StrInput);
     if (INPUT_IS_YES(addStudentInput.StrInput))
     {
       system("clear");
@@ -521,7 +521,7 @@ int confirm_generated_student_id(char *studentID)
   {
     show_current_step("Confirm Student Id", 6, 7);
     printf("Is the ID: " BOLD "%s" RESET " for" BOLD " %s %s" RESET " satisfactory?[y/n]\n", studentID, NewStudent.FirstName, NewStudent.LastName);
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
+    __utils_fgets_and_remove_newline(addStudentInput.StrInput);
     char setStudentID[15];
     strcpy(setStudentID, studentID);
 
@@ -580,7 +580,7 @@ int confirm_manually_entered_student_id(char *studentID)
   {
     show_current_step("Confirm Student Id", 6, 7);
     printf("You've entered: " BOLD "%s" RESET "is that correct?[y/n]\n", studentID);
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
+    __utils_fgets_and_remove_newline(addStudentInput.StrInput);
     char setStudentID[15];
     strcpy(setStudentID, studentID);
 
@@ -642,7 +642,7 @@ int ask_to_add_new_student_to_roster(void)
   puts(YELLOW "NOTE: You can choose to do this later as well" RESET);
   puts("1: Yes");
   puts("2: No");
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
+  __utils_fgets_and_remove_newline(addStudentInput.StrInput);
   addStudentInput.NumInput = atoi(addStudentInput.StrInput);
   if (addStudentInput.NumInput == 1 || INPUT_IS_YES(addStudentInput.StrInput))
   {
@@ -715,7 +715,7 @@ int ask_which_roster_to_add_newly_created_student(void)
   puts("Please enter the name of the roster you would like to add this student to.");
   system("clear");
   show_tables();
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
+  __utils_fgets_and_remove_newline(addStudentInput.StrInput);
   __utils_runtime_logger("Entered a roster name", "ask_which_roster_to_add_newly_created_student");
   sprintf(destinationRoster.rosterNameWithPrefix, "Roster_%s", addStudentInput.StrInput);
   int rosterExists = check_if_table_exists(destinationRoster.rosterNameWithPrefix);
@@ -761,7 +761,7 @@ int handle_last_name_truncated_menu(void)
   puts("1. Enter a new last name");
   puts("2. Manually set an ID");
   puts("3. Cancel");
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(addStudentInput.StrInput);
+  __utils_fgets_and_remove_newline(addStudentInput.StrInput);
   addStudentInput.NumInput = atoi(addStudentInput.StrInput);
   if (addStudentInput.NumInput == 1)
   {
