@@ -45,12 +45,12 @@ extern "C"
 #define GREEN "\x1B[32m"
 #define PURPLE "\x1B[35m"
 #define YELLOW "\x1B[33m"
+
 // fonts
 #define BOLD "\x1B[1m"
 #define UNDERLINE "\x1B[4m"
 
   //--------------------------------------------------------------------------------//
-  extern const char *dbPath;
 
   enum ErrorLevel
   {
@@ -69,14 +69,15 @@ extern "C"
                                 strcmp(param, "cancel") == 0 || strcmp(param, "Cancel") == 0)
   //--------------------------------------------------------------------------------//
 
-#define UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(param) (fgets(param, sizeof(param), stdin), UTILS_REMOVE_NEWLINE_CHAR(param))
+#define __utils_fgets_and_remove_newline(param) (fgets(param, sizeof(param), stdin), __utils_remove_newline_char(param))
   //--------------------------------------------------------------------------------//
 
   // Declaration of utility functions
 
-  int UTILS_ERROR_LOGGER(char *error_message, char *function, enum ErrorLevel level);
-  void UTILS_REMOVE_NEWLINE_CHAR(char *param);
-  void UTILS_CLEAR_INPUT_BUFFER();
+  int __utils_error_logger(char *error_message, char *function, enum ErrorLevel level);
+  int __utils_runtime_logger(char *action, char *functionName);
+  void __utils_remove_newline_char(char *param);
+  void __utils_clear_input_buffer();
   void show_current_menu(char *str);
   void show_current_step(char *str, int currentStep, int totalSteps);
   int wait_for_char_input(void);
@@ -143,7 +144,24 @@ extern "C"
     int isTriggered;
   } GlobalTrigger;
 
-  extern GlobalTrigger globalTrigger; // initialized in main.c
+  typedef struct
+  {
+    const char *dbPath;
+    char newDBPath[50];
+    char currentDBName[20];
+    char newDBName[20];
+  } DatabaseInfo;
+
+  typedef struct
+  {
+    int colorEnabled;
+    int runtimeLoggingEnabled;
+    DatabaseInfo databaseInfo; // may not need this
+  } ProgramSettings;
+
+  extern DatabaseInfo databaseInfo;       // initialized in main.c
+  extern ProgramSettings programSettings; // initialized in main.c
+  extern GlobalTrigger globalTrigger;     // initialized in main.c
 #ifdef __cplusplus
 } // extern "C"
 #endif

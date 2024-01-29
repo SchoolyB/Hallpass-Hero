@@ -25,7 +25,7 @@ int search_for_student(void)
 {
   puts("Search for a student by name or ID...");
   printf("This is not case sensitive");
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(searchInput.StrInput);
+  __utils_fgets_and_remove_newline(searchInput.StrInput);
   searchInput.StrInput[0] = toupper(searchInput.StrInput[0]);
   int result = query_student_db(searchInput.StrInput);
 
@@ -36,7 +36,7 @@ int search_for_student(void)
   else
   {
     printf(RED "Unable to query student data base for search:" BOLD "%s" RESET RED ".Please try again\n" RESET, searchInput.StrInput);
-    UTILS_ERROR_LOGGER("Error occurred when trying to query student data base", "search_for_student", CRITICAL);
+    __utils_error_logger("Error occurred when trying to query student data base", "search_for_student", CRITICAL);
   }
   return 0;
 }

@@ -21,6 +21,6 @@ enum class CppErrorLevel
   CRITICAL
 };
 
-int CPP_UTILS_ERROR_LOGGER(const char *message, const char *function, const CppErrorLevel level);
+int cpp_utils_error_logger(const char *message, const char *function, const CppErrorLevel level);
 void CPP_UTILS_SLEEP(int seconds);
 #endif

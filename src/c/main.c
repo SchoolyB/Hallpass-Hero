@@ -14,24 +14,47 @@ Description : This source file contains the main function for the Hallpass Hero 
 #include "../lib/headers/utils.h"
 #include "../lib/headers/c_files.h"
 
-const char *dbPath = "../build/db.sqlite";
-
 GlobalTrigger globalTrigger = {FALSE};
+ProgramSettings programSettings = {FALSE};
+DatabaseInfo databaseInfo = {FALSE};
+
+// default db path can be changed in settings menu
+char dbPath[40];
+
 UserInput mainMenuInput;
 uint8_t mainMenuProccess = FALSE;
-char MainMenuOptions[7][50] = {
+char MainMenuOptions[8][50] = {
     "1. Create a new roster",
     "2. View and manage an existing roster",
     "3. Add a student to the student database",
     "4. View and manage the student database",
     "5. Search for a student",
     "6. Help",
-    "7. Exit"};
+    "7. Settings",
+    "8. Exit"};
 
 int main(void)
 {
+  time_t currentTime;
+  time(&currentTime);
+  char dbPath[40] = "../build/db.sqlite";
+  programSettings.databaseInfo.dbPath = dbPath;
+  programSettings.runtimeLoggingEnabled = TRUE;
+  programSettings.colorEnabled = TRUE;
+
+  /*Runs a check on start up to see if a sqlite file is already found
+  in the build folder. If a file is not then create the default db.sqlite file*/
+  int databaseFound = read_from_dir_and_check_extension("../build", ".sqlite");
+  if (databaseFound == FALSE)
+  {
+    create_student_db_and_table();
+  }
+  sprintf(dbPath, "../build/%s", programSettings.databaseInfo.currentDBName);
+
+  // Creates the logs dir on startup if it doesn't already exist
   mkdir("../logs", 0777);
 
+  // Create the errors.log file if it doesn't already exist
   FILE *errorLogFile = fopen("../logs/errors.log", "a");
   if (errorLogFile == NULL)
   {
@@ -39,6 +62,23 @@ int main(void)
     return 1;
   }
   fclose(errorLogFile);
+
+  // Create the runtime.log file if it doesn't already exist
+  FILE *runtimeLogFile = fopen("../logs/runtime.log", "a");
+  if (runtimeLogFile == NULL)
+  {
+    perror("Error creating runtimeLog file");
+    return 1;
+  }
+  fprintf(runtimeLogFile, "Logged @ %s", ctime(&currentTime));
+  fprintf(runtimeLogFile, "--------------------------------------------\n");
+  fprintf(runtimeLogFile, "Log directory created or found\n");
+  fprintf(runtimeLogFile, "Runtime logging has been enabled\n");
+  fprintf(runtimeLogFile, "Error logging initialized\n");
+  fprintf(runtimeLogFile, "SQLite3 database initialized\n");
+  fprintf(runtimeLogFile, "======================================================================================\n\n");
+  fflush(runtimeLogFile);
+  fclose(runtimeLogFile);
 
   char buffer[50];
   int mainMenuProccess = TRUE;
@@ -52,30 +92,33 @@ int main(void)
 
     // showing main menu options
     puts("===========================================================================================");
-    for (int i = 0; i < 7; ++i)
+    for (int i = 0; i < 8; ++i)
     {
       printf("| %s %-90s\n", MainMenuOptions[i], "");
     }
     puts("===========================================================================================");
     /*Here we are handling the input that the user makes on the main menu*/
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(buffer);
+    __utils_fgets_and_remove_newline(buffer);
     mainMenuInput.NumInput = atoi(buffer);
 
     // to create a new roster
     if (mainMenuInput.NumInput == 1 || strcmp(buffer, "new roster") == 0)
     {
+      __utils_runtime_logger("entered the create new roster menu", "main");
       system("clear");
       create_new_roster();
     }
     // to manage an existing roster
     else if (mainMenuInput.NumInput == 2 || strcmp(buffer, "manage roster") == 0)
     {
+      __utils_runtime_logger("entered the manage roster menu", "main");
       system("clear");
       manage_roster();
     }
     // to add a student to the student database
     else if (mainMenuInput.NumInput == 3 || strcmp(buffer, "add student") == 0)
     {
+      __utils_runtime_logger("entered the add student menu", "main");
       system("clear");
       system("clear");
       add_student_to_db();
@@ -83,29 +126,39 @@ int main(void)
     // to view and manage the student database
     else if (mainMenuInput.NumInput == 4 || strcmp(buffer, "manage student database") == 0)
     {
+      __utils_runtime_logger("entered the manage student database menu", "main");
       system("clear");
       manage_student_db();
     }
     // to search for a student
     else if (mainMenuInput.NumInput == 5 || strcmp(buffer, "search student") == 0)
     {
+      __utils_runtime_logger("entered the search student menu", "main");
       system("clear");
       // do stuff
     }
     else if (mainMenuInput.NumInput == 6 || strcmp(buffer, "help") == 0)
     {
+      __utils_runtime_logger("entered the main menu's help menu", "main");
       system("clear");
       // do stuff
     }
-    else if (mainMenuInput.NumInput == 7 || strcmp(buffer, "exit") == 0)
+    else if (mainMenuInput.NumInput == 7 || strcmp(buffer, "settings") == 0)
+    {
+      __utils_runtime_logger("entered the settings menu", "main");
+      system("clear");
+      show_settings_menu();
+    }
+    else if (mainMenuInput.NumInput == 8 || strcmp(buffer, "exit") == 0)
     {
       system("clear");
       puts("See you soon!");
+      __utils_runtime_logger("exited the program", "main");
       mainMenuProccess = FALSE;
     }
     else
     {
-      UTILS_ERROR_LOGGER("Invalid decision made on while on main menu", "main", MINOR);
+      __utils_error_logger("Invalid decision made on while on main menu", "main", MINOR);
       puts("Sorry, I didn't understand that.");
       puts("Please try again");
       system("clear");

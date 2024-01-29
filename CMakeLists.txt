@@ -17,6 +17,7 @@ set(SOURCES_C
     src/c/_manage_roster.c
     src/c/_manage_student_db.c
     src/c/_search.c
+    src/c/_settings.c
     src/lib/utils.c
     # src/lib/Cuazar/lib/Cuazar.c
 )

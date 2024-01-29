@@ -40,7 +40,7 @@ int manage_student_db(void)
     {
       printf("%d. %s\n", i + 1, manageStudentDBMenu[i]);
     }
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageStudentDBInput.StrInput);
+    __utils_fgets_and_remove_newline(manageStudentDBInput.StrInput);
     manageStudentDBInput.NumInput = atoi(manageStudentDBInput.StrInput);
     if (manageStudentDBInput.NumInput == 1 || strcmp(manageStudentDBInput.StrInput, "list") == 0)
     {
@@ -58,10 +58,10 @@ int manage_student_db(void)
       manageStudentDBMenuIsRunning = FALSE;
       system("clear");
       show_current_menu("Delete Student From Database");
-      show_all_students_in_student_db("../build/db.sqlite");
+      show_all_students_in_student_db(programSettings.databaseInfo.dbPath);
       printf("Enter the StudentID of the student you would like to delete.\n");
       puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
-      UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageStudentDBInput.StrInput);
+      __utils_fgets_and_remove_newline(manageStudentDBInput.StrInput);
 
       if (strcmp(manageStudentDBInput.StrInput, "cancel") == 0)
       {
@@ -81,7 +81,7 @@ int manage_student_db(void)
           system("clear");
           printf(RED "WARNING: This action cannot be undone\n" RESET);
           puts("Are you sure you want to delete this student?[y/n]");
-          UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageStudentDBInput.StrInput);
+          __utils_fgets_and_remove_newline(manageStudentDBInput.StrInput);
           if (INPUT_IS_CANCEL(manageStudentDBInput.StrInput) || INPUT_IS_NO(manageStudentDBInput.StrInput))
           {
             system("clear");

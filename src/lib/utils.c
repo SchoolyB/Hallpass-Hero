@@ -16,10 +16,10 @@ Description : This source file contains several utility functions that are used
 #include "headers/utils.h"
 #include "headers/db.hpp"
 /************************************************************************************
- * UTILS_ERROR_LOGGER(): Logs errors errors that occur specifically in 'C' files
- * Note: For 'C++' code error logging see CPP_UTILS_ERROR_LOGGER in utils.cpp
+ * __utils_error_logger(): Logs errors errors that occur specifically in 'C' files
+ * Note: For 'C++' code error logging see cpp_utils_error_logger in utils.cpp
  ************************************************************************************/
-int UTILS_ERROR_LOGGER(char *errorMessage, char *function, enum ErrorLevel level)
+int __utils_error_logger(char *errorMessage, char *function, enum ErrorLevel level)
 {
 
   FILE *errorLog = fopen("../logs/errors.log", "a");
@@ -56,6 +56,29 @@ int UTILS_ERROR_LOGGER(char *errorMessage, char *function, enum ErrorLevel level
   }
 }
 /************************************************************************************
+ * __utils_runtime_logger(): Logs runtime activity
+ *
+ ************************************************************************************/
+int __utils_runtime_logger(char *action, char *functionName)
+{
+  if (programSettings.runtimeLoggingEnabled == FALSE)
+  {
+    return 0;
+  }
+
+  FILE *runtimeLog = fopen("../logs/runtime.log", "a");
+  time_t currentTime;
+  time(&currentTime);
+
+  fprintf(runtimeLog, "Logged @ %s", ctime(&currentTime));
+
+  fprintf(runtimeLog, "User Action: User %s, in function call: %s()\n", action, functionName);
+
+  fprintf(runtimeLog, "======================================================================================\n\n");
+  fflush(runtimeLog);
+}
+
+/************************************************************************************
  * show_current_menu(): Simply shows the current menu the user is in to prevent confusion
  ************************************************************************************/
 void show_current_menu(char *str)
@@ -73,7 +96,7 @@ void show_current_step(char *str, int currentStep, int totalSteps)
   printf("--------------------------------------------------\n");
 }
 
-void UTILS_REMOVE_NEWLINE_CHAR(char *param)
+void __utils_remove_newline_char(char *param)
 {
   size_t len = strlen(param);
   if (len > 0 && param[len - 1] == '\n')
@@ -83,9 +106,9 @@ void UTILS_REMOVE_NEWLINE_CHAR(char *param)
 }
 
 /************************************************************************************
- * UTILS_CLEAR_INPUT_BUFFER(): Clears the input buffer to prevent unwanted behavior
+ * __utils_clear_input_buffer(): Clears the input buffer to prevent unwanted behavior
  ************************************************************************************/
-void UTILS_CLEAR_INPUT_BUFFER()
+void __utils_clear_input_buffer()
 {
   int c;
   while ((c = getchar()) != '\n' && c != EOF)
@@ -98,7 +121,7 @@ void UTILS_CLEAR_INPUT_BUFFER()
 int list_all_students(void)
 {
 
-  int result = show_all_students_in_student_db("../build/db.sqlite");
+  int result = show_all_students_in_student_db(databaseInfo.dbPath);
   if (result == 0)
   {
     int showingStudents = TRUE;
@@ -112,13 +135,26 @@ int list_all_students(void)
   }
   else if (result == 1)
   {
-    UTILS_ERROR_LOGGER("Could not find students in database or table: 'students' does not exist", "list_all_students()", MODERATE);
+    __utils_error_logger("Could not find students in database or table: 'students' does not exist", "list_all_students()", MODERATE);
     puts(RED "Error: Could not find students in database or table: 'students' does not exist " RESET);
     puts("May need to add a student to the database then try this action again.");
     wait_for_char_input();
   }
 
   return 0;
+}
+// todo need to check to see if this even works.
+int check_for_special_chars(const char *str)
+{
+  while (*str)
+  {
+    if (*str == '!' || *str == '@' || *str == '#' || *str == '$' || *str == '%' || *str == '^' || *str == '&' || *str == '*' || *str == '(' || *str == ')' || *str == '-' || *str == '_' || *str == '=' || *str == '+' || *str == '[' || *str == ']' || *str == '{' || *str == '}' || *str == '|' || *str == ';' || *str == ':' || *str == '"' || *str == '\'' || *str == '<' || *str == '>' || *str == ',' || *str == '.' || *str == '/' || *str == '?' || *str == '`' || *str == '~')
+    {
+      return TRUE; // Special character found
+    }
+    str++;
+  }
+  return FALSE; // No special characters found
 }
 
 /*Helper function that takes in a string/input.

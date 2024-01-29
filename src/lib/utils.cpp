@@ -25,10 +25,10 @@ prefixing them all with 'std::'
 using namespace std;
 
 /************************************************************************************
- * CPP_UTILS_ERROR_LOGGER(): Logs errors errors that occur specifically in 'C++' files
- * Note: For 'C' code error logging see UTILS_ERROR_LOGGER in utils.c
+ * cpp_utils_error_logger(): Logs errors errors that occur specifically in 'C++' files
+ * Note: For 'C' code error logging see __utils_error_logger in utils.c
  ************************************************************************************/
-int CPP_UTILS_ERROR_LOGGER(const char *message, const char *function, const CppErrorLevel level)
+int cpp_utils_error_logger(const char *message, const char *function, const CppErrorLevel level)
 {
   fstream errorLog;
 
@@ -47,18 +47,18 @@ int CPP_UTILS_ERROR_LOGGER(const char *message, const char *function, const CppE
   {
   case CppErrorLevel::MINOR:
     errorLog << "Logged @ " << timeString << endl;
-    errorLog << "Minor Error: " << message << " in function " << function << endl;
+    errorLog << "Minor Error: " << message << " in function call" << function << endl;
     errorLog << "=============================================================" << endl;
     break;
   case CppErrorLevel::MODERATE:
     errorLog << "Logged @ " << timeString << endl;
-    errorLog << "Moderate Error: " << message << " in function " << function << endl;
+    errorLog << "Moderate Error: " << message << " in function call " << function << endl;
     errorLog << "=============================================================" << endl;
     break;
   case CppErrorLevel::CRITICAL:
     errorLog << "Logged @ " << timeString << endl;
     errorLog << "=============================================================" << endl;
-    errorLog << "CRITICAL ERROR: " << message << " in function " << function << endl;
+    errorLog << "CRITICAL ERROR: " << message << " in function call" << function << endl;
     break;
   default:
     break;

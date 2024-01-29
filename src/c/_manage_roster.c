@@ -75,7 +75,7 @@ int manage_roster(void)
     }
     puts("|===========================================================================================");
 
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+    __utils_fgets_and_remove_newline(manageRosterInput.StrInput);
 
     manageRosterInput.NumInput = atoi(manageRosterInput.StrInput);
     if (manageRosterInput.NumInput == 1 || strcmp(manageRosterInput.StrInput, "view roster") == 0 || strcmp(manageRosterInput.StrInput, "view") == 0)
@@ -83,7 +83,7 @@ int manage_roster(void)
       manageRosterMenuIsOpen = FALSE;
       system("clear");
 
-      int tableExists = get_table_count("../build/db.sqlite");
+      int tableExists = get_table_count(programSettings.databaseInfo.dbPath);
       if (tableExists == TRUE)
       {
         showingFoundRosters = TRUE;
@@ -97,7 +97,7 @@ int manage_roster(void)
           showingFoundRosters = FALSE;
           puts("Enter the name of the roster that you would like to view?");
           puts(YELLOW "To cancel this operation enter 'cancel'" RESET);
-          UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+          __utils_fgets_and_remove_newline(manageRosterInput.StrInput);
           if (INPUT_IS_CANCEL(manageRosterInput.StrInput))
           {
             system("clear");
@@ -130,7 +130,7 @@ int manage_roster(void)
               puts("1.Sort Roster");
               puts("2.Go Back");
               puts("3.Main Menu");
-              UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+              __utils_fgets_and_remove_newline(manageRosterInput.StrInput);
               manageRosterInput.NumInput = atoi(manageRosterInput.StrInput);
               switch (manageRosterInput.NumInput)
               {
@@ -182,7 +182,7 @@ int manage_roster(void)
       }
       else
       {
-        UTILS_ERROR_LOGGER("Failed to get roster table count.", "manage_roster", MINOR);
+        __utils_error_logger("Failed to get roster table count.", "manage_roster", MINOR);
         printf(RED "Error: Failed to get roster table count.\n" RESET);
         wait_for_char_input();
       }
@@ -193,7 +193,7 @@ int manage_roster(void)
       system("clear");
       show_current_step("Rename roster", 1, 2);
 
-      int tableExists = get_table_count("../build/db.sqlite");
+      int tableExists = get_table_count(programSettings.databaseInfo.dbPath);
       if (tableExists == TRUE)
       {
         showingFoundRosters = TRUE;
@@ -214,7 +214,7 @@ int manage_roster(void)
       }
       else
       {
-        UTILS_ERROR_LOGGER("Failed to get roster table count.", "manage_roster", MINOR);
+        __utils_error_logger("Failed to get roster table count.", "manage_roster", MINOR);
         printf(RED "Error: Failed to get roster table count.\n" RESET);
         wait_for_char_input();
       }
@@ -225,7 +225,7 @@ int manage_roster(void)
       system("clear");
       show_current_step("Delete roster", 1, 2);
 
-      int tableExists = get_table_count("../build/db.sqlite");
+      int tableExists = get_table_count(programSettings.databaseInfo.dbPath);
       if (tableExists == TRUE)
       {
         showingFoundRosters = TRUE;
@@ -246,7 +246,7 @@ int manage_roster(void)
       }
       else
       {
-        UTILS_ERROR_LOGGER("Failed to get roster table count.", "manage_roster", MINOR);
+        __utils_error_logger("Failed to get roster table count.", "manage_roster", MINOR);
         printf(RED "Error: Failed to get roster table count.\n" RESET);
         wait_for_char_input();
       }
@@ -256,7 +256,7 @@ int manage_roster(void)
       manageRosterMenuIsOpen = FALSE;
       system("clear");
       show_current_step("Add student to roster", 1, 2);
-      int tableExists = get_table_count("../build/db.sqlite");
+      int tableExists = get_table_count(programSettings.databaseInfo.dbPath);
       if (tableExists == TRUE)
       {
         showingFoundRosters = TRUE;
@@ -277,7 +277,7 @@ int manage_roster(void)
       }
       else
       {
-        UTILS_ERROR_LOGGER("Failed to get roster table count.", "manage_roster", MINOR);
+        __utils_error_logger("Failed to get roster table count.", "manage_roster", MINOR);
         printf(RED "Error: Failed to get roster table count.\n" RESET);
         wait_for_char_input();
       }
@@ -287,7 +287,7 @@ int manage_roster(void)
       manageRosterMenuIsOpen = FALSE;
       system("clear");
       show_current_step("Remove students from roster", 1, 2);
-      int tableExists = get_table_count("../build/db.sqlite");
+      int tableExists = get_table_count(programSettings.databaseInfo.dbPath);
       if (tableExists == TRUE)
       {
         showingFoundRosters = TRUE;
@@ -308,7 +308,7 @@ int manage_roster(void)
       }
       else
       {
-        UTILS_ERROR_LOGGER("Failed to get roster table count.", "manage_roster", MINOR);
+        __utils_error_logger("Failed to get roster table count.", "manage_roster", MINOR);
         printf(RED "Error: Failed to get roster table count.\n" RESET);
         wait_for_char_input();
       }
@@ -318,7 +318,7 @@ int manage_roster(void)
       manageRosterMenuIsOpen = FALSE;
       system("clear");
       show_current_step("Create a column", 1, 3);
-      int tableExists = get_table_count("../build/db.sqlite");
+      int tableExists = get_table_count(programSettings.databaseInfo.dbPath);
       if (tableExists == TRUE)
       {
         showingFoundRosters = TRUE;
@@ -339,7 +339,7 @@ int manage_roster(void)
       }
       else
       {
-        UTILS_ERROR_LOGGER("Failed to get roster table count.", "manage_roster", MINOR);
+        __utils_error_logger("Failed to get roster table count.", "manage_roster", MINOR);
         printf(RED "Error: Failed to get roster table count.\n" RESET);
         wait_for_char_input();
       }
@@ -351,7 +351,7 @@ int manage_roster(void)
       manageRosterMenuIsOpen = FALSE;
       system("clear");
       show_current_step("Delete a column", 1, 2);
-      int tableExists = get_table_count("../build/db.sqlite");
+      int tableExists = get_table_count(programSettings.databaseInfo.dbPath);
       if (tableExists == TRUE)
       {
         showingFoundRosters = TRUE;
@@ -372,7 +372,7 @@ int manage_roster(void)
       }
       else
       {
-        UTILS_ERROR_LOGGER("Failed to get roster table count.", "manage_roster", MINOR);
+        __utils_error_logger("Failed to get roster table count.", "manage_roster", MINOR);
         printf(RED "Error: Failed to get roster table count.\n" RESET);
         wait_for_char_input();
       }
@@ -413,7 +413,7 @@ int ask_which_roster_and_preform_action(char *action)
   puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
   if (strcmp(action, "rename") == 0)
   {
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+    __utils_fgets_and_remove_newline(manageRosterInput.StrInput);
     if (INPUT_IS_CANCEL(manageRosterInput.StrInput))
     {
       system("clear");
@@ -433,7 +433,7 @@ int ask_which_roster_and_preform_action(char *action)
       sleep(2);
       system("clear");
 
-      int tableExists = get_table_count("../build/db.sqlite");
+      int tableExists = get_table_count(programSettings.databaseInfo.dbPath);
       if (tableExists == TRUE)
       {
         int showingFoundRosters = TRUE;
@@ -452,7 +452,7 @@ int ask_which_roster_and_preform_action(char *action)
       show_current_step("Rename roster", 2, 2);
       printf("Enter the new name for the roster: %s\n", oldRosterName);
       puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
-      UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(newRosterName);
+      __utils_fgets_and_remove_newline(newRosterName);
       if (INPUT_IS_CANCEL(newRosterName))
       {
         system("clear");
@@ -505,7 +505,7 @@ int ask_which_roster_and_preform_action(char *action)
   }
   else if (strcmp(action, "delete") == 0)
   {
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+    __utils_fgets_and_remove_newline(manageRosterInput.StrInput);
     if (INPUT_IS_CANCEL(manageRosterInput.StrInput))
     {
       system("clear");
@@ -524,7 +524,7 @@ int ask_which_roster_and_preform_action(char *action)
       sleep(2);
       system("clear");
 
-      int tableExists = get_table_count("../build/db.sqlite");
+      int tableExists = get_table_count(programSettings.databaseInfo.dbPath);
       if (tableExists == TRUE)
       {
         int showingFoundRosters = TRUE;
@@ -546,7 +546,7 @@ int ask_which_roster_and_preform_action(char *action)
       printf(RED "This action is IRREVERSIBLE.\n" RESET);
       printf("Do you understand that this cannot be undone? [y/n]\n");
       puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
-      UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(confirmation);
+      __utils_fgets_and_remove_newline(confirmation);
       if (INPUT_IS_YES(confirmation))
       {
         int confirmation = confirm_action("delete", manageRosterInput.StrInput);
@@ -597,7 +597,7 @@ int ask_which_roster_and_preform_action(char *action)
   else if (strcmp(action, "add student to roster") == 0)
   {
 
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+    __utils_fgets_and_remove_newline(manageRosterInput.StrInput);
     if (INPUT_IS_CANCEL(manageRosterInput.StrInput))
     {
       system("clear");
@@ -616,7 +616,7 @@ int ask_which_roster_and_preform_action(char *action)
       sleep(2);
       system("clear");
 
-      int tableExists = get_table_count("../build/db.sqlite");
+      int tableExists = get_table_count(programSettings.databaseInfo.dbPath);
       if (tableExists == TRUE)
       {
         int showingFoundRosters = TRUE;
@@ -647,7 +647,7 @@ int ask_which_roster_and_preform_action(char *action)
         puts("1. Search the student database for a student");
         puts("2. Manually add a student");
         puts("3. Use the bulk data loader to add multiple students");
-        UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+        __utils_fgets_and_remove_newline(manageRosterInput.StrInput);
         manageRosterInput.NumInput = atoi(manageRosterInput.StrInput);
         if (INPUT_IS_CANCEL(manageRosterInput.StrInput))
         {
@@ -699,7 +699,7 @@ int ask_which_roster_and_preform_action(char *action)
   }
   else if (strcmp(action, "remove student from roster") == 0)
   {
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+    __utils_fgets_and_remove_newline(manageRosterInput.StrInput);
     if (INPUT_IS_CANCEL(manageRosterInput.StrInput))
     {
       system("clear");
@@ -719,7 +719,7 @@ int ask_which_roster_and_preform_action(char *action)
       printf(YELLOW "The entered roster: " BOLD "%s" RESET YELLOW " does not exist please try again. \n" RESET, roster.rosterNameWithPrefix);
       sleep(2);
       system("clear");
-      int tableExists = get_table_count("../build/db.sqlite");
+      int tableExists = get_table_count(programSettings.databaseInfo.dbPath);
       if (tableExists == TRUE)
       {
         int showingFoundRosters = TRUE;
@@ -743,7 +743,7 @@ int ask_which_roster_and_preform_action(char *action)
   }
   else if (strcmp(action, "Create a column") == 0)
   {
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+    __utils_fgets_and_remove_newline(manageRosterInput.StrInput);
     if (INPUT_IS_CANCEL(manageRosterInput.StrInput))
     {
       system("clear");
@@ -762,7 +762,7 @@ int ask_which_roster_and_preform_action(char *action)
       sleep(2);
       system("clear");
 
-      int tableExists = get_table_count("../build/db.sqlite");
+      int tableExists = get_table_count(programSettings.databaseInfo.dbPath);
       if (tableExists == TRUE)
       {
         int showingFoundRosters = TRUE;
@@ -783,7 +783,7 @@ int ask_which_roster_and_preform_action(char *action)
   }
   else if (strcmp(action, "delete a column") == 0)
   {
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+    __utils_fgets_and_remove_newline(manageRosterInput.StrInput);
     if (INPUT_IS_CANCEL(manageRosterInput.StrInput))
     {
       system("clear");
@@ -801,7 +801,7 @@ int ask_which_roster_and_preform_action(char *action)
       printf(YELLOW "The entered roster: " BOLD "%s" RESET YELLOW " does not exist please try again. \n" RESET, manageRosterInput.StrInput);
       sleep(2);
       system("clear");
-      int tableExists = get_table_count("../build/db.sqlite");
+      int tableExists = get_table_count(programSettings.databaseInfo.dbPath);
       if (tableExists == TRUE)
       {
         int showingFoundRosters = TRUE;
@@ -839,7 +839,7 @@ int create_col(const char *rosterName, const char *colType)
   puts("Enter a name for the new column");
   puts("Note: The column name must be atleast one character long");
   puts(YELLOW "To cancel this operation enter 'cancel'" RESET);
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+  __utils_fgets_and_remove_newline(manageRosterInput.StrInput);
   strcpy(colName, manageRosterInput.StrInput);
 
   if (INPUT_IS_CANCEL(manageRosterInput.StrInput))
@@ -915,7 +915,7 @@ int delete_col(const char *rosterName)
   puts("Enter the name of the column that you would like to delete");
   puts(YELLOW "You CANNOT delete the FirstName, LastName, or StudentID columns" RESET);
   puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+  __utils_fgets_and_remove_newline(manageRosterInput.StrInput);
   strcpy(colName, manageRosterInput.StrInput);
 
   if (INPUT_IS_CANCEL(manageRosterInput.StrInput))
@@ -1001,7 +1001,7 @@ int choose_col_type(const char *rosterName)
     puts("4. True or False Values");
     puts("5. Dates");
     puts("6. Not sure");
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+    __utils_fgets_and_remove_newline(manageRosterInput.StrInput);
     if (INPUT_IS_CANCEL(manageRosterInput.StrInput))
     {
       system("clear");
@@ -1093,7 +1093,7 @@ const char check_roster_col_type(const char *rosterName, const char *colName)
 int choose_which_col_to_sort(const char *rosterName)
 {
   puts("Which column would you like to sort?");
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+  __utils_fgets_and_remove_newline(manageRosterInput.StrInput);
 
   int colExists = check_if_col_exists(rosterName, manageRosterInput.StrInput);
   if (colExists == TRUE)
@@ -1144,7 +1144,7 @@ int handle_col_sort_logic(const char *colName)
   {
     puts("1: True First");
     puts("2: False First");
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(rosterColumn.ColumnSortingMethod);
+    __utils_fgets_and_remove_newline(rosterColumn.ColumnSortingMethod);
     manageRosterInput.NumInput = atoi(rosterColumn.ColumnSortingMethod);
     if (INPUT_IS_CANCEL(rosterColumn.ColumnSortingMethod))
     {
@@ -1176,7 +1176,7 @@ int handle_col_sort_logic(const char *colName)
   {
     puts("1: Ascending Order");
     puts("2: Descending Order");
-    UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(rosterColumn.ColumnSortingMethod);
+    __utils_fgets_and_remove_newline(rosterColumn.ColumnSortingMethod);
     manageRosterInput.NumInput = atoi(rosterColumn.ColumnSortingMethod);
     if (INPUT_IS_CANCEL(rosterColumn.ColumnSortingMethod))
     {
@@ -1231,7 +1231,7 @@ int show_roster_data_with_warning(const char *rosterName)
   printf("2: Take several seconds to load all the data\n\n" RESET);
   puts("Are you sure that you'd like to continue with this operation?[y/n]");
   puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+  __utils_fgets_and_remove_newline(manageRosterInput.StrInput);
   if (INPUT_IS_CANCEL(manageRosterInput.StrInput) || INPUT_IS_NO(manageRosterInput.StrInput))
   {
     system("clear");
@@ -1278,7 +1278,7 @@ int check_if_roster_has_data(const char *rosterName)
   }
   else
   {
-    UTILS_ERROR_LOGGER("Failed to check if roster has data.", "check_if_roster_has_data", MINOR);
+    __utils_error_logger("Failed to check if roster has data.", "check_if_roster_has_data", MINOR);
     printf(RED "Error: Failed to check if roster has data.\n" RESET);
     // TODO do something here
   }
@@ -1294,7 +1294,7 @@ int handle_student_deletion_logic(const char *rosterName)
 {
   show_all_roster_data(rosterName);
   puts("Enter the StudentID of the student that you would like to remove from the roster.");
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+  __utils_fgets_and_remove_newline(manageRosterInput.StrInput);
 
   Student student;
   strcpy(student.StudentID, manageRosterInput.StrInput);
@@ -1369,7 +1369,7 @@ int confirm_action(const char *action, ...)
   system("clear");
   printf(YELLOW "Are you sure that you want to %s" BOLD " %s " RESET YELLOW " [y/n]\n" RESET, action, rosterName);
 
-  UTILS_FGETS_AND_REMOVE_NEWLINE_CHAR(manageRosterInput.StrInput);
+  __utils_fgets_and_remove_newline(manageRosterInput.StrInput);
   if (INPUT_IS_YES(manageRosterInput.StrInput))
   {
     return 1;
