@@ -19,7 +19,7 @@ ProgramSettings programSettings = {FALSE};
 DatabaseInfo databaseInfo = {FALSE};
 
 // default db path can be changed in settings menu
-// const char *dbPath = "../build/db.sqlite";
+char dbPath[40];
 
 UserInput mainMenuInput;
 uint8_t mainMenuProccess = FALSE;
@@ -35,15 +35,22 @@ char MainMenuOptions[8][50] = {
 
 int main(void)
 {
-  // strcpy(databaseInfo.currentDBName, add name here )
-  strcpy(databaseInfo.dbPath, "../build/db.sqlite");
-
   time_t currentTime;
   time(&currentTime);
-
+  char dbPath[40] = "../build/db.sqlite";
+  programSettings.databaseInfo.dbPath = dbPath;
   programSettings.runtimeLoggingEnabled = TRUE;
-  // Creates the student DB table on startup if it doesn't already exist
-  create_student_db_and_table();
+  programSettings.colorEnabled = TRUE;
+
+  /*Runs a check on start up to see if a sqlite file is already found
+  in the build folder. If a file is not then create the default db.sqlite file*/
+  int databaseFound = read_from_dir_and_check_extension("../build", ".sqlite");
+  if (databaseFound == FALSE)
+  {
+    create_student_db_and_table();
+  }
+  sprintf(dbPath, "../build/%s", programSettings.databaseInfo.currentDBName);
+
   // Creates the logs dir on startup if it doesn't already exist
   mkdir("../logs", 0777);
 

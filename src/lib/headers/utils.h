@@ -45,6 +45,7 @@ extern "C"
 #define GREEN "\x1B[32m"
 #define PURPLE "\x1B[35m"
 #define YELLOW "\x1B[33m"
+
 // fonts
 #define BOLD "\x1B[1m"
 #define UNDERLINE "\x1B[4m"
@@ -145,18 +146,18 @@ extern "C"
 
   typedef struct
   {
-    int colorEnabled;
-    int runtimeLoggingEnabled;
-  } ProgramSettings;
-
-  typedef struct
-  {
-    char dbPath[50];
+    const char *dbPath;
     char newDBPath[50];
-
     char currentDBName[20];
     char newDBName[20];
   } DatabaseInfo;
+
+  typedef struct
+  {
+    int colorEnabled;
+    int runtimeLoggingEnabled;
+    DatabaseInfo databaseInfo; // may not need this
+  } ProgramSettings;
 
   extern DatabaseInfo databaseInfo;       // initialized in main.c
   extern ProgramSettings programSettings; // initialized in main.c

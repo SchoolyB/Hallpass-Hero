@@ -71,7 +71,7 @@ int create_new_roster(void)
       newRosterMenuIsRunning = FALSE;
       system("clear");
 
-      int tablesExists = get_table_count(databaseInfo.dbPath);
+      int tablesExists = get_table_count(programSettings.databaseInfo.dbPath);
 
       if (tablesExists == TRUE)
       {

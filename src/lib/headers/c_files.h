@@ -51,4 +51,6 @@ int show_settings_menu(void);
 int handle_runtime_logging_logic(void);
 int handle_rename_db_logic(const char *currentDBName);
 int confirm_db_rename(const char *newDBName);
+int toggle_colors(void);
+int read_from_dir_and_check_extension(const char *directoryPath, const char *extension);
 #endif

@@ -388,7 +388,7 @@ void manually_set_student_id(void)
     system("clear");
     char studentID[15];
     strcpy(studentID, addStudentInput.StrInput);
-    int result = check_if_student_id_exists(studentID, databaseInfo.dbPath);
+    int result = check_if_student_id_exists(studentID, programSettings.databaseInfo.dbPath);
     if (result == FALSE)
     {
       confirm_manually_entered_student_id(studentID);
@@ -454,7 +454,7 @@ int generate_student_id(char *FirstName, char *LastName)
       system("clear");
       __utils_runtime_logger("Acknowledged student last name trucation", "generate_student_id");
       snprintf(setStudentID, sizeof(setStudentID), "%c%c%s%d%d%d", toupper(FirstName[0]), toupper(FirstName[1]), truncatedLastName, digit1, digit2, digit3);
-      int result = check_if_student_id_exists(setStudentID, databaseInfo.dbPath);
+      int result = check_if_student_id_exists(setStudentID, programSettings.databaseInfo.dbPath);
       if (result == FALSE)
       {
         puts(GREEN "ID successfully generated!" RESET);
@@ -489,7 +489,7 @@ int generate_student_id(char *FirstName, char *LastName)
   {
     snprintf(setStudentID, sizeof(setStudentID), "%c%c%s%d%d%d", toupper(FirstName[0]), toupper(FirstName[1]), LastName, digit1, digit2, digit3);
     ;
-    int result = check_if_student_id_exists(setStudentID, databaseInfo.dbPath);
+    int result = check_if_student_id_exists(setStudentID, programSettings.databaseInfo.dbPath);
     if (result == FALSE)
     {
       puts(GREEN "ID successfully generated!" RESET);

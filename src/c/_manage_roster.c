@@ -83,7 +83,7 @@ int manage_roster(void)
       manageRosterMenuIsOpen = FALSE;
       system("clear");
 
-      int tableExists = get_table_count(databaseInfo.dbPath);
+      int tableExists = get_table_count(programSettings.databaseInfo.dbPath);
       if (tableExists == TRUE)
       {
         showingFoundRosters = TRUE;
@@ -193,7 +193,7 @@ int manage_roster(void)
       system("clear");
       show_current_step("Rename roster", 1, 2);
 
-      int tableExists = get_table_count(databaseInfo.dbPath);
+      int tableExists = get_table_count(programSettings.databaseInfo.dbPath);
       if (tableExists == TRUE)
       {
         showingFoundRosters = TRUE;
@@ -225,7 +225,7 @@ int manage_roster(void)
       system("clear");
       show_current_step("Delete roster", 1, 2);
 
-      int tableExists = get_table_count(databaseInfo.dbPath);
+      int tableExists = get_table_count(programSettings.databaseInfo.dbPath);
       if (tableExists == TRUE)
       {
         showingFoundRosters = TRUE;
@@ -256,7 +256,7 @@ int manage_roster(void)
       manageRosterMenuIsOpen = FALSE;
       system("clear");
       show_current_step("Add student to roster", 1, 2);
-      int tableExists = get_table_count(databaseInfo.dbPath);
+      int tableExists = get_table_count(programSettings.databaseInfo.dbPath);
       if (tableExists == TRUE)
       {
         showingFoundRosters = TRUE;
@@ -287,7 +287,7 @@ int manage_roster(void)
       manageRosterMenuIsOpen = FALSE;
       system("clear");
       show_current_step("Remove students from roster", 1, 2);
-      int tableExists = get_table_count(databaseInfo.dbPath);
+      int tableExists = get_table_count(programSettings.databaseInfo.dbPath);
       if (tableExists == TRUE)
       {
         showingFoundRosters = TRUE;
@@ -318,7 +318,7 @@ int manage_roster(void)
       manageRosterMenuIsOpen = FALSE;
       system("clear");
       show_current_step("Create a column", 1, 3);
-      int tableExists = get_table_count(databaseInfo.dbPath);
+      int tableExists = get_table_count(programSettings.databaseInfo.dbPath);
       if (tableExists == TRUE)
       {
         showingFoundRosters = TRUE;
@@ -351,7 +351,7 @@ int manage_roster(void)
       manageRosterMenuIsOpen = FALSE;
       system("clear");
       show_current_step("Delete a column", 1, 2);
-      int tableExists = get_table_count(databaseInfo.dbPath);
+      int tableExists = get_table_count(programSettings.databaseInfo.dbPath);
       if (tableExists == TRUE)
       {
         showingFoundRosters = TRUE;
@@ -433,7 +433,7 @@ int ask_which_roster_and_preform_action(char *action)
       sleep(2);
       system("clear");
 
-      int tableExists = get_table_count(databaseInfo.dbPath);
+      int tableExists = get_table_count(programSettings.databaseInfo.dbPath);
       if (tableExists == TRUE)
       {
         int showingFoundRosters = TRUE;
@@ -524,7 +524,7 @@ int ask_which_roster_and_preform_action(char *action)
       sleep(2);
       system("clear");
 
-      int tableExists = get_table_count(databaseInfo.dbPath);
+      int tableExists = get_table_count(programSettings.databaseInfo.dbPath);
       if (tableExists == TRUE)
       {
         int showingFoundRosters = TRUE;
@@ -616,7 +616,7 @@ int ask_which_roster_and_preform_action(char *action)
       sleep(2);
       system("clear");
 
-      int tableExists = get_table_count(databaseInfo.dbPath);
+      int tableExists = get_table_count(programSettings.databaseInfo.dbPath);
       if (tableExists == TRUE)
       {
         int showingFoundRosters = TRUE;
@@ -719,7 +719,7 @@ int ask_which_roster_and_preform_action(char *action)
       printf(YELLOW "The entered roster: " BOLD "%s" RESET YELLOW " does not exist please try again. \n" RESET, roster.rosterNameWithPrefix);
       sleep(2);
       system("clear");
-      int tableExists = get_table_count(databaseInfo.dbPath);
+      int tableExists = get_table_count(programSettings.databaseInfo.dbPath);
       if (tableExists == TRUE)
       {
         int showingFoundRosters = TRUE;
@@ -762,7 +762,7 @@ int ask_which_roster_and_preform_action(char *action)
       sleep(2);
       system("clear");
 
-      int tableExists = get_table_count(databaseInfo.dbPath);
+      int tableExists = get_table_count(programSettings.databaseInfo.dbPath);
       if (tableExists == TRUE)
       {
         int showingFoundRosters = TRUE;
@@ -801,7 +801,7 @@ int ask_which_roster_and_preform_action(char *action)
       printf(YELLOW "The entered roster: " BOLD "%s" RESET YELLOW " does not exist please try again. \n" RESET, manageRosterInput.StrInput);
       sleep(2);
       system("clear");
-      int tableExists = get_table_count(databaseInfo.dbPath);
+      int tableExists = get_table_count(programSettings.databaseInfo.dbPath);
       if (tableExists == TRUE)
       {
         int showingFoundRosters = TRUE;
