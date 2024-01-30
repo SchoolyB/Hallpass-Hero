@@ -14,15 +14,15 @@ Description : This source file contains the main function for the Hallpass Hero 
 #include "../lib/headers/utils.h"
 #include "../lib/headers/c_files.h"
 
+UserInput userInput = {FALSE};
 GlobalTrigger globalTrigger = {FALSE};
 ProgramSettings programSettings = {FALSE};
 DatabaseInfo databaseInfo = {FALSE};
 
 // default db path can be changed in settings menu
 char dbPath[40];
-
-UserInput mainMenuInput;
 uint8_t mainMenuProccess = FALSE;
+
 char MainMenuOptions[8][50] = {
     "1. Create a new roster",
     "2. View and manage an existing roster",
@@ -41,6 +41,7 @@ int main(void)
   programSettings.databaseInfo.dbPath = dbPath;
   programSettings.runtimeLoggingEnabled = TRUE;
   programSettings.colorEnabled = TRUE;
+  globalTrigger.isTriggered = TRUE;
 
   /*Runs a check on start up to see if a sqlite file is already found
   in the build folder. If a file is not then create the default db.sqlite file*/
@@ -49,6 +50,12 @@ int main(void)
   {
     create_student_db_and_table();
   }
+
+  /*This appends the current database name to the dbPath variable
+  so on startup the db name is already set if it already exists
+  in the build folder, and if it doesn't then it will be created
+  and the db name will be set to the default db.sqlite
+   */
   sprintf(dbPath, "../build/%s", programSettings.databaseInfo.currentDBName);
 
   // Creates the logs dir on startup if it doesn't already exist
@@ -80,9 +87,7 @@ int main(void)
   fflush(runtimeLogFile);
   fclose(runtimeLogFile);
 
-  char buffer[50];
   int mainMenuProccess = TRUE;
-
   while (mainMenuProccess == TRUE)
   {
     /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-START OF MAIN MENU+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
@@ -98,25 +103,25 @@ int main(void)
     }
     puts("===========================================================================================");
     /*Here we are handling the input that the user makes on the main menu*/
-    __utils_fgets_and_remove_newline(buffer);
-    mainMenuInput.NumInput = atoi(buffer);
+    __utils_fgets_and_remove_newline(userInput.StrInput);
+    userInput.NumInput = atoi(userInput.StrInput);
 
     // to create a new roster
-    if (mainMenuInput.NumInput == 1 || strcmp(buffer, "new roster") == 0)
+    if (userInput.NumInput == 1 || strcmp(userInput.StrInput, "new roster") == 0)
     {
       __utils_runtime_logger("entered the create new roster menu", "main");
       system("clear");
       create_new_roster();
     }
     // to manage an existing roster
-    else if (mainMenuInput.NumInput == 2 || strcmp(buffer, "manage roster") == 0)
+    else if (userInput.NumInput == 2 || strcmp(userInput.StrInput, "manage roster") == 0)
     {
       __utils_runtime_logger("entered the manage roster menu", "main");
       system("clear");
       manage_roster();
     }
     // to add a student to the student database
-    else if (mainMenuInput.NumInput == 3 || strcmp(buffer, "add student") == 0)
+    else if (userInput.NumInput == 3 || strcmp(userInput.StrInput, "add student") == 0)
     {
       __utils_runtime_logger("entered the add student menu", "main");
       system("clear");
@@ -124,32 +129,33 @@ int main(void)
       add_student_to_db();
     }
     // to view and manage the student database
-    else if (mainMenuInput.NumInput == 4 || strcmp(buffer, "manage student database") == 0)
+    else if (userInput.NumInput == 4 || strcmp(userInput.StrInput, "manage student database") == 0)
     {
       __utils_runtime_logger("entered the manage student database menu", "main");
       system("clear");
       manage_student_db();
     }
     // to search for a student
-    else if (mainMenuInput.NumInput == 5 || strcmp(buffer, "search student") == 0)
+    else if (userInput.NumInput == 5 || strcmp(userInput.StrInput, "search student") == 0)
     {
       __utils_runtime_logger("entered the search student menu", "main");
       system("clear");
       // do stuff
     }
-    else if (mainMenuInput.NumInput == 6 || strcmp(buffer, "help") == 0)
+    else if (userInput.NumInput == 6 || strcmp(userInput.StrInput, "help") == 0)
     {
       __utils_runtime_logger("entered the main menu's help menu", "main");
       system("clear");
       // do stuff
     }
-    else if (mainMenuInput.NumInput == 7 || strcmp(buffer, "settings") == 0)
+    // to enter the settings menu
+    else if (userInput.NumInput == 7 || strcmp(userInput.StrInput, "settings") == 0)
     {
       __utils_runtime_logger("entered the settings menu", "main");
       system("clear");
       show_settings_menu();
     }
-    else if (mainMenuInput.NumInput == 8 || strcmp(buffer, "exit") == 0)
+    else if (userInput.NumInput == 8 || strcmp(userInput.StrInput, "exit") == 0)
     {
       system("clear");
       puts("See you soon!");

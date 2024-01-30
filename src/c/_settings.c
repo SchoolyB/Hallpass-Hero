@@ -7,9 +7,6 @@
 #include "../lib/headers/utils.h"
 #include "../lib/headers/c_files.h"
 
-// TODOs: Need to first read the name of the current db in the directory, then rename it, then update the global dbpath variable with that name
-
-UserInput settingsInput;
 int settingsMenuRunning = TRUE;
 int show_settings_menu(void)
 {
@@ -22,11 +19,11 @@ int show_settings_menu(void)
     puts("2. Rename Database");
     puts("3. Enable/Disable Color");
     puts("4. Main Menu");
-    __utils_fgets_and_remove_newline(settingsInput.StrInput);
-    settingsInput.NumInput = atoi(settingsInput.StrInput);
+    __utils_fgets_and_remove_newline(userInput.StrInput);
+    userInput.NumInput = atoi(userInput.StrInput);
     settingsMenuRunning = FALSE;
   }
-  switch (settingsInput.NumInput)
+  switch (userInput.NumInput)
   {
   case 1:
     __utils_runtime_logger("user entered the enable/disable runtime logging menu", "show_settings_menu");
@@ -67,16 +64,16 @@ int handle_rename_db_logic(const char *currentDBName)
   puts("Would you like to rename the database?[y/n]");
   puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
 
-  __utils_fgets_and_remove_newline(settingsInput.StrInput);
-  if (INPUT_IS_YES(settingsInput.StrInput))
+  __utils_fgets_and_remove_newline(userInput.StrInput);
+  if (INPUT_IS_YES(userInput.StrInput))
   {
     system("clear");
     puts("Enter enter the new name for the database.");
     puts("Note: The name cannot contain any special characters.");
     puts("Note: The file extension will be added automatically.");
-    __utils_fgets_and_remove_newline(settingsInput.StrInput);
+    __utils_fgets_and_remove_newline(userInput.StrInput);
 
-    if (strlen(settingsInput.StrInput) < 1)
+    if (strlen(userInput.StrInput) < 1)
     {
       system("clear");
       puts(YELLOW "The entered name is too short. Please try again." RESET);
@@ -84,7 +81,7 @@ int handle_rename_db_logic(const char *currentDBName)
       system("clear");
       handle_rename_db_logic(databaseInfo.currentDBName);
     }
-    else if (strlen(settingsInput.StrInput) > 20)
+    else if (strlen(userInput.StrInput) > 20)
     {
       system("clear");
       puts(YELLOW "The entered name is too long. Please try again." RESET);
@@ -94,11 +91,11 @@ int handle_rename_db_logic(const char *currentDBName)
     }
     else
     {
-      int hasSpecialChars = check_for_special_chars(settingsInput.StrInput);
+      int hasSpecialChars = check_for_special_chars(userInput.StrInput);
       switch (hasSpecialChars)
       {
       case 0: // false
-        strcpy(programSettings.databaseInfo.newDBName, settingsInput.StrInput);
+        strcpy(programSettings.databaseInfo.newDBName, userInput.StrInput);
         int confirmed = confirm_db_rename(programSettings.databaseInfo.newDBName);
         if (confirmed == TRUE)
         {
@@ -139,7 +136,7 @@ int handle_rename_db_logic(const char *currentDBName)
       }
     }
   }
-  else if (INPUT_IS_NO(settingsInput.StrInput))
+  else if (INPUT_IS_NO(userInput.StrInput))
   {
     system("clear");
     __utils_runtime_logger("chose not to rename the database", "handle_rename_db_logic");
@@ -148,7 +145,7 @@ int handle_rename_db_logic(const char *currentDBName)
     system("clear");
     show_settings_menu();
   }
-  else if (INPUT_IS_CANCEL(settingsInput.StrInput))
+  else if (INPUT_IS_CANCEL(userInput.StrInput))
   {
     system("clear");
     __utils_runtime_logger("cancelled operation", "handle_rename_db_logic");
@@ -172,18 +169,18 @@ int confirm_db_rename(const char *newDBName)
   system("clear");
   printf("Are you sure you want to rename the database to " BOLD "%s" RESET "?[y/n]\n", newDBName);
   puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
-  __utils_fgets_and_remove_newline(settingsInput.StrInput);
+  __utils_fgets_and_remove_newline(userInput.StrInput);
 
-  if (INPUT_IS_CANCEL(settingsInput.StrInput))
+  if (INPUT_IS_CANCEL(userInput.StrInput))
   {
     // todo finish this
   }
-  else if (INPUT_IS_NO(settingsInput.StrInput))
+  else if (INPUT_IS_NO(userInput.StrInput))
   {
     __utils_runtime_logger("chose not to rename the database", "confirm_db_rename");
     return 0;
   }
-  else if (INPUT_IS_YES(settingsInput.StrInput))
+  else if (INPUT_IS_YES(userInput.StrInput))
   {
     system("clear");
     __utils_runtime_logger("confirmed database renaming", "confirm_db_rename");
@@ -206,8 +203,8 @@ int handle_runtime_logging_logic(void)
     printf("Currently runtime logging is " BOLD GREEN "enabled" RESET "\n");
     puts("Would you like to disable runtime logging?[y/n]");
     puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
-    __utils_fgets_and_remove_newline(settingsInput.StrInput);
-    if (INPUT_IS_YES(settingsInput.StrInput))
+    __utils_fgets_and_remove_newline(userInput.StrInput);
+    if (INPUT_IS_YES(userInput.StrInput))
     {
       system("clear");
       puts("Disabling runtime logging...");
@@ -232,7 +229,7 @@ int handle_runtime_logging_logic(void)
       fclose(runtimeLogFile);
       return 0;
     }
-    if (INPUT_IS_NO(settingsInput.StrInput || INPUT_IS_CANCEL(settingsInput.StrInput)))
+    if (INPUT_IS_NO(userInput.StrInput || INPUT_IS_CANCEL(userInput.StrInput)))
     {
       system("clear");
       puts("Returning to settings menu...");
@@ -248,8 +245,8 @@ int handle_runtime_logging_logic(void)
     printf("Currently runtime logging is " BOLD RED "disabled" RESET "\n");
     puts("Would you like to enable runtime logging?[y/n]");
     puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
-    __utils_fgets_and_remove_newline(settingsInput.StrInput);
-    if (INPUT_IS_YES(settingsInput.StrInput))
+    __utils_fgets_and_remove_newline(userInput.StrInput);
+    if (INPUT_IS_YES(userInput.StrInput))
     {
       system("clear");
       puts("Enabling runtime logging...");
@@ -277,7 +274,7 @@ int handle_runtime_logging_logic(void)
 
       return 0;
     }
-    else if (INPUT_IS_NO(settingsInput.StrInput))
+    else if (INPUT_IS_NO(userInput.StrInput))
     {
       system("clear");
       __utils_runtime_logger("user chose not to toggle runtime logging", "show_settings_menu");
@@ -305,8 +302,8 @@ int toggle_colors(void)
     puts("Colors are currently " BOLD GREEN "enabled" RESET);
     puts("Would you like to disable colors?[y/n]");
     puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
-    __utils_fgets_and_remove_newline(settingsInput.StrInput);
-    if (INPUT_IS_YES(settingsInput.StrInput))
+    __utils_fgets_and_remove_newline(userInput.StrInput);
+    if (INPUT_IS_YES(userInput.StrInput))
     {
       system("clear");
       puts("Disabling colors...");
@@ -333,7 +330,7 @@ int toggle_colors(void)
       system("clear");
       return 0;
     }
-    else if (INPUT_IS_NO(settingsInput.StrInput))
+    else if (INPUT_IS_NO(userInput.StrInput))
     {
       system("clear");
       puts("Returning to settings menu...");
@@ -341,7 +338,7 @@ int toggle_colors(void)
       system("clear");
       show_settings_menu();
     }
-    else if (INPUT_IS_CANCEL(settingsInput.StrInput))
+    else if (INPUT_IS_CANCEL(userInput.StrInput))
     {
       system("clear");
       __utils_runtime_logger("cancelled operation", "toggle_colors");
@@ -370,8 +367,8 @@ int toggle_colors(void)
     puts("Colors are currently " BOLD "disabled" RESET);
     puts("Would you like to enable colors?[y/n]");
     puts("To cancel this operation enter" BOLD "'cancel'" RESET);
-    __utils_fgets_and_remove_newline(settingsInput.StrInput);
-    if (INPUT_IS_YES(settingsInput.StrInput))
+    __utils_fgets_and_remove_newline(userInput.StrInput);
+    if (INPUT_IS_YES(userInput.StrInput))
     {
       system("clear");
       puts("Enabling colors...");
@@ -387,7 +384,7 @@ int toggle_colors(void)
       system("clear");
       return 0;
     }
-    else if (INPUT_IS_NO(settingsInput.StrInput))
+    else if (INPUT_IS_NO(userInput.StrInput))
     {
       system("clear");
       __utils_runtime_logger("user chose not to toggle colors", "toggle_colors");
@@ -396,7 +393,7 @@ int toggle_colors(void)
       system("clear");
       show_settings_menu();
     }
-    else if (INPUT_IS_CANCEL(settingsInput.StrInput))
+    else if (INPUT_IS_CANCEL(userInput.StrInput))
     {
       system("clear");
       __utils_runtime_logger("cancelled operation", "toggle_colors");

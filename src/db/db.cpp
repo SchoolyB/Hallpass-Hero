@@ -817,7 +817,7 @@ extern "C"
 
   /************************************************************************************
    *  check_if_student_id_exists(): Checks if the passed in studentID exists in the
-   *                                 student db or a roster
+   *                                student db or a roster
    *
    * Note: See function usage in _manage_student_db.c & _manage_roster.c
    ************************************************************************************/
@@ -833,7 +833,6 @@ extern "C"
     {
       tableNameString = "students";
     }
-
     int dbConnection = sqlite3_open(programSettings.databaseInfo.dbPath, &database);
 
     if (dbConnection != SQLITE_OK)
@@ -953,13 +952,11 @@ extern "C"
       __throw_error_opening_db("show_all_students_in_student_db", database, dbConnection);
       return -1;
     }
-    print_student_list_heading();
     // Construct the SQL query to select all rows from the specified table
     string selectFromStudentSQLTable = "SELECT FirstName, LastName, StudentID FROM students";
 
     // Execute the query and invoke the callback function to print each row
     dbConnection = sqlite3_exec(database, selectFromStudentSQLTable.c_str(), print_all_students_in_student_db_callback, nullptr, nullptr);
-
     if (dbConnection != SQLITE_OK)
     {
       __throw_error_exec_query("show_all_students_in_student_db", database, dbConnection);

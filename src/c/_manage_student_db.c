@@ -18,7 +18,6 @@ Description : This source file contains the function used
 
 static uint8_t mainMenuProccess;
 int manageStudentDBMenuIsRunning;
-UserInput manageStudentDBInput;
 Student CurrentStudent;
 
 int manage_student_db(void)
@@ -40,20 +39,20 @@ int manage_student_db(void)
     {
       printf("%d. %s\n", i + 1, manageStudentDBMenu[i]);
     }
-    __utils_fgets_and_remove_newline(manageStudentDBInput.StrInput);
-    manageStudentDBInput.NumInput = atoi(manageStudentDBInput.StrInput);
-    if (manageStudentDBInput.NumInput == 1 || strcmp(manageStudentDBInput.StrInput, "list") == 0)
+    __utils_fgets_and_remove_newline(userInput.StrInput);
+    userInput.NumInput = atoi(userInput.StrInput);
+    if (userInput.NumInput == 1 || strcmp(userInput.StrInput, "list") == 0)
     {
       manageStudentDBMenuIsRunning = FALSE;
       system("clear");
       list_all_students();
       manageStudentDBMenuIsRunning = TRUE;
     }
-    else if (manageStudentDBInput.NumInput == 2 || strcmp(manageStudentDBInput.StrInput, "update") == 0)
+    else if (userInput.NumInput == 2 || strcmp(userInput.StrInput, "update") == 0)
     {
       search_for_student();
     }
-    else if (manageStudentDBInput.NumInput == 3 || strcmp(manageStudentDBInput.StrInput, "delete") == 0)
+    else if (userInput.NumInput == 3 || strcmp(userInput.StrInput, "delete") == 0)
     {
       manageStudentDBMenuIsRunning = FALSE;
       system("clear");
@@ -61,9 +60,9 @@ int manage_student_db(void)
       show_all_students_in_student_db(programSettings.databaseInfo.dbPath);
       printf("Enter the StudentID of the student you would like to delete.\n");
       puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
-      __utils_fgets_and_remove_newline(manageStudentDBInput.StrInput);
+      __utils_fgets_and_remove_newline(userInput.StrInput);
 
-      if (strcmp(manageStudentDBInput.StrInput, "cancel") == 0)
+      if (strcmp(userInput.StrInput, "cancel") == 0)
       {
         system("clear");
         puts(YELLOW "Cancelling operation" RESET);
@@ -74,15 +73,15 @@ int manage_student_db(void)
       else
       {
         // TODO NEW: Jan 24th 2024 Need to add a check that says something like "the entered student is aldo in roster 'name of roster' preforming this action will also delete the student from the roster. are you sure you want to continue?"
-        strcpy(CurrentStudent.StudentID, manageStudentDBInput.StrInput);
+        strcpy(CurrentStudent.StudentID, userInput.StrInput);
         int studentExists = check_if_student_id_exists(CurrentStudent.StudentID, "students");
         if (studentExists == TRUE)
         {
           system("clear");
           printf(RED "WARNING: This action cannot be undone\n" RESET);
           puts("Are you sure you want to delete this student?[y/n]");
-          __utils_fgets_and_remove_newline(manageStudentDBInput.StrInput);
-          if (INPUT_IS_CANCEL(manageStudentDBInput.StrInput) || INPUT_IS_NO(manageStudentDBInput.StrInput))
+          __utils_fgets_and_remove_newline(userInput.StrInput);
+          if (INPUT_IS_CANCEL(userInput.StrInput) || INPUT_IS_NO(userInput.StrInput))
           {
             system("clear");
             puts(YELLOW "Cancelling operation" RESET);
@@ -90,7 +89,7 @@ int manage_student_db(void)
             system("clear");
             manageStudentDBMenuIsRunning = TRUE;
           }
-          else if (INPUT_IS_YES(manageStudentDBInput.StrInput))
+          else if (INPUT_IS_YES(userInput.StrInput))
           {
             delete_student_from_table(CurrentStudent.StudentID, "students");
           }
@@ -114,7 +113,7 @@ int manage_student_db(void)
         }
       }
     }
-    else if (manageStudentDBInput.NumInput == 4 || strcmp(manageStudentDBInput.StrInput, "main") == 0)
+    else if (userInput.NumInput == 4 || strcmp(userInput.StrInput, "main") == 0)
     {
       system("clear");
       manageStudentDBMenuIsRunning = FALSE;

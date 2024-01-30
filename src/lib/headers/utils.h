@@ -86,6 +86,20 @@ extern "C"
   int has_one_non_space_char(const char *str);
 
   // this type allows the same input through each C source file. As opposed to constantly declaring char arrays
+
+  /*This UserInput was previously a struct
+    but I made it a union. I was not using
+    both the int and char array at the same
+    time. I was only using one or the other.
+    So I made it a union to save memory.
+    - Marshall Burns Jan 30th 2024
+  */
+
+  // this is only used to set the passed in tableName of the check_if_table_exists() function
+  typedef struct
+  {
+    char TableName[50];
+  } DesiredTableName;
   typedef struct
   {
     int NumInput;
@@ -159,6 +173,7 @@ extern "C"
     DatabaseInfo databaseInfo; // may not need this
   } ProgramSettings;
 
+  extern UserInput userInput;             // initialized in main.c
   extern DatabaseInfo databaseInfo;       // initialized in main.c
   extern ProgramSettings programSettings; // initialized in main.c
   extern GlobalTrigger globalTrigger;     // initialized in main.c
