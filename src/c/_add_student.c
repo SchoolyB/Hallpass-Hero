@@ -31,7 +31,7 @@ DesiredTableName desiredTableName;
  ************************************************************************************/
 int add_student_to_db(void)
 {
-  globalTrigger.isTriggered = FALSE;
+  globalTrigger.isTriggered = TRUE;
   addStudentMenuIsRunning = TRUE;
   while (addStudentMenuIsRunning == TRUE)
   {
