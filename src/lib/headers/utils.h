@@ -36,16 +36,25 @@ extern "C"
 // Booleans
 #define FALSE 0
 #define TRUE 1
-//--------------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------------//
 
-// Colors
-#define RESET "\x1B[0m"
+  // Colors
+
 #define RED "\x1B[31m"
-#define BLUE "\x1B[34m"
 #define GREEN "\x1B[32m"
-#define PURPLE "\x1B[35m"
 #define YELLOW "\x1B[33m"
+#define RESET "\x1B[0m"
+  typedef struct
+  {
+    const char *colorCode;
+  } Color;
 
+  extern Color red;
+  extern Color green;
+  extern Color yellow;
+  extern Color reset;
+
+  // Error messages
 // fonts
 #define BOLD "\x1B[1m"
 #define UNDERLINE "\x1B[4m"

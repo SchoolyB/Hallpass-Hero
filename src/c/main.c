@@ -19,6 +19,11 @@ GlobalTrigger globalTrigger = {FALSE};
 ProgramSettings programSettings = {FALSE};
 DatabaseInfo databaseInfo = {FALSE};
 
+Color red = {RED};
+Color green = {GREEN};
+Color yellow = {YELLOW};
+Color reset = {RESET};
+
 // default db path can be changed in settings menu
 char dbPath[40];
 uint8_t mainMenuProccess = FALSE;

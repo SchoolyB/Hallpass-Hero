@@ -43,13 +43,13 @@ int add_student_to_db(void)
         "4. Main Menu"};
     system("clear");
     show_current_menu("Add Student To Database");
-    puts("What would you like to do?");
-    puts("|===========================================================================================");
+    printf("What would you like to do?\n");
+    printf("|===========================================================================================\n");
     for (int i = 0; i < 4; ++i)
     {
       printf("| %s %-90s\n", addStudentOptions[i], "");
     }
-    puts("|===========================================================================================");
+    printf("|===========================================================================================\n");
     __utils_fgets_and_remove_newline(userInput.StrInput);
     userInput.NumInput = atoi(userInput.StrInput);
 
@@ -73,7 +73,7 @@ int add_student_to_db(void)
     else if (userInput.NumInput == 4 || strcmp(userInput.StrInput, "main menu") == 0 || strcmp(userInput.StrInput, "main") == 0)
     {
       system("clear");
-      puts("Returning to main menu.");
+      printf("Returning to main menu.");
       sleep(1);
       system("clear");
       return 0;
@@ -82,7 +82,7 @@ int add_student_to_db(void)
     {
       system("clear");
       addStudentMenuIsRunning = FALSE;
-      puts("Invalid input. Please try again.");
+      printf("Invalid input. Please try again.");
       sleep(1);
       system("clear");
       addStudentMenuIsRunning = TRUE;
@@ -98,13 +98,13 @@ int add_student_to_db(void)
 int get_student_first_name(void)
 {
   show_current_step("Enter Student First Name", 1, 7);
-  puts("Please enter the students first name.");
-  puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
+  printf("Please enter the students first name.\n");
+  printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n", yellow.colorCode, reset.colorCode);
   __utils_fgets_and_remove_newline(userInput.StrInput);
   __utils_runtime_logger("entered a students first name", "get_student_first_name");
   if (!has_one_non_space_char(userInput.StrInput))
   {
-    printf(YELLOW "The entered first name is too short. Please try again\n" RESET);
+    printf("%sThe entered first name is too short. Please try again.%s\n", yellow.colorCode, reset.colorCode);
     sleep(1);
     system("clear");
     __utils_error_logger("The entered first name is too short", "get_student_first_name", MINOR);
@@ -113,7 +113,7 @@ int get_student_first_name(void)
   else if (INPUT_IS_CANCEL(userInput.StrInput))
   {
     system("clear");
-    puts(YELLOW "Cancelling operation." RESET);
+    printf("%sCancelling operation.%s\n", yellow.colorCode, reset.colorCode);
     __utils_runtime_logger("Cancelled operation", "get_student_first_name");
     globalTrigger.studentCreationInterrupted = TRUE;
     sleep(1);
@@ -125,7 +125,7 @@ int get_student_first_name(void)
   {
     system("clear");
     show_current_step("Confirm Student First Name", 2, 7);
-    printf("You entered: " BOLD "%s" RESET " is that correct[y/n]\n", userInput.StrInput);
+    printf("You entered: " BOLD "%s%s is that correct[y/n]\n", userInput.StrInput, reset.colorCode);
 
     /*Taking the entered value and
     assigning it to a variable.*/
@@ -152,7 +152,7 @@ int get_student_first_name(void)
     else if (INPUT_IS_NO(userInput.StrInput))
     {
       system("clear");
-      puts("Ok lets try again.");
+      printf("Ok lets try again.");
       sleep(1);
       system("clear");
       __utils_runtime_logger("did not confirm students first name", "get_student_first_name");
@@ -162,7 +162,7 @@ int get_student_first_name(void)
     else
     {
       system("clear");
-      puts("Im sorry I didn't understand that please try again.");
+      printf("Im sorry I didn't understand that please try again.");
       sleep(1);
       system("clear");
       get_student_first_name();
@@ -183,16 +183,16 @@ int get_student_last_name(void)
   system("clear");
   show_current_step("Enter Student Last Name", 3, 7);
 
-  puts("Please enter the students last name.");
-  puts("If the student does not have a last name please enter 'none'.");
-  puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
+  printf("Please enter the students last name.\n");
+  printf("If the student does not have a last name please enter 'none'.\n");
+  printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n", yellow.colorCode, reset.colorCode);
   __utils_fgets_and_remove_newline(userInput.StrInput);
   __utils_runtime_logger("entered a students last name", "get_student_last_name");
 
   if (!has_one_non_space_char(userInput.StrInput))
   {
-    printf(YELLOW "The entered last name is too short. Please try again\n" RESET);
-    printf(YELLOW "If the student does not have a last name please enter 'none'.\n" RESET);
+    printf("%sThe entered last name is too short. Please try again%s\n", yellow.colorCode, reset.colorCode);
+    printf("%sIf the student does not have a last name please enter 'none'.%s\n", yellow.colorCode, reset.colorCode);
     sleep(2);
     system("clear");
     __utils_error_logger("The entered last name is too short", "get_student_last_name", MINOR);
@@ -201,7 +201,7 @@ int get_student_last_name(void)
   else if (INPUT_IS_CANCEL(userInput.StrInput))
   {
     system("clear");
-    puts(YELLOW "Cancelling operation." RESET);
+    printf("%sCancelling operation.%s\n", yellow.colorCode, reset.colorCode);
     globalTrigger.studentCreationInterrupted = TRUE;
     __utils_runtime_logger("Cancelled operation", "get_student_last_name");
     sleep(1);
@@ -214,7 +214,7 @@ int get_student_last_name(void)
     __utils_runtime_logger("Entered 'none' for students last name", "get_student_last_name");
     system("clear");
     show_current_step("Confirm Student Last Name", 4, 7);
-    puts(YELLOW "This student does not have a last name. is that correct?[y/n]" RESET);
+    printf("%sThis student does not have a last name. is that correct?[y/n]%s\n", yellow.colorCode, reset.colorCode);
 
     /*Taking the entered value and
     assigning it to a variable.*/
@@ -234,7 +234,7 @@ int get_student_last_name(void)
     else if (INPUT_IS_NO(userInput.StrInput))
     {
       system("clear");
-      puts("Ok lets try again.");
+      printf("Ok lets try again.");
       __utils_runtime_logger("Did not confirm student does not have last name", "get_student_last_name");
       sleep(1);
       system("clear");
@@ -243,7 +243,7 @@ int get_student_last_name(void)
     else
     {
       system("clear");
-      puts("Im sorry I didn't understand that please try again.");
+      printf("Im sorry I didn't understand that please try again.");
       sleep(1);
       system("clear");
       get_student_last_name();
@@ -254,7 +254,7 @@ int get_student_last_name(void)
     strcpy(setLastName, userInput.StrInput);
     system("clear");
     show_current_step("Confirm Student Last Name", 4, 7);
-    printf("You entered: " BOLD "%s" RESET " is that correct?[y/n]\n", setLastName);
+    printf("You entered: " BOLD "%s%s is that correct?[y/n]\n", setLastName, reset.colorCode);
     __utils_fgets_and_remove_newline(userInput.StrInput);
     if (INPUT_IS_YES(userInput.StrInput))
     {
@@ -272,7 +272,7 @@ int get_student_last_name(void)
     else if (INPUT_IS_NO(userInput.StrInput))
     {
       system("clear");
-      puts("Ok lets try again.");
+      printf("Ok lets try again.");
       sleep(1);
       system("clear");
       get_student_last_name();
@@ -280,7 +280,7 @@ int get_student_last_name(void)
     else
     {
       system("clear");
-      puts("Im sorry I didn't understand that please try again.");
+      printf("Im sorry I didn't understand that please try again.");
       sleep(1);
       system("clear");
       get_student_last_name();
@@ -295,11 +295,11 @@ int get_student_last_name(void)
 int ask_about_student_id(void)
 {
   system("clear");
-  puts("How would you like to assign the student ID?");
-  puts("Please enter either '1' or '2'.");
-  puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
-  puts("1. Automatically generate an ID ");
-  puts("2. Create your own");
+  printf("How would you like to assign the student ID?\n");
+  printf("Please enter either '1' or '2'.\n");
+  printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n", yellow.colorCode, reset.colorCode);
+  printf("1. Automatically generate an ID \n");
+  printf("2. Create your own\n");
 
   __utils_fgets_and_remove_newline(userInput.StrInput);
   userInput.NumInput = atoi(userInput.StrInput);
@@ -307,7 +307,7 @@ int ask_about_student_id(void)
   if (INPUT_IS_CANCEL(userInput.StrInput))
   {
     system("clear");
-    puts(YELLOW "Cancelling operation." RESET);
+    printf("%sCancelling operation.%s\n", yellow.colorCode, reset.colorCode);
     __utils_runtime_logger("Cancelled operation", "ask_about_student_id");
     globalTrigger.studentCreationInterrupted = TRUE;
     sleep(1);
@@ -332,7 +332,7 @@ int ask_about_student_id(void)
   else
   {
     system("clear");
-    puts("Please make a valid decision.");
+    printf("Please make a valid decision.");
     ask_about_student_id();
   }
 }
@@ -348,10 +348,10 @@ void manually_set_student_id(void)
   while (gettingStudentId == TRUE)
   {
     show_current_step("Set Student Id", 5, 7);
-    puts("Please enter the students id.");
-    puts(YELLOW "NOTE: The id can be no MORE than 15 characters and LESS than 2." RESET);
-    puts(RED "IMPORTANT: It is not recommended to use private information such as social security numbers or birth dates as an id." RESET);
-    puts(YELLOW "You can cancel this operation by entering 'cancel." RESET);
+    printf("Please enter the students id.\n");
+    printf("%sNOTE: The id can be no MORE than 15 characters and LESS than 2.%s\n", yellow.colorCode, reset.colorCode);
+    printf("%sIMPORTANT: It is not recommended to use private information such as social security numbers or birth dates as an id.%s\n", red.colorCode, reset.colorCode);
+    printf("%sYou can cancel this operation by entering 'cancel.%s\n", yellow.colorCode, reset.colorCode);
     gettingStudentId = FALSE;
   }
   __utils_fgets_and_remove_newline(userInput.StrInput);
@@ -360,7 +360,7 @@ void manually_set_student_id(void)
   if (INPUT_IS_CANCEL(userInput.StrInput))
   {
     system("clear");
-    puts(YELLOW "Cancelling operation." RESET);
+    printf("%sCancelling operation.%s\n", yellow.colorCode, reset.colorCode);
     __utils_runtime_logger("Cancelled operation", "manually_set_student_id");
     globalTrigger.studentCreationInterrupted = TRUE;
     sleep(1);
@@ -371,7 +371,7 @@ void manually_set_student_id(void)
   else if (strlen(userInput.StrInput) < 2)
   {
     gettingStudentId == FALSE;
-    puts(YELLOW "The id you entered is too short. Please try again." RESET);
+    printf("%sThe id you entered is too short. Please try again.%s\n", yellow.colorCode, reset.colorCode);
     sleep(1);
     system("clear");
     manually_set_student_id();
@@ -379,7 +379,7 @@ void manually_set_student_id(void)
   else if (strlen(userInput.StrInput) > 15)
   {
     gettingStudentId == FALSE;
-    puts(YELLOW "The id you entered is too long. Please try again." RESET);
+    printf("%sThe id you entered is too long. Please try again.%s\n", yellow.colorCode, reset.colorCode);
     sleep(1);
     system("clear");
     manually_set_student_id();
@@ -398,7 +398,7 @@ void manually_set_student_id(void)
     else if (result == TRUE)
     {
       system("clear");
-      printf(YELLOW "Duplicate ID detected. Please try again.\n" RESET);
+      printf("%sDuplicate ID detected. Please try again.%s\n", yellow.colorCode, reset.colorCode);
       __utils_error_logger("Duplicate ID detected", "manually_set_student_id", MINOR);
       sleep(3);
       system("clear");
@@ -424,7 +424,7 @@ int generate_student_id(char *FirstName, char *LastName)
   int digit2 = arr[rand() % 10];
   int digit3 = arr[rand() % 10];
 
-  puts("Generating student ID");
+  printf("Generating student ID");
   sleep(1);
   size_t lastNameLength = strlen(NewStudent.LastName);
   // if the student last name is empty
@@ -432,7 +432,7 @@ int generate_student_id(char *FirstName, char *LastName)
   {
 
     snprintf(setStudentID, sizeof(setStudentID), "%c%c%d%d%d", toupper(FirstName[0]), toupper(FirstName[1]), digit1, digit2, digit3);
-    puts(GREEN "ID successfully generated!" RESET);
+    printf("%sID successfully generated!%s\n", green.colorCode, reset.colorCode);
     sleep(1);
     system("clear");
     confirm_generated_student_id(setStudentID);
@@ -446,10 +446,11 @@ int generate_student_id(char *FirstName, char *LastName)
     strncpy(truncatedLastName, NewStudent.LastName, 10);
     truncatedLastName[10] = '\0';
 
-    printf(YELLOW "Entered last name:" BOLD " %s" RESET YELLOW
-                  " longer than 10 characters, this will be shortened to" BOLD " %s in the student ID \n" RESET,
-           NewStudent.LastName, truncatedLastName);
-    printf("Are you sure you want to continue with this students last name?[y/n]\n");
+    printf("%sEntered last name:" BOLD " %s%s%s"
+           " longer than 10 characters, this will be shortened to" BOLD " %s in the student ID %s\n",
+           yellow.colorCode,
+           NewStudent.LastName, reset.colorCode, yellow.colorCode, truncatedLastName);
+    printf("Are you sure you want to continue with this students last name?[y/n]%s\n");
     __utils_fgets_and_remove_newline(userInput.StrInput);
     if (INPUT_IS_YES(userInput.StrInput))
     {
@@ -460,7 +461,7 @@ int generate_student_id(char *FirstName, char *LastName)
       int result = check_if_student_id_exists(setStudentID, desiredTableName.TableName);
       if (result == FALSE)
       {
-        puts(GREEN "ID successfully generated!" RESET);
+        printf("%sID successfully generated!%s", green.colorCode, reset.colorCode);
         sleep(1);
         system("clear");
         sleep(2);
@@ -470,7 +471,7 @@ int generate_student_id(char *FirstName, char *LastName)
       {
         system("clear");
         sleep(1);
-        printf(YELLOW "Duplicate ID detected. Regenerating....\n" RESET);
+        printf("%sDuplicate ID detected. Regenerating....%s\n", yellow.colorCode, reset.colorCode);
         sleep(1);
         generate_student_id(FirstName, LastName);
       }
@@ -482,7 +483,7 @@ int generate_student_id(char *FirstName, char *LastName)
     else
     {
       system("clear");
-      puts("Please make a valid decision.");
+      printf("Please make a valid decision.");
       sleep(1);
       system("clear");
       generate_student_id(FirstName, LastName);
@@ -495,7 +496,7 @@ int generate_student_id(char *FirstName, char *LastName)
     int result = check_if_student_id_exists(setStudentID, desiredTableName.TableName);
     if (result == FALSE)
     {
-      puts(GREEN "ID successfully generated!" RESET);
+      printf("%sID successfully generated!%s\n", green.colorCode, reset.colorCode);
       sleep(1);
       system("clear");
       confirm_generated_student_id(setStudentID);
@@ -504,7 +505,7 @@ int generate_student_id(char *FirstName, char *LastName)
     {
       system("clear");
       sleep(1);
-      printf(YELLOW "Duplicate ID detected. Regenerating....\n" RESET);
+      printf("%sDuplicate ID detected. Regenerating....%s\n", yellow.colorCode, reset.colorCode);
       sleep(1);
       generate_student_id(FirstName, LastName);
     }
@@ -523,7 +524,7 @@ int confirm_generated_student_id(char *studentID)
   while (confirmingStudentId == TRUE)
   {
     show_current_step("Confirm Student Id", 6, 7);
-    printf("Is the ID: " BOLD "%s" RESET " for" BOLD " %s %s" RESET " satisfactory?[y/n]\n", studentID, NewStudent.FirstName, NewStudent.LastName);
+    printf("Is the ID: " BOLD "%s%s for" BOLD " %s %s%s satisfactory?[y/n]\n", studentID, reset.colorCode, NewStudent.FirstName, NewStudent.LastName, reset.colorCode);
     __utils_fgets_and_remove_newline(userInput.StrInput);
     char setStudentID[15];
     strcpy(setStudentID, studentID);
@@ -550,7 +551,7 @@ int confirm_generated_student_id(char *studentID)
     {
       confirmingStudentId = FALSE;
       system("clear");
-      puts("Ok lets try again.");
+      printf("Ok lets try again.");
       __utils_runtime_logger("Did not confirm auto generated student id", "confirm_generated_student_id");
       sleep(1);
       system("clear");
@@ -559,7 +560,7 @@ int confirm_generated_student_id(char *studentID)
     else
     {
       confirmingStudentId = FALSE;
-      puts("Im sorry I didn't understand that please try again.");
+      printf("Im sorry I didn't understand that please try again.");
       sleep(1);
       system("clear");
       confirm_generated_student_id(studentID);
@@ -579,7 +580,7 @@ int confirm_manually_entered_student_id(char *studentID)
   while (confirmingStudentId == TRUE)
   {
     show_current_step("Confirm Student Id", 6, 7);
-    printf("You've entered: " BOLD "%s" RESET "is that correct?[y/n]\n", studentID);
+    printf("You've entered: " BOLD "%s%s is that correct?[y/n]\n", studentID, reset.colorCode);
     __utils_fgets_and_remove_newline(userInput.StrInput);
     char setStudentID[15];
     strcpy(setStudentID, studentID);
@@ -609,7 +610,7 @@ int confirm_manually_entered_student_id(char *studentID)
     {
       confirmingStudentId = FALSE;
       system("clear");
-      puts("Ok lets try again.");
+      printf("Ok lets try again.");
       __utils_runtime_logger("Did not confirm manually entered student id", "confirm_manually_entered_student_id");
       sleep(1);
       system("clear");
@@ -618,7 +619,7 @@ int confirm_manually_entered_student_id(char *studentID)
     else
     {
       confirmingStudentId = FALSE;
-      puts("Im sorry I didn't understand that please try again.");
+      printf("Im sorry I didn't understand that please try again.");
       sleep(1);
       system("clear");
       confirm_manually_entered_student_id(studentID);
@@ -638,24 +639,24 @@ int ask_to_add_new_student_to_roster(void)
   system("clear");
   __utils_runtime_logger("Asked to add new student to a roster", "ask_to_add_new_student_to_roster");
   show_current_step("Add Student To Roster", 7, 7);
-  puts("Would you like to add this student to a roster?");
-  puts(YELLOW "NOTE: You can choose to do this later as well" RESET);
-  puts("1: Yes");
-  puts("2: No");
+  printf("Would you like to add this student to a roster?\n");
+  printf("%sNOTE: You can choose to do this later as well%s\n", yellow.colorCode, reset.colorCode);
+  printf("1: Yes");
+  printf("2: No");
   __utils_fgets_and_remove_newline(userInput.StrInput);
   userInput.NumInput = atoi(userInput.StrInput);
   if (userInput.NumInput == 1 || INPUT_IS_YES(userInput.StrInput))
   {
     __utils_runtime_logger("Chose to add new student to a roster", "ask_to_add_new_student_to_roster");
     ask_which_roster_to_add_newly_created_student();
-    puts(GREEN "Adding new student to database..." RESET);
+    printf("%sAdding new student to database...%s\n", green.colorCode, reset.colorCode);
     sleep(2);
     system("clear");
     int result = insert_student_into_db(NewStudent.FirstName, NewStudent.LastName, NewStudent.StudentID);
 
     if (result == 0)
     {
-      puts(GREEN "Student successfully added to database." RESET);
+      printf("%sStudent successfully added to database.%s\n", green.colorCode, reset.colorCode);
       __utils_runtime_logger("Successfully added new student to database", "ask_to_add_new_student_to_roster");
       sleep(1);
       system("clear");
@@ -664,7 +665,7 @@ int ask_to_add_new_student_to_roster(void)
     }
     else if (result == 1)
     {
-      puts(RED "Please try again." RESET);
+      printf("Please try again.\n");
       sleep(1);
       system("clear");
       addStudentMenuIsRunning = TRUE;
@@ -678,7 +679,7 @@ int ask_to_add_new_student_to_roster(void)
     int result = insert_student_into_db(NewStudent.FirstName, NewStudent.LastName, NewStudent.StudentID);
     if (result == 0)
     {
-      puts(GREEN "Student successfully added to database." RESET);
+      printf("%sStudent successfully added to database.%s\n", green.colorCode, reset.colorCode);
       __utils_runtime_logger("Successfully added new student to database", "ask_to_add_new_student_to_roster");
       sleep(1);
       system("clear");
@@ -687,7 +688,7 @@ int ask_to_add_new_student_to_roster(void)
     }
     else if (result == 1)
     {
-      puts(RED "Please try again." RESET);
+      printf("Please try again.\n");
       sleep(1);
       system("clear");
       addStudentMenuIsRunning = TRUE;
@@ -696,8 +697,8 @@ int ask_to_add_new_student_to_roster(void)
   }
   else
   {
-    puts("Sorry, I didn't understand that.");
-    puts("Please try again");
+    printf("Sorry, I didn't understand that.");
+    printf("Please try again");
     ask_to_add_new_student_to_roster();
   }
 }
@@ -712,7 +713,7 @@ int ask_to_add_new_student_to_roster(void)
 int ask_which_roster_to_add_newly_created_student(void)
 {
   __utils_runtime_logger("Asked which roster to add new student to", "ask_which_roster_to_add_newly_created_student");
-  puts("Please enter the name of the roster you would like to add this student to.");
+  printf("Please enter the name of the roster you would like to add this student to.");
   system("clear");
   show_tables();
   __utils_fgets_and_remove_newline(userInput.StrInput);
@@ -725,7 +726,7 @@ int ask_which_roster_to_add_newly_created_student(void)
     if (addedToRoster == TRUE)
     {
       system("clear");
-      puts(GREEN "Student successfully added to roster." RESET);
+      printf("%sStudent successfully added to roster.%s\n", green.colorCode, reset.colorCode);
       sleep(1);
       system("clear");
       return 0;
@@ -733,14 +734,14 @@ int ask_which_roster_to_add_newly_created_student(void)
     else
     {
       system("clear");
-      printf(RED "Failed to add student to roster. Please try again.\n" RESET);
+      printf("%sFailed to add student to roster. Please try again.%s\n", red.colorCode, reset.colorCode);
       __utils_error_logger("Failed to add student to roster", "ask_which_roster_to_add_newly_created_student", MINOR);
     }
   }
   else if (rosterExists == FALSE)
   {
     system("clear");
-    printf(YELLOW "The entered name:" BOLD RESET YELLOW "%s does not exist. Please try again.\n" RESET, userInput.StrInput);
+    printf("%sThe entered name:" BOLD "%s%s does not exist. Please try again.\n", yellow.colorCode, userInput.StrInput, reset.colorCode);
     sleep(1);
     system("clear");
     ask_which_roster_to_add_newly_created_student();
@@ -757,10 +758,10 @@ int handle_last_name_truncated_menu(void)
 {
   sleep(1);
   system("clear");
-  puts("Please enter the number of an option listed below?");
-  puts("1. Enter a new last name");
-  puts("2. Manually set an ID");
-  puts("3. Cancel");
+  printf("Please enter the number of an option listed below?");
+  printf("1. Enter a new last name");
+  printf("2. Manually set an ID");
+  printf("3. Cancel");
   __utils_fgets_and_remove_newline(userInput.StrInput);
   userInput.NumInput = atoi(userInput.StrInput);
   if (userInput.NumInput == 1)
@@ -776,7 +777,7 @@ int handle_last_name_truncated_menu(void)
   else if (userInput.NumInput == 3)
   {
     system("clear");
-    puts(YELLOW "Cancelling operation" RESET);
+    printf("%sCancelling operation%s\n", yellow.colorCode, reset.colorCode);
     globalTrigger.studentCreationInterrupted = TRUE;
     sleep(1);
     system("clear");
@@ -785,7 +786,7 @@ int handle_last_name_truncated_menu(void)
   else
   {
     system("clear");
-    puts("Please enter a valid decision.");
+    printf("Please enter a valid decision.");
     handle_last_name_truncated_menu();
   }
   return 0;
@@ -805,9 +806,9 @@ int skip_and_add_to_roster(const char *rosterName)
     int addedToStudentDB = insert_student_into_db(NewStudent.FirstName, NewStudent.LastName, NewStudent.StudentID);
     if (addedToStudentDB == 0)
     {
-      printf(GREEN "Student successfully added to roster" BOLD " %s.\n" RESET, rosterName);
+      printf("%sStudent successfully added to roster" BOLD " %s.%s\n", green.colorCode, rosterName, reset.colorCode);
       sleep(1);
-      puts(GREEN "Student successfully added to database." RESET);
+      printf("%sStudent successfully added to database.%s\n", green.colorCode, reset.colorCode);
       sleep(1);
       system("clear");
       addStudentMenuIsRunning = TRUE;
@@ -815,7 +816,7 @@ int skip_and_add_to_roster(const char *rosterName)
     }
     else if (addedToStudentDB == 1)
     {
-      puts(RED "Please try again." RESET);
+      printf("Please try again.\n");
       sleep(1);
       system("clear");
       addStudentMenuIsRunning = TRUE;
@@ -826,7 +827,7 @@ int skip_and_add_to_roster(const char *rosterName)
   else
   {
     system("clear");
-    printf(RED "Failed to add student to roster. Please try again.\n" RESET);
+    printf("%sFailed to add student to roster. Please try again.%s\n", red.colorCode, reset.colorCode);
     __utils_error_logger("Failed to add student to roster", "skip_and_add_to_roster", MINOR);
   }
 }
