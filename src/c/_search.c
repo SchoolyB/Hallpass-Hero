@@ -22,19 +22,19 @@ int searchingForStudent = TRUE;
 // TODO add desc for func
 int search_for_student(void)
 {
-  puts("Search for a student by name or ID...");
-  printf("This is not case sensitive");
+  printf("Search for a student by name or ID...\n");
+  printf("This is not case sensitive\n");
   __utils_fgets_and_remove_newline(userInput.StrInput);
   userInput.StrInput[0] = toupper(userInput.StrInput[0]);
   int result = query_student_db(userInput.StrInput);
 
   if (result == 0)
   {
-    puts(GREEN "Successfully queried student database." RESET);
+    printf("%sSuccessfully queried student database.%s\n", green.colorCode, reset.colorCode);
   }
   else
   {
-    printf(RED "Unable to query student data base for search:" BOLD "%s" RESET RED ".Please try again\n" RESET, userInput.StrInput);
+    printf("%sUnable to query student data base for search:" BOLD "%s %s%s.Please try again\n", red.colorCode, userInput.StrInput, reset.colorCode, red.colorCode);
     __utils_error_logger("Error occurred when trying to query student data base", "search_for_student", CRITICAL);
   }
   return 0;
