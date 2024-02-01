@@ -42,8 +42,8 @@ int create_new_roster(void)
         "3. Help",
         "4. Main Menu"};
     show_current_menu("Create New Roster");
-    puts("What would you like to do?");
-    puts("|===========================================================================================");
+    printf("What would you like to do?\n");
+    printf("|===========================================================================================\n");
     for (int i = 0; i < 4; ++i)
     {
       printf("| %s %-90s\n", newRosterOptions[i], "");
@@ -52,13 +52,13 @@ int create_new_roster(void)
     {
       printf("| %-90s\n", "");
     }
-    puts("|===========================================================================================");
+    printf("|===========================================================================================\n");
     __utils_fgets_and_remove_newline(userInput.StrInput);
     menuInput = atoi(userInput.StrInput);
     if (menuInput == 1 || strcmp(userInput.StrInput, "new roster") == 0 || strcmp(userInput.StrInput, "new") == 0)
     {
       __utils_runtime_logger("selected to create a new roster", "create_new_roster");
-      puts("You selected to create a new roster.");
+      printf("You selected to create a new roster.\n");
       newRosterMenuIsRunning = FALSE;
       system("clear");
       get_and_confirm_roster_name();
@@ -66,7 +66,7 @@ int create_new_roster(void)
     else if (menuInput == 2 || strcmp(userInput.StrInput, "view rosters") == 0 || strcmp(userInput.StrInput, "view") == 0)
     {
       __utils_runtime_logger("selected to view created rosters", "create_new_roster");
-      puts("You selected to view created rosters.");
+      printf("You selected to view created rosters.\n");
       newRosterMenuIsRunning = FALSE;
       system("clear");
 
@@ -78,14 +78,14 @@ int create_new_roster(void)
         while (showingFoundRosters == TRUE)
         {
           system("clear");
-          printf(GREEN "Successfully found created roster(s)\n" RESET);
+          printf("%sSuccessfully found created roster(s)%s\n", green.colorCode, reset.colorCode);
           sleep(1);
           system("clear");
           show_tables();
           showingFoundRosters = FALSE;
-          puts("What would you like to do?");
-          puts("1: Back");
-          puts("2: Main Menu");
+          printf("What would you like to do?\n");
+          printf("1: Back\n");
+          printf("2: Main Menu\n");
 
           __utils_fgets_and_remove_newline(userInput.StrInput);
           menuInput = atoi(userInput.StrInput);
@@ -94,7 +94,7 @@ int create_new_roster(void)
             __utils_runtime_logger("selected to go back to create roster menu", "create_new_roster");
             showingFoundRosters = FALSE;
             system("clear");
-            puts("Going back to create roster menu");
+            printf("Going back to create roster menu\n");
             sleep(1);
             system("clear");
             create_new_roster();
@@ -104,7 +104,7 @@ int create_new_roster(void)
             __utils_runtime_logger("selected to go back to main menu", "create_new_roster");
             showingFoundRosters = FALSE;
             system("clear");
-            puts("Returning to the main menu");
+            printf("Returning to the main menu\n");
             sleep(1);
             system("clear");
 
@@ -113,7 +113,7 @@ int create_new_roster(void)
           else
           {
             system("clear");
-            puts("Please make a valid decision");
+            printf("Please make a valid decision\n");
             sleep(1);
             system("clear");
             showingFoundRosters = TRUE;
@@ -123,8 +123,8 @@ int create_new_roster(void)
       else if (tablesExists == FALSE)
       {
         system("clear");
-        printf(YELLOW "No rosters found\n" RESET);
-        puts("Please create a new roster");
+        printf("%sNo rosters found%s\n", yellow.colorCode, reset.colorCode);
+        printf("Please create a new roster");
         sleep(1);
         system("clear");
         newRosterMenuIsRunning = TRUE;
@@ -132,7 +132,7 @@ int create_new_roster(void)
       else
       {
         __utils_error_logger("Failed to get table count", "create_new_roster", MINOR);
-        printf(RED "Error: Failed to get table count\n" RESET);
+        printf("%sError: Failed to get table count%s\n", red.colorCode, reset.colorCode);
         wait_for_char_input();
       }
     }
@@ -140,7 +140,7 @@ int create_new_roster(void)
     else if (menuInput == 3 || strcmp(userInput.StrInput, "help") == 0)
     {
       __utils_runtime_logger("Selected to view create roster help menu", "create_new_roster");
-      puts("You selected to get help.");
+      printf("You selected to get help.\n");
       newRosterMenuIsRunning = FALSE;
       system("clear");
       // show_help_menu();
@@ -149,15 +149,15 @@ int create_new_roster(void)
     {
 
       system("clear");
-      puts("Returning to main menu.");
+      printf("Returning to main menu.");
       sleep(1);
       system("clear");
       return 0;
     }
     else
     {
-      puts("Sorry, I didn't understand that.");
-      puts("Please try again");
+      printf("Sorry, I didn't understand that.");
+      printf("Please try again");
       create_new_roster();
     }
   }
@@ -173,15 +173,15 @@ int get_and_confirm_roster_name(void)
   char rosterNameInput[30];
   char rosterNameWithPrefix[60];
   // getting initial input
-  puts("What would you like to name your new roster?");
-  puts("Roster names can be no less the 1 character and no more then 30 characters.");
-  puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
+  printf("What would you like to name your new roster?\n");
+  printf("Roster names can be no less the 1 character and no more then 30 characters.\n");
+  printf("%sTo cancel this operation enter" BOLD "'cancel'%s.\n", yellow.colorCode, reset.colorCode);
 
   __utils_fgets_and_remove_newline(userInput.StrInput);
   strcpy(rosterNameInput, userInput.StrInput);
   if (strlen(rosterNameInput) > 30)
   {
-    printf(YELLOW "Sorry that name is too long please try again.\n" RESET);
+    printf("%sSorry that name%s is too long please try again.\n" RESET);
     sleep(1);
     system("clear");
     __utils_error_logger("Entered roster name is too long", "get_and_confirm_roster_name", MINOR);
@@ -190,7 +190,7 @@ int get_and_confirm_roster_name(void)
   }
   else if (!has_one_non_space_char(rosterNameInput))
   {
-    printf(YELLOW "Sorry that name is too short please try again.\n" RESET);
+    printf("%sSorry that name%s is too short please try again.\n" RESET);
     sleep(1);
     system("clear");
     __utils_error_logger("Entered roster name is too short", "get_and_confirm_roster_name", MINOR);
@@ -200,7 +200,7 @@ int get_and_confirm_roster_name(void)
   else if (INPUT_IS_CANCEL(rosterNameInput))
   {
     system("clear");
-    puts(YELLOW "Cancelling operation" RESET);
+    printf("%sCancelling operation%s\n", yellow.colorCode, reset.colorCode);
     __utils_runtime_logger("cancelled operation", "get_and_confirm_roster_name");
     sleep(1);
     system("clear");
@@ -210,7 +210,7 @@ int get_and_confirm_roster_name(void)
   {
     system("clear");
     show_current_step("Confirm new roster name", 2, 2);
-    printf("You have decided to name your new roster:" BOLD "%s " RESET ".\nIs that correct?[y/n]\n", rosterNameInput);
+    printf("You have decided to name your new roster:" BOLD "%s %s.\nIs that correct?[y/n]\n", rosterNameInput, reset.colorCode);
 
     // confirming input
     __utils_fgets_and_remove_newline(userInput.StrInput);
@@ -228,15 +228,15 @@ int get_and_confirm_roster_name(void)
         if (result == 0)
         {
           printf("Creating new roster:" BOLD " %s.\n" RESET, rosterNameInput);
-          printf(GREEN "Successfully created new roster: %s\n" RESET, rosterNameInput);
+          printf("%sSuccessfully created new roster: %s %s\n", green.colorCode, rosterNameInput, reset.colorCode);
           sleep(3);
           system("clear");
           create_new_roster();
         }
         else
         {
-          printf(RED "Error: Failed to create new roster: %s\n" RESET, rosterNameInput);
-          puts("Please try again");
+          printf("%sError: Failed to create new roster: %s\n", red.colorCode, rosterNameInput);
+          printf("Please try again\n");
           sleep(3);
           system("clear");
           create_new_roster();
@@ -244,8 +244,8 @@ int get_and_confirm_roster_name(void)
       }
       else if (table_exists == TRUE)
       {
-        printf(YELLOW "Roster: %s already exists\n" RESET, rosterNameInput);
-        puts("Please try again");
+        printf("%sRoster:" BOLD "%s%s%s already exists%s\n", yellow.colorCode, rosterNameInput, reset.colorCode, yellow.colorCode, reset.colorCode);
+        printf("Please try again\n");
         sleep(3);
         system("clear");
         create_new_roster();
@@ -256,13 +256,13 @@ int get_and_confirm_roster_name(void)
       __utils_runtime_logger("Did not confirm roster name", "get_and_confirm_roster_name");
       system("clear");
       show_current_step("Name your new roster", 2, 2);
-      printf("The name " BOLD "%s " RESET "was not correct.\n", rosterNameInput);
-      puts("What would you like to do?");
+      printf("The name " BOLD "%s was not correct.\n", rosterNameInput, reset.colorCode);
+      printf("What would you like to do?\n");
       // todo dont print this out...re-write this
-      puts("1: Try again");
-      puts("2: Help");
-      puts("3: Back");
-      puts("4: Main Menu");
+      printf("1: Try again\n");
+      printf("2: Help\n");
+      printf("3: Back\n");
+      printf("4: Main Menu\n");
 
       __utils_fgets_and_remove_newline(userInput.StrInput);
       menuInput = atoi(userInput.StrInput);
@@ -270,7 +270,7 @@ int get_and_confirm_roster_name(void)
       {
         system("clear");
         __utils_runtime_logger("Selected to try again", "get_and_confirm_roster_name");
-        puts("Ok please try again.");
+        printf("Ok please try again.\n");
         sleep(1);
         system("clear");
         get_and_confirm_roster_name();
@@ -284,21 +284,21 @@ int get_and_confirm_roster_name(void)
       else if (menuInput == 3 || strcmp(userInput.StrInput, "back") == 0)
       {
         system("clear");
-        puts("Going back to previous menu.");
+        printf("Going back to previous menu.\n");
         sleep(1);
         create_new_roster();
       }
       else if (menuInput == 4 || strcmp(userInput.StrInput, "main") == 0 || strcmp(userInput.StrInput, "main menu") == 0)
       {
         system("clear");
-        puts("Returning to main menu.");
+        printf("Returning to main menu.\n");
         sleep(1);
         system("clear");
         return 0;
       }
       else
       {
-        puts("Invalid input please try again.");
+        printf("Invalid input please try again.\n");
         sleep(1);
         __utils_error_logger("Entered invalid input", "get_and_confirm_roster_name", MINOR);
         system("clear");
@@ -307,7 +307,7 @@ int get_and_confirm_roster_name(void)
     }
     else
     {
-      puts("I did'nt understand that please try again");
+      printf("I did'nt understand that please try again\n");
       sleep(1);
       __utils_error_logger("Input entered was neither yes nor no", "get_and_confirm_roster_name", MINOR);
       system("clear");
