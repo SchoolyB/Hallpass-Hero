@@ -14,11 +14,11 @@ int show_settings_menu(void)
   while (settingsMenuRunning == TRUE)
   {
     show_current_menu("Settings Menu");
-    puts("Enter the number of the option you would like to select:");
-    puts("1. Enable/Disable Runtime Logging");
-    puts("2. Rename Database");
-    puts("3. Enable/Disable Color");
-    puts("4. Main Menu");
+    printf("Enter the number of the option you would like to select:\n");
+    printf("1. Enable/Disable Runtime Logging\n");
+    printf("2. Rename Database\n");
+    printf("3. Enable/Disable Color\n");
+    printf("4. Main Menu\n");
     __utils_fgets_and_remove_newline(userInput.StrInput);
     userInput.NumInput = atoi(userInput.StrInput);
     settingsMenuRunning = FALSE;
@@ -39,17 +39,17 @@ int show_settings_menu(void)
     break;
   case 4:
     system("clear");
-    puts("Returning to main menu...");
+    printf("Returning to main menu...\n");
     sleep(1);
     system("clear");
     return 0;
     break;
   default:
     system("clear");
-    puts("Invalid input");
+    printf("Invalid input\n");
     sleep(1);
     system("clear");
-    puts("Please try again.");
+    printf("Please try again.\n");
     show_settings_menu();
   }
 }
@@ -60,23 +60,23 @@ int handle_rename_db_logic(const char *currentDBName)
   read_from_dir_and_check_extension("../build", ".sqlite");
   system("clear");
   show_current_step("Change database name", 1, 1);
-  printf("Currently the database is named: " BOLD "%s" RESET "\n", programSettings.databaseInfo.currentDBName);
-  puts("Would you like to rename the database?[y/n]");
-  puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
+  printf("Currently the database is named: " BOLD "%s%s\n", programSettings.databaseInfo.currentDBName, reset.colorCode);
+  printf("Would you like to rename the database?[y/n]\n");
+  printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n", yellow.colorCode, reset.colorCode);
 
   __utils_fgets_and_remove_newline(userInput.StrInput);
   if (INPUT_IS_YES(userInput.StrInput))
   {
     system("clear");
-    puts("Enter enter the new name for the database.");
-    puts("Note: The name cannot contain any special characters.");
-    puts("Note: The file extension will be added automatically.");
+    printf("Enter enter the new name for the database.\n");
+    printf("Note: The name cannot contain any special characters.\n");
+    printf("Note: The file extension will be added automatically.\n");
     __utils_fgets_and_remove_newline(userInput.StrInput);
 
     if (strlen(userInput.StrInput) < 1)
     {
       system("clear");
-      puts(YELLOW "The entered name is too short. Please try again." RESET);
+      printf("%sThe entered name is too short. Please try again.%s\n", yellow.colorCode, reset.colorCode);
       sleep(1);
       system("clear");
       handle_rename_db_logic(databaseInfo.currentDBName);
@@ -84,7 +84,7 @@ int handle_rename_db_logic(const char *currentDBName)
     else if (strlen(userInput.StrInput) > 20)
     {
       system("clear");
-      puts(YELLOW "The entered name is too long. Please try again." RESET);
+      printf("%sThe entered name is too long. Please try again.%s\n", yellow.colorCode, reset.colorCode);
       sleep(1);
       system("clear");
       handle_rename_db_logic(databaseInfo.currentDBName);
@@ -109,7 +109,7 @@ int handle_rename_db_logic(const char *currentDBName)
         {
           system("clear");
           __utils_runtime_logger("chose not to rename the database", "handle_rename_db_logic");
-          puts("Returning to settings menu...");
+          printf("Returning to settings menu...\n");
           sleep(1);
           system("clear");
           show_settings_menu();
@@ -124,7 +124,7 @@ int handle_rename_db_logic(const char *currentDBName)
       case 1: // true
         system("clear");
         __utils_runtime_logger("entered a name with special characters", "handle_rename_db_logic");
-        puts(YELLOW "The entered name contains special characters. Please try again." RESET);
+        printf("%sThe entered name contains special characters. Please try again.%s\n", yellow.colorCode, reset.colorCode);
         sleep(1);
         system("clear");
 
@@ -140,7 +140,7 @@ int handle_rename_db_logic(const char *currentDBName)
   {
     system("clear");
     __utils_runtime_logger("chose not to rename the database", "handle_rename_db_logic");
-    puts("Returning to settings menu...");
+    printf("Returning to settings menu...\n");
     sleep(1);
     system("clear");
     show_settings_menu();
@@ -149,7 +149,7 @@ int handle_rename_db_logic(const char *currentDBName)
   {
     system("clear");
     __utils_runtime_logger("cancelled operation", "handle_rename_db_logic");
-    puts(YELLOW "Cancelling operation..." RESET);
+    printf("%sCancelling operation...%s\n", yellow.colorCode, reset.colorCode);
     sleep(1);
     system("clear");
     return -1;
@@ -157,18 +157,18 @@ int handle_rename_db_logic(const char *currentDBName)
   else
   {
     system("clear");
-    puts("Please enter a valid input");
+    printf("Please enter a valid input\n");
     sleep(1);
     system("clear");
-    // handle_rename_db_logic(currentDBName);
+    handle_rename_db_logic(currentDBName);
   }
 }
 
 int confirm_db_rename(const char *newDBName)
 {
   system("clear");
-  printf("Are you sure you want to rename the database to " BOLD "%s" RESET "?[y/n]\n", newDBName);
-  puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
+  printf("Are you sure you want to rename the database to " BOLD "%s%s?[y/n]\n", newDBName, reset.colorCode);
+  printf("%sTo cancel this operation enter" BOLD "'cancel'" RESET);
   __utils_fgets_and_remove_newline(userInput.StrInput);
 
   if (INPUT_IS_CANCEL(userInput.StrInput))
@@ -184,7 +184,7 @@ int confirm_db_rename(const char *newDBName)
   {
     system("clear");
     __utils_runtime_logger("confirmed database renaming", "confirm_db_rename");
-    puts("Renaming database...");
+    printf("Renaming database...\n");
     return 1;
   }
 
@@ -200,16 +200,16 @@ int handle_runtime_logging_logic(void)
   {
     system("clear");
     show_current_step("Enable/Disable Runtime Logging", 1, 1);
-    printf("Currently runtime logging is " BOLD GREEN "enabled" RESET "\n");
-    puts("Would you like to disable runtime logging?[y/n]");
-    puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
+    printf("Currently runtime logging is " BOLD "%s enabled %s\n", green.colorCode, reset.colorCode);
+    printf("Would you like to disable runtime logging?[y/n]\n");
+    printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n", yellow.colorCode, reset.colorCode);
     __utils_fgets_and_remove_newline(userInput.StrInput);
     if (INPUT_IS_YES(userInput.StrInput))
     {
       system("clear");
-      puts("Disabling runtime logging...");
+      printf("Disabling runtime logging...\n");
       programSettings.runtimeLoggingEnabled = FALSE;
-      puts(RED "Runtime logging has been disabled" RESET);
+      printf("%sRuntime logging has been disabled%s\n", red.colorCode, reset.colorCode);
       __utils_runtime_logger("disabled runtime logging", "show_settings_menu");
       sleep(2);
       system("clear");
@@ -232,7 +232,7 @@ int handle_runtime_logging_logic(void)
     if (INPUT_IS_NO(userInput.StrInput || INPUT_IS_CANCEL(userInput.StrInput)))
     {
       system("clear");
-      puts("Returning to settings menu...");
+      printf("Returning to settings menu...\n");
       sleep(1);
       system("clear");
       show_settings_menu();
@@ -242,16 +242,16 @@ int handle_runtime_logging_logic(void)
   {
     system("clear");
     show_current_step("Enable/Disable Runtime Logging", 1, 1);
-    printf("Currently runtime logging is " BOLD RED "disabled" RESET "\n");
-    puts("Would you like to enable runtime logging?[y/n]");
-    puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
+    printf("Currently runtime logging is " BOLD "%s disabled" RESET "\n");
+    printf("Would you like to enable runtime logging?[y/n]\n");
+    printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n", yellow.colorCode, reset.colorCode);
     __utils_fgets_and_remove_newline(userInput.StrInput);
     if (INPUT_IS_YES(userInput.StrInput))
     {
       system("clear");
-      puts("Enabling runtime logging...");
+      printf("Enabling runtime logging...\n");
       programSettings.runtimeLoggingEnabled = TRUE;
-      puts(GREEN "Runtime logging has been enabled" RESET);
+      printf("%sRuntime logging has been enabled%s\n", green.colorCode, reset.colorCode);
       __utils_runtime_logger("enabled runtime logging", "show_settings_menu");
       sleep(2);
       system("clear");
@@ -278,7 +278,7 @@ int handle_runtime_logging_logic(void)
     {
       system("clear");
       __utils_runtime_logger("user chose not to toggle runtime logging", "show_settings_menu");
-      puts("Returning to settings menu...");
+      printf("Returning to settings menu...\n");
       sleep(1);
       system("clear");
       show_settings_menu();
@@ -299,32 +299,22 @@ int toggle_colors(void)
   if (programSettings.colorEnabled == TRUE)
   {
     system("clear");
-    puts("Colors are currently " BOLD GREEN "enabled" RESET);
-    puts("Would you like to disable colors?[y/n]");
-    puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
+    printf("Colors are currently " BOLD "%s enabled%s\n", green.colorCode, reset.colorCode);
+    printf("Would you like to disable colors?[y/n]\n");
+    printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n", yellow.colorCode, reset.colorCode);
     __utils_fgets_and_remove_newline(userInput.StrInput);
     if (INPUT_IS_YES(userInput.StrInput))
     {
       system("clear");
-      puts("Disabling colors...");
-#ifdef RED
-#undef RED
-#endif
-
-#ifdef BLUE
-#undef BLUE
-#endif
-
-#ifdef GREEN
-#undef GREEN
-#endif
-
-#ifdef PURPLE
-#undef PURPLE
-#endif
+      printf("Disabling colors...\n");
 
       programSettings.colorEnabled = FALSE;
-      puts("Colors have been disabled");
+      printf("Colors have been disabled\n");
+      // Set the global color codes to empty strings
+      red.colorCode = "";
+      green.colorCode = "";
+      yellow.colorCode = "";
+
       __utils_runtime_logger("disabled colors", "toggle_colors");
       sleep(2);
       system("clear");
@@ -333,7 +323,7 @@ int toggle_colors(void)
     else if (INPUT_IS_NO(userInput.StrInput))
     {
       system("clear");
-      puts("Returning to settings menu...");
+      printf("Returning to settings menu...\n");
       sleep(1);
       system("clear");
       show_settings_menu();
@@ -342,20 +332,17 @@ int toggle_colors(void)
     {
       system("clear");
       __utils_runtime_logger("cancelled operation", "toggle_colors");
-      puts(YELLOW "Cancelling operation..." RESET);
+      printf("%sCancelling operation...%s\n", yellow.colorCode, reset.colorCode);
       sleep(1);
       system("clear");
       return -1;
     }
 
-// This is here only because of the cancel message above
-#ifdef YELLOW
-#undef YELLOW
-#endif
+    // This is here only because of the cancel message above
     else
     {
       system("clear");
-      puts("Please enter a valid input");
+      printf("Please enter a valid input\n");
       sleep(1);
       system("clear");
       toggle_colors();
@@ -364,21 +351,21 @@ int toggle_colors(void)
   else if (programSettings.colorEnabled == FALSE)
   {
     system("clear");
-    puts("Colors are currently " BOLD "disabled" RESET);
-    puts("Would you like to enable colors?[y/n]");
-    puts("To cancel this operation enter" BOLD "'cancel'" RESET);
+    printf("Colors are currently " BOLD "disabled%s\n", reset.colorCode);
+    printf("Would you like to enable colors?[y/n]\n");
+    printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n", yellow.colorCode, reset.colorCode);
     __utils_fgets_and_remove_newline(userInput.StrInput);
     if (INPUT_IS_YES(userInput.StrInput))
     {
       system("clear");
-      puts("Enabling colors...");
-#define RED "\x1B[31m"
-#define BLUE "\x1B[34m"
-#define GREEN "\x1B[32m"
-#define PURPLE "\x1B[35m"
-#define YELLOW "\x1B[33m"
+      printf("Enabling colors...\n");
       programSettings.colorEnabled = TRUE;
-      puts(GREEN "Colors have been enabled" RESET);
+      printf("%sColors have been enabled%s\n", green.colorCode, reset.colorCode);
+      // Set the global color codes back to their respective values
+      red.colorCode = RED;
+      green.colorCode = GREEN;
+      yellow.colorCode = YELLOW;
+
       __utils_runtime_logger("enabled colors", "toggle_colors");
       sleep(2);
       system("clear");
@@ -388,7 +375,7 @@ int toggle_colors(void)
     {
       system("clear");
       __utils_runtime_logger("user chose not to toggle colors", "toggle_colors");
-      puts("Returning to settings menu...");
+      printf("Returning to settings menu...\n");
       sleep(1);
       system("clear");
       show_settings_menu();
@@ -397,7 +384,7 @@ int toggle_colors(void)
     {
       system("clear");
       __utils_runtime_logger("cancelled operation", "toggle_colors");
-      puts("Cancelling operation...");
+      printf("Cancelling operation...\n");
       sleep(1);
       system("clear");
       return -1;
@@ -405,7 +392,7 @@ int toggle_colors(void)
     else
     {
       system("clear");
-      puts("Please enter a valid input");
+      printf("Please enter a valid input");
       sleep(1);
       system("clear");
       toggle_colors();
