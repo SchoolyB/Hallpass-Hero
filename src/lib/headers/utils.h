@@ -177,6 +177,8 @@ extern "C"
 
   typedef struct
   {
+    char settingKeyName[50];
+    int settingKeyValue;
     int colorEnabled;
     int runtimeLoggingEnabled;
     DatabaseInfo databaseInfo; // may not need this

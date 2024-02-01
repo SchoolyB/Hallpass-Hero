@@ -185,6 +185,7 @@ int confirm_db_rename(const char *newDBName)
     system("clear");
     __utils_runtime_logger("confirmed database renaming", "confirm_db_rename");
     printf("Renaming database...\n");
+
     return 1;
   }
 
@@ -211,6 +212,7 @@ int handle_runtime_logging_logic(void)
       programSettings.runtimeLoggingEnabled = FALSE;
       printf("%sRuntime logging has been disabled%s\n", red.colorCode, reset.colorCode);
       __utils_runtime_logger("disabled runtime logging", "show_settings_menu");
+      save_setting("runtimeLoggingEnabled", FALSE);
       sleep(2);
       system("clear");
       time_t currentTime;
@@ -253,6 +255,7 @@ int handle_runtime_logging_logic(void)
       programSettings.runtimeLoggingEnabled = TRUE;
       printf("%sRuntime logging has been enabled%s\n", green.colorCode, reset.colorCode);
       __utils_runtime_logger("enabled runtime logging", "show_settings_menu");
+      save_setting("runtimeLoggingEnabled", TRUE);
       sleep(2);
       system("clear");
 
@@ -314,8 +317,8 @@ int toggle_colors(void)
       red.colorCode = "";
       green.colorCode = "";
       yellow.colorCode = "";
-
       __utils_runtime_logger("disabled colors", "toggle_colors");
+      save_setting("colorEnabled", FALSE);
       sleep(2);
       system("clear");
       return 0;
@@ -367,6 +370,7 @@ int toggle_colors(void)
       yellow.colorCode = YELLOW;
 
       __utils_runtime_logger("enabled colors", "toggle_colors");
+      save_setting("colorEnabled", TRUE);
       sleep(2);
       system("clear");
       return 0;
@@ -434,4 +438,63 @@ int read_from_dir_and_check_extension(const char *directoryPath, const char *ext
 
   closedir(dir);
   return 0;
+}
+
+int save_setting(const char *settingName, int *settingValue)
+{
+  printf("Would you like to save this setting?[y/n]\n");
+  __utils_fgets_and_remove_newline(userInput.StrInput);
+  if (INPUT_IS_YES(userInput.StrInput))
+  {
+    // do stuff
+    store_setting(settingName, settingValue);
+  }
+  else if (INPUT_IS_NO(userInput.StrInput))
+  {
+    system("clear");
+    printf("Returning to settings menu...\n");
+    sleep(1);
+    system("clear");
+    show_settings_menu();
+  }
+  else
+  {
+    system("clear");
+    printf("Please enter a valid input\n");
+    sleep(1);
+    system("clear");
+    save_setting(settingName, settingValue);
+  }
+}
+// todo currently this will keep adding the same setting to the file I need to make it so that it only adds the setting if it doesn't already exist
+int store_setting(const char *settingName, int settingValue)
+{
+  strcpy(programSettings.settingKeyName, settingName);
+  programSettings.settingKeyValue = settingValue;
+  printf("setting name: %s\n", programSettings.settingKeyName);
+  printf("setting value: %d\n", programSettings.settingKeyValue);
+  sleep(5);
+
+  FILE *settingsFile = fopen("../build/settings.config", "a");
+  if (settingsFile == NULL)
+  {
+    __utils_error_logger("Error opening settings file", "store_setting", MODERATE);
+    perror("Error opening settings file");
+    return 1;
+  }
+  fprintf(settingsFile, "%s=%d\n", programSettings.settingKeyName, programSettings.settingKeyValue);
+  fclose(settingsFile);
+}
+
+int load_settings_from_config()
+{
+  // here we are going to load the settings from the settings.config file
+  FILE *settingsConfig = fopen("../build/settings.config", "r");
+  if (settingsConfig == NULL)
+  {
+    __utils_error_logger("Error opening settings file", "load_settings_from_config", MODERATE);
+    perror("Error opening settings file");
+    return 1;
+  }
+  // todo finish this
 }
