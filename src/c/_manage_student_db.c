@@ -59,13 +59,13 @@ int manage_student_db(void)
       show_current_menu("Delete Student From Database");
       show_all_students_in_student_db(programSettings.databaseInfo.dbPath);
       printf("Enter the StudentID of the student you would like to delete.\n");
-      puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
+      printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n", yellow.colorCode, reset.colorCode);
       __utils_fgets_and_remove_newline(userInput.StrInput);
 
       if (strcmp(userInput.StrInput, "cancel") == 0)
       {
         system("clear");
-        puts(YELLOW "Cancelling operation" RESET);
+        printf("%sCancelling operation" RESET);
         sleep(1);
         system("clear");
         manageStudentDBMenuIsRunning = TRUE;
@@ -78,13 +78,13 @@ int manage_student_db(void)
         if (studentExists == TRUE)
         {
           system("clear");
-          printf(RED "WARNING: This action cannot be undone\n" RESET);
-          puts("Are you sure you want to delete this student?[y/n]");
+          printf("%sWARNING: This action cannot be undone%s\n", red.colorCode, reset.colorCode);
+          printf("Are you sure you want to delete this student?[y/n]\n");
           __utils_fgets_and_remove_newline(userInput.StrInput);
           if (INPUT_IS_CANCEL(userInput.StrInput) || INPUT_IS_NO(userInput.StrInput))
           {
             system("clear");
-            puts(YELLOW "Cancelling operation" RESET);
+            printf("%sCancelling operation%s\n", yellow.colorCode, reset.colorCode);
             sleep(1);
             system("clear");
             manageStudentDBMenuIsRunning = TRUE;
@@ -96,7 +96,7 @@ int manage_student_db(void)
           else
           {
             system("clear");
-            puts(RED "Invalid input, please try again." RESET);
+            printf("%sInvalid input, please try again.%s\n", red.colorCode, reset.colorCode);
             sleep(1);
             system("clear");
             manageStudentDBMenuIsRunning = TRUE;
@@ -108,7 +108,7 @@ int manage_student_db(void)
           printf("Student with ID: %s does not exist.\n", CurrentStudent.StudentID);
           sleep(1);
           system("clear");
-          puts("Please try again.");
+          printf("Please try again.\n");
           manageStudentDBMenuIsRunning = TRUE;
         }
       }
