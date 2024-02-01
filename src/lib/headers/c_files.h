@@ -53,4 +53,8 @@ int handle_rename_db_logic(const char *currentDBName);
 int confirm_db_rename(const char *newDBName);
 int toggle_colors(void);
 int read_from_dir_and_check_extension(const char *directoryPath, const char *extension);
+int store_setting(const char *settingName, int settingValue);
+int check_if_settings_config_keys_exist(const char *key);
+int update_config_key_value(const char *settingName, int newSettingValue);
+
 #endif

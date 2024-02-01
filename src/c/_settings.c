@@ -1,3 +1,12 @@
+/*
+===============================================================================
+File Name   : _settings.c
+-------------------------------------------------------------------------------
+Author      : Marshall Burns a.k.a. Schooly
+-------------------------------------------------------------------------------
+Description : This source file contains all functions related to the settings menu
+===============================================================================
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,6 +17,13 @@
 #include "../lib/headers/c_files.h"
 
 int settingsMenuRunning = TRUE;
+
+/************************************************************************************
+ * show_settings_menu(): Displays the settings menu and handles all logic for
+ *                       the settings menu.
+ *
+ * See usage in: main.c
+ ************************************************************************************/
 int show_settings_menu(void)
 {
   settingsMenuRunning = TRUE;
@@ -54,6 +70,11 @@ int show_settings_menu(void)
   }
 }
 
+/************************************************************************************
+ * handle_rename_db_logic(): Handles the logic for renaming the database.
+ *
+ * See usage in: show_settings_menu()
+ ************************************************************************************/
 int handle_rename_db_logic(const char *currentDBName)
 {
 
@@ -164,6 +185,11 @@ int handle_rename_db_logic(const char *currentDBName)
   }
 }
 
+/************************************************************************************
+ * confirm_db_rename(): Prompts the user to confirm the database renaming operation.
+ *
+ * See usage in: handle_rename_db_logic()
+ ************************************************************************************/
 int confirm_db_rename(const char *newDBName)
 {
   system("clear");
@@ -195,10 +221,17 @@ int confirm_db_rename(const char *newDBName)
   }
 }
 
+/************************************************************************************
+ * handle_runtime_logging_logic(): Handles the logic for enabling/disabling runtime
+ *                                 logging....duh
+ *
+ * See usage in: show_settings_menu()
+ ************************************************************************************/
 int handle_runtime_logging_logic(void)
 {
   if (programSettings.runtimeLoggingEnabled == TRUE)
   {
+    // TODO this is crashing somewhere around here....need to fix
     system("clear");
     show_current_step("Enable/Disable Runtime Logging", 1, 1);
     printf("Currently runtime logging is " BOLD "%s enabled %s\n", green.colorCode, reset.colorCode);
@@ -212,7 +245,7 @@ int handle_runtime_logging_logic(void)
       programSettings.runtimeLoggingEnabled = FALSE;
       printf("%sRuntime logging has been disabled%s\n", red.colorCode, reset.colorCode);
       __utils_runtime_logger("disabled runtime logging", "show_settings_menu");
-      save_setting("runtimeLoggingEnabled", FALSE);
+      store_setting("runtimeLoggingEnabled", FALSE);
       sleep(2);
       system("clear");
       time_t currentTime;
@@ -244,7 +277,7 @@ int handle_runtime_logging_logic(void)
   {
     system("clear");
     show_current_step("Enable/Disable Runtime Logging", 1, 1);
-    printf("Currently runtime logging is " BOLD "%s disabled" RESET "\n");
+    printf("Currently runtime logging is " BOLD "%s disabled%s\n", red.colorCode, reset.colorCode);
     printf("Would you like to enable runtime logging?[y/n]\n");
     printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n", yellow.colorCode, reset.colorCode);
     __utils_fgets_and_remove_newline(userInput.StrInput);
@@ -255,7 +288,7 @@ int handle_runtime_logging_logic(void)
       programSettings.runtimeLoggingEnabled = TRUE;
       printf("%sRuntime logging has been enabled%s\n", green.colorCode, reset.colorCode);
       __utils_runtime_logger("enabled runtime logging", "show_settings_menu");
-      save_setting("runtimeLoggingEnabled", TRUE);
+      store_setting("runtimeLoggingEnabled", TRUE);
       sleep(2);
       system("clear");
 
@@ -297,6 +330,11 @@ int handle_runtime_logging_logic(void)
   }
 }
 
+/************************************************************************************
+ * toggle_colors(): Handles the logic for toggling the colorEnabled setting.
+ *
+ * See usage in: show_settings_menu()
+ ************************************************************************************/
 int toggle_colors(void)
 {
   if (programSettings.colorEnabled == TRUE)
@@ -318,7 +356,7 @@ int toggle_colors(void)
       green.colorCode = "";
       yellow.colorCode = "";
       __utils_runtime_logger("disabled colors", "toggle_colors");
-      save_setting("colorEnabled", FALSE);
+      store_setting("colorEnabled", FALSE);
       sleep(2);
       system("clear");
       return 0;
@@ -353,8 +391,11 @@ int toggle_colors(void)
   }
   else if (programSettings.colorEnabled == FALSE)
   {
+    red.colorCode = "";
+    green.colorCode = "";
+    yellow.colorCode = "";
     system("clear");
-    printf("Colors are currently " BOLD "disabled%s\n", reset.colorCode);
+    printf("%sColors are currently " BOLD "disabled%s\n", red.colorCode, reset.colorCode);
     printf("Would you like to enable colors?[y/n]\n");
     printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n", yellow.colorCode, reset.colorCode);
     __utils_fgets_and_remove_newline(userInput.StrInput);
@@ -370,7 +411,7 @@ int toggle_colors(void)
       yellow.colorCode = YELLOW;
 
       __utils_runtime_logger("enabled colors", "toggle_colors");
-      save_setting("colorEnabled", TRUE);
+      store_setting("colorEnabled", TRUE);
       sleep(2);
       system("clear");
       return 0;
@@ -403,6 +444,13 @@ int toggle_colors(void)
     }
   }
 }
+
+/************************************************************************************
+ * read_from_dir_and_check_extension(): Reads from the directory and checks if the
+ *                                      file has the specified extension.
+ *
+ * See usage in: handle_rename_db_logic() & main.c
+ ************************************************************************************/
 int read_from_dir_and_check_extension(const char *directoryPath, const char *extension)
 {
   DIR *dir;
@@ -440,41 +488,15 @@ int read_from_dir_and_check_extension(const char *directoryPath, const char *ext
   return 0;
 }
 
-int save_setting(const char *settingName, int *settingValue)
-{
-  printf("Would you like to save this setting?[y/n]\n");
-  __utils_fgets_and_remove_newline(userInput.StrInput);
-  if (INPUT_IS_YES(userInput.StrInput))
-  {
-    // do stuff
-    store_setting(settingName, settingValue);
-  }
-  else if (INPUT_IS_NO(userInput.StrInput))
-  {
-    system("clear");
-    printf("Returning to settings menu...\n");
-    sleep(1);
-    system("clear");
-    show_settings_menu();
-  }
-  else
-  {
-    system("clear");
-    printf("Please enter a valid input\n");
-    sleep(1);
-    system("clear");
-    save_setting(settingName, settingValue);
-  }
-}
-// todo currently this will keep adding the same setting to the file I need to make it so that it only adds the setting if it doesn't already exist
+/************************************************************************************
+ * store_setting(): Used to store the passed in settings value into the key-value pair
+ *                  in the settings.config file.
+ *
+ ************************************************************************************/
 int store_setting(const char *settingName, int settingValue)
 {
   strcpy(programSettings.settingKeyName, settingName);
   programSettings.settingKeyValue = settingValue;
-  printf("setting name: %s\n", programSettings.settingKeyName);
-  printf("setting value: %d\n", programSettings.settingKeyValue);
-  sleep(5);
-
   FILE *settingsFile = fopen("../build/settings.config", "a");
   if (settingsFile == NULL)
   {
@@ -482,19 +504,149 @@ int store_setting(const char *settingName, int settingValue)
     perror("Error opening settings file");
     return 1;
   }
-  fprintf(settingsFile, "%s=%d\n", programSettings.settingKeyName, programSettings.settingKeyValue);
-  fclose(settingsFile);
+  int settingExists = check_if_settings_config_keys_exist(programSettings.settingKeyName);
+  int runtimeLoggingEnabledKeyExists = check_if_settings_config_keys_exist("runtimeLoggingEnabled");
+  if (settingExists == TRUE)
+  {
+    update_config_key_value(programSettings.settingKeyName, programSettings.settingKeyValue);
+    fclose(settingsFile);
+  }
+  else if (settingExists == FALSE)
+  {
+    fprintf(settingsFile, "%s=%d\n", programSettings.settingKeyName, programSettings.settingKeyValue);
+    fclose(settingsFile);
+  }
 }
 
-int load_settings_from_config()
+/************************************************************************************
+ * check_if_settings_config_keys_exist(): Checks if the passed in key exists in the
+ *                                        settings.config file.
+ * See usage in: store_setting()
+ ************************************************************************************/
+int check_if_settings_config_keys_exist(const char *key)
 {
-  // here we are going to load the settings from the settings.config file
-  FILE *settingsConfig = fopen("../build/settings.config", "r");
-  if (settingsConfig == NULL)
+  FILE *settingsFile = fopen("../build/settings.config", "r");
+  if (settingsFile == NULL)
   {
-    __utils_error_logger("Error opening settings file", "load_settings_from_config", MODERATE);
+    __utils_error_logger("Error opening settings file", "store_setting", MODERATE);
     perror("Error opening settings file");
     return 1;
   }
-  // todo finish this
+  /*Will need to change the bytes in this array in
+  the even that I add more settings options but since
+  there are only 2 for now, this works fine.
+  Marshall Burns Feb 1st 2024*/
+  char line[100];
+  int keyLength = strlen(key);
+  int keyExists = FALSE; // initialize to false before checking
+
+  // while the file is able to be read, read the lines upto the end of the file
+  while (fgets(line, sizeof(line), settingsFile) != NULL)
+  {
+    // if the lines read from the file contain BOTH 2 keys then return true.
+    if (strncmp(line, key, keyLength) == 0)
+    {
+      keyExists = TRUE;
+      break;
+    }
+  }
+  fclose(settingsFile);
+
+  if (keyExists)
+  {
+    return TRUE;
+  }
+  else
+  {
+    return FALSE;
+  }
+}
+
+/************************************************************************************
+ * update_config_key_value(): Updates the value of the passed in key in the
+ *                            settings.config file.
+ * See usage in: store_setting()
+ ************************************************************************************/
+int update_config_key_value(const char *settingName, int newSettingValue)
+{
+  const char *filename = "../build/settings.config";
+  FILE *settingsFile = fopen(filename, "r+");
+  if (settingsFile == NULL)
+  {
+    __utils_error_logger("Error opening settings file", "update__config_key_value", MODERATE);
+    perror("Error opening settings file");
+    return 0;
+  }
+
+  char line[100];
+  int keyLength = strlen(settingName);
+  int keyFound = FALSE;
+
+  // Read and write to the same file
+  while (fgets(line, sizeof(line), settingsFile) != NULL)
+  {
+    if (strncmp(line, settingName, keyLength) == 0)
+    {
+      // Found the key, update the line with the new value
+      fseek(settingsFile, -strlen(line), SEEK_CUR); // Move the cursor back to the beginning of the line
+      fprintf(settingsFile, "%s=%d\n", settingName, newSettingValue);
+      keyFound = TRUE;
+      break; // No need to continue searching
+    }
+  }
+  fclose(settingsFile);
+  if (keyFound)
+  {
+    return TRUE;
+  }
+  else
+  {
+
+    return FALSE;
+  }
+}
+/************************************************************************************
+ * load_settings_config(): Loads the settings.config file by extracting the value of
+ *                         the passed in key. and stores the key and value in the
+ *                         programSettings struct.
+ * See usage in: main.c
+ ************************************************************************************/
+int load_settings_config(const char *settingName, int settingValue)
+{
+  const char *filename = "../build/settings.config";
+  FILE *settingsFile = fopen(filename, "r");
+  if (settingsFile == NULL)
+  {
+    perror("Error opening settings file");
+    return FALSE;
+  }
+
+  char line[100];
+  int keyLength = strlen(settingName);
+  int keyFound = FALSE;
+
+  // Read the file
+  while (fgets(line, sizeof(line), settingsFile) != NULL)
+  {
+    if (strncmp(line, settingName, keyLength) == 0)
+    {
+      // Found the key, extract the value
+      sscanf(line, "%*[^=]=%d", &settingValue); // idk how this works but it does shoutout ChatGPT
+      strcpy(programSettings.settingKeyName, settingName);
+      programSettings.settingKeyValue = settingValue;
+      keyFound = TRUE;
+      break; // No need to continue searching
+    }
+  }
+
+  fclose(settingsFile);
+
+  if (keyFound)
+  {
+    return TRUE;
+  }
+  else
+  {
+    return FALSE;
+  }
 }
