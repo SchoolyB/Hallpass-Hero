@@ -36,9 +36,6 @@ extern "C"
   int print_table_names_callback(void *data, int argc, char **argv, char **azColName);
   int print_table_names_callback(void *data, int argc, char **argv, char **azColName);
   int show_table_data_callback(void *data, int argc, char **argv, char **azColName);
-  // todo delete this one. This is a duplicate of the one above
-  static int callback(void *NotUsed, int argc, char **argv, char **azColName);
-
   // MOST OF THESE FUNCTIONS ARE FOR THE ROSTER DATABASE ONLY
   // but technically can be used for the student database as well
   int check_if_table_exists(const char *rosterName);
