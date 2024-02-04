@@ -34,7 +34,8 @@ int show_settings_menu(void)
     printf("1. Enable/Disable Runtime Logging\n");
     printf("2. Rename Database\n");
     printf("3. Enable/Disable Color\n");
-    printf("4. Main Menu\n");
+    printf("4. Enable/Disable Student ID Generation\n");
+    printf("5. Main Menu\n");
     __utils_fgets_and_remove_newline(userInput.StrInput);
     userInput.NumInput = atoi(userInput.StrInput);
     settingsMenuRunning = FALSE;
@@ -54,6 +55,10 @@ int show_settings_menu(void)
     toggle_colors();
     break;
   case 4:
+    __utils_runtime_logger("user entered the enable/disable automatic student ID generation menu", "show_settings_menu");
+    toggle_student_id_auto_generation();
+    break;
+  case 5:
     system("clear");
     printf("Returning to main menu...\n");
     sleep(1);
@@ -233,7 +238,7 @@ int handle_runtime_logging_logic(void)
   {
     // TODO this is crashing somewhere around here....need to fix
     system("clear");
-    show_current_step("Enable/Disable Runtime Logging", 1, 1);
+    show_current_step("Disable Runtime Logging", 1, 1);
     printf("Currently runtime logging is " BOLD "%s enabled %s\n", green.colorCode, reset.colorCode);
     printf("Would you like to disable runtime logging?[y/n]\n");
     printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n", yellow.colorCode, reset.colorCode);
@@ -276,7 +281,7 @@ int handle_runtime_logging_logic(void)
   else if (programSettings.runtimeLoggingEnabled == FALSE)
   {
     system("clear");
-    show_current_step("Enable/Disable Runtime Logging", 1, 1);
+    show_current_step("Enable runtime logging", 1, 1);
     printf("Currently runtime logging is " BOLD "%s disabled%s\n", red.colorCode, reset.colorCode);
     printf("Would you like to enable runtime logging?[y/n]\n");
     printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n", yellow.colorCode, reset.colorCode);
@@ -350,7 +355,7 @@ int toggle_colors(void)
       printf("Disabling colors...\n");
 
       programSettings.colorEnabled = FALSE;
-      printf("Colors have been disabled\n");
+      printf("Colors have been %s disabled%s\n", red.colorCode, reset.colorCode);
       // Set the global color codes to empty strings
       red.colorCode = "";
       green.colorCode = "";
@@ -643,5 +648,89 @@ int load_settings_config(const char *settingName, int settingValue)
   else
   {
     return FALSE;
+  }
+}
+
+/************************************************************************************
+ * toggle_student_id_auto_generation(): Handles the logic for toggling the
+ *                                      autoStudentIDGenerationEnabled setting.
+ *
+ * See usage in: show_settings_menu(),  _add_student.c. and _manage_rosters.c
+ ************************************************************************************/
+int toggle_student_id_auto_generation()
+{
+  if (programSettings.autoStudentIDGenerationEnabled == TRUE)
+  {
+    system("clear");
+    show_current_step("Disable Student ID Generation", 1, 1);
+    printf("Currently automatic student ID generation is " BOLD "%s enabled%s\n", green.colorCode, reset.colorCode);
+    printf("Would you like to disable automatic student ID generation?[y/n]\n");
+    printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n", yellow.colorCode, reset.colorCode);
+    __utils_fgets_and_remove_newline(userInput.StrInput);
+
+    if (INPUT_IS_CANCEL(userInput.StrInput))
+    {
+      __utils_operation_cancelled("toggle_student_id_auto_generation");
+      printf("Returning to settings menu...\n");
+      sleep(1);
+      system("clear");
+      show_settings_menu();
+    }
+    else if (INPUT_IS_YES(userInput.StrInput))
+    {
+      system("clear");
+      programSettings.autoStudentIDGenerationEnabled = FALSE;
+      store_setting("autoStudentIDGenerationEnabled", FALSE);
+      printf("Automatic student ID generation has been %s disabled%s\n", red.colorCode, reset.colorCode);
+      __utils_runtime_logger("disabled automatic student ID generation", "toggle_student_id_auto_generation");
+      sleep(2);
+      system("clear");
+      show_settings_menu();
+    }
+    else if (INPUT_IS_NO(userInput.StrInput))
+    {
+      system("clear");
+      printf("Returning to settings menu...\n");
+      sleep(1);
+      system("clear");
+      show_settings_menu();
+    }
+  }
+  else if (programSettings.autoStudentIDGenerationEnabled == FALSE)
+  {
+    system("clear");
+    show_current_step("Enable Student ID Generation", 1, 1);
+    printf("Currently automatic student ID generation is " BOLD "%s disabled%s\n", red.colorCode, reset.colorCode);
+    printf("Would you like to enable automatic student ID generation?[y/n]\n");
+    printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n", yellow.colorCode, reset.colorCode);
+    __utils_fgets_and_remove_newline(userInput.StrInput);
+
+    if (INPUT_IS_CANCEL(userInput.StrInput))
+    {
+      __utils_operation_cancelled("toggle_student_id_auto_generation");
+      printf("Returning to settings menu...\n");
+      sleep(1);
+      system("clear");
+      show_settings_menu();
+    }
+    else if (INPUT_IS_YES(userInput.StrInput))
+    {
+      system("clear");
+      programSettings.autoStudentIDGenerationEnabled = TRUE;
+      store_setting("autoStudentIDGenerationEnabled", TRUE);
+      printf("Automatic student ID generation has been %s enabled%s\n", green.colorCode, reset.colorCode);
+      __utils_runtime_logger("enabled automatic student ID generation", "toggle_student_id_auto_generation");
+      sleep(2);
+      system("clear");
+      show_settings_menu();
+    }
+    else if (INPUT_IS_NO(userInput.StrInput))
+    {
+      system("clear");
+      printf("Returning to settings menu...\n");
+      sleep(1);
+      system("clear");
+      show_settings_menu();
+    }
   }
 }

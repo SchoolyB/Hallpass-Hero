@@ -283,46 +283,60 @@ int get_student_last_name(void)
  * ask_about_student_id: Asks if the user wants to give a student an id.
  * Note: see usage in get_student_last_name()
  ************************************************************************************/
-// TODO might make an option in the future to enable or disable the need to do this
 int ask_about_student_id(void)
 {
-  system("clear");
-  printf("How would you like to assign the student ID?\n");
-  printf("Please enter either '1' or '2'.\n");
-  printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n", yellow.colorCode, reset.colorCode);
-  printf("1. Automatically generate an ID \n");
-  printf("2. Create your own\n");
-
-  __utils_fgets_and_remove_newline(userInput.StrInput);
-  userInput.NumInput = atoi(userInput.StrInput);
-
-  if (INPUT_IS_CANCEL(userInput.StrInput))
+  switch (programSettings.autoStudentIDGenerationEnabled)
   {
-
-    __utils_operation_cancelled("ask_about_student_id");
-    globalTrigger.studentCreationInterrupted = TRUE;
-    addStudentMenuIsRunning = TRUE;
-    return 0;
-  }
-
-  if (userInput.NumInput == 1)
-  {
+    /*In the event that the user has not enabled the automatic
+    generation of student IDs, ask the user how they would like
+    to assign the student ID.*/
+  case 0: // not enabled
     system("clear");
-    __utils_runtime_logger("Chose to automatically generate an ID", "ask_about_student_id");
+    printf("How would you like to assign the student ID?\n");
+    printf("Please enter either '1' or '2'.\n");
+    printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n", yellow.colorCode, reset.colorCode);
+    printf("1. Automatically generate an ID \n");
+    printf("2. Create your own\n");
+    __utils_fgets_and_remove_newline(userInput.StrInput);
+    userInput.NumInput = atoi(userInput.StrInput);
+
+    if (INPUT_IS_CANCEL(userInput.StrInput))
+    {
+      __utils_operation_cancelled("ask_about_student_id");
+      globalTrigger.studentCreationInterrupted = TRUE;
+      addStudentMenuIsRunning = TRUE;
+      return 0;
+    }
+
+    if (userInput.NumInput == 1)
+    {
+      system("clear");
+      __utils_runtime_logger("Chose to automatically generate an ID", "ask_about_student_id");
+      generate_student_id(NewStudent.FirstName, NewStudent.LastName);
+    }
+    else if (userInput.NumInput == 2)
+    {
+      system("clear");
+      __utils_runtime_logger("Chose to manually set an ID", "ask_about_student_id");
+      manually_set_student_id();
+    }
+
+    else
+    {
+      system("clear");
+      printf("Please make a valid decision.");
+      ask_about_student_id();
+    }
+    break;
+    /*In the event that the user has enabled the automatic
+    generation of student IDs, skip all the questions and
+    automatically generate the student ID.*/
+  case 1: // enabled
+    system("clear");
     generate_student_id(NewStudent.FirstName, NewStudent.LastName);
-  }
-  else if (userInput.NumInput == 2)
-  {
-    system("clear");
-    __utils_runtime_logger("Chose to manually set an ID", "ask_about_student_id");
-    manually_set_student_id();
-  }
-
-  else
-  {
-    system("clear");
-    printf("Please make a valid decision.");
-    ask_about_student_id();
+    break;
+  default:
+    break;
   }
 }
 
@@ -409,7 +423,7 @@ int generate_student_id(char *FirstName, char *LastName)
   int digit2 = arr[rand() % 10];
   int digit3 = arr[rand() % 10];
 
-  printf("Generating student ID");
+  printf("Generating student ID\n");
   sleep(1);
   size_t lastNameLength = strlen(NewStudent.LastName);
   // if the student last name is empty
@@ -442,7 +456,7 @@ int generate_student_id(char *FirstName, char *LastName)
       system("clear");
       __utils_runtime_logger("Acknowledged student last name trucation", "generate_student_id");
       snprintf(setStudentID, sizeof(setStudentID), "%c%c%s%d%d%d", toupper(FirstName[0]), toupper(FirstName[1]), truncatedLastName, digit1, digit2, digit3);
-      // TODO need to find a way to allow the second argument in the check_if_student_id_exists() function to be a passed in roster name or the name of the 'students' table. Need to have it so either or can be passed in when needed. Maybe a global variable that can be set to either or depending on the situation.
+      // TODO need to find a way to allow the second argument in the check_if_student_id_exists() function to be a passed in roster name or the name of the 'students' table. Need to have it so either or can be passed in when needed. Maybe a global variable that can be set to either or depending on the situation. I think I may have fixed this but i dont remember. - Marshall Burns Feb 4th 2024
       int result = check_if_student_id_exists(setStudentID, desiredTableName.TableName);
       if (result == FALSE)
       {

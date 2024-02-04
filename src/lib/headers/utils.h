@@ -179,6 +179,7 @@ extern "C"
   {
     char settingKeyName[50];
     int settingKeyValue;
+    int autoStudentIDGenerationEnabled;
     int colorEnabled;
     int runtimeLoggingEnabled;
     DatabaseInfo databaseInfo; // may not need this
