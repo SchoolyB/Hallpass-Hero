@@ -112,12 +112,8 @@ int get_student_first_name(void)
   }
   else if (INPUT_IS_CANCEL(userInput.StrInput))
   {
-    system("clear");
-    printf("%sCancelling operation.%s\n", yellow.colorCode, reset.colorCode);
-    __utils_runtime_logger("Cancelled operation", "get_student_first_name");
+    __utils_operation_cancelled("get_student_first_name");
     globalTrigger.studentCreationInterrupted = TRUE;
-    sleep(1);
-    system("clear");
     addStudentMenuIsRunning = TRUE;
     return 0;
   }
@@ -200,12 +196,8 @@ int get_student_last_name(void)
   }
   else if (INPUT_IS_CANCEL(userInput.StrInput))
   {
-    system("clear");
-    printf("%sCancelling operation.%s\n", yellow.colorCode, reset.colorCode);
+    __utils_operation_cancelled("get_student_last_name");
     globalTrigger.studentCreationInterrupted = TRUE;
-    __utils_runtime_logger("Cancelled operation", "get_student_last_name");
-    sleep(1);
-    system("clear");
     addStudentMenuIsRunning = TRUE;
     return 0;
   }
@@ -306,12 +298,9 @@ int ask_about_student_id(void)
 
   if (INPUT_IS_CANCEL(userInput.StrInput))
   {
-    system("clear");
-    printf("%sCancelling operation.%s\n", yellow.colorCode, reset.colorCode);
-    __utils_runtime_logger("Cancelled operation", "ask_about_student_id");
+
+    __utils_operation_cancelled("ask_about_student_id");
     globalTrigger.studentCreationInterrupted = TRUE;
-    sleep(1);
-    system("clear");
     addStudentMenuIsRunning = TRUE;
     return 0;
   }
@@ -359,12 +348,8 @@ void manually_set_student_id(void)
 
   if (INPUT_IS_CANCEL(userInput.StrInput))
   {
-    system("clear");
-    printf("%sCancelling operation.%s\n", yellow.colorCode, reset.colorCode);
-    __utils_runtime_logger("Cancelled operation", "manually_set_student_id");
+    __utils_operation_cancelled("manually_set_student_id");
     globalTrigger.studentCreationInterrupted = TRUE;
-    sleep(1);
-    system("clear");
     gettingStudentId == FALSE;
     addStudentMenuIsRunning = TRUE;
   }
@@ -776,11 +761,8 @@ int handle_last_name_truncated_menu(void)
   }
   else if (userInput.NumInput == 3)
   {
-    system("clear");
-    printf("%sCancelling operation%s\n", yellow.colorCode, reset.colorCode);
+    __utils_operation_cancelled("handle_last_name_truncated_menu");
     globalTrigger.studentCreationInterrupted = TRUE;
-    sleep(1);
-    system("clear");
     add_student_to_db();
   }
   else

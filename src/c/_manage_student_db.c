@@ -64,10 +64,7 @@ int manage_student_db(void)
 
       if (strcmp(userInput.StrInput, "cancel") == 0)
       {
-        system("clear");
-        printf("%sCancelling operation" RESET);
-        sleep(1);
-        system("clear");
+        __utils_operation_cancelled("manage_student_db");
         manageStudentDBMenuIsRunning = TRUE;
       }
       else
@@ -83,10 +80,7 @@ int manage_student_db(void)
           __utils_fgets_and_remove_newline(userInput.StrInput);
           if (INPUT_IS_CANCEL(userInput.StrInput) || INPUT_IS_NO(userInput.StrInput))
           {
-            system("clear");
-            printf("%sCancelling operation%s\n", yellow.colorCode, reset.colorCode);
-            sleep(1);
-            system("clear");
+            __utils_operation_cancelled("manage_student_db");
             manageStudentDBMenuIsRunning = TRUE;
           }
           else if (INPUT_IS_YES(userInput.StrInput))

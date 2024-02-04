@@ -137,7 +137,7 @@ int handle_rename_db_logic(const char *currentDBName)
         }
         else
         {
-          // todo add more here
+
           __utils_error_logger("Error occurred when confirming database renaming", "handle_rename_db_logic", MODERATE);
         }
         break;
@@ -169,11 +169,9 @@ int handle_rename_db_logic(const char *currentDBName)
   else if (INPUT_IS_CANCEL(userInput.StrInput))
   {
     system("clear");
-    __utils_runtime_logger("cancelled operation", "handle_rename_db_logic");
-    printf("%sCancelling operation...%s\n", yellow.colorCode, reset.colorCode);
+    __utils_operation_cancelled("handle_rename_db_logic");
     sleep(1);
     system("clear");
-    return -1;
   }
   else
   {
@@ -194,12 +192,14 @@ int confirm_db_rename(const char *newDBName)
 {
   system("clear");
   printf("Are you sure you want to rename the database to " BOLD "%s%s?[y/n]\n", newDBName, reset.colorCode);
-  printf("%sTo cancel this operation enter" BOLD "'cancel'" RESET);
+  printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n", yellow.colorCode, reset.colorCode);
   __utils_fgets_and_remove_newline(userInput.StrInput);
 
   if (INPUT_IS_CANCEL(userInput.StrInput))
   {
-    // todo finish this
+    system("clear");
+    __utils_operation_cancelled("confirm_db_rename");
+    __utils_runtime_logger("cancelled operation", "confirm_db_rename");
   }
   else if (INPUT_IS_NO(userInput.StrInput))
   {
@@ -371,9 +371,7 @@ int toggle_colors(void)
     }
     else if (INPUT_IS_CANCEL(userInput.StrInput))
     {
-      system("clear");
-      __utils_runtime_logger("cancelled operation", "toggle_colors");
-      printf("%sCancelling operation...%s\n", yellow.colorCode, reset.colorCode);
+      __utils_operation_cancelled("toggle_colors");
       sleep(1);
       system("clear");
       return -1;
@@ -427,11 +425,8 @@ int toggle_colors(void)
     }
     else if (INPUT_IS_CANCEL(userInput.StrInput))
     {
-      system("clear");
-      __utils_runtime_logger("cancelled operation", "toggle_colors");
-      printf("Cancelling operation...\n");
-      sleep(1);
-      system("clear");
+
+      __utils_operation_cancelled("toggle_colors");
       return -1;
     }
     else

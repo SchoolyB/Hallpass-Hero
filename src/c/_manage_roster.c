@@ -99,10 +99,7 @@ int manage_roster(void)
           __utils_fgets_and_remove_newline(userInput.StrInput);
           if (INPUT_IS_CANCEL(userInput.StrInput))
           {
-            system("clear");
-            printf(YELLOW "Cancelling operation\n" RESET);
-            sleep(1);
-            system("clear");
+            __utils_operation_cancelled("manage_roster");
             return 0; // TODO come back to this. might call a function instead
           }
 
@@ -415,10 +412,7 @@ int ask_which_roster_and_preform_action(char *action)
     __utils_fgets_and_remove_newline(userInput.StrInput);
     if (INPUT_IS_CANCEL(userInput.StrInput))
     {
-      system("clear");
-      printf(YELLOW "Cancelling operation\n" RESET);
-      sleep(1);
-      system("clear");
+      __utils_operation_cancelled("ask_which_roster_and_preform_action");
       return 0; // TODO come back to this. might call a function instead
     }
     strcpy(oldRosterName, userInput.StrInput);
@@ -454,10 +448,7 @@ int ask_which_roster_and_preform_action(char *action)
       __utils_fgets_and_remove_newline(newRosterName);
       if (INPUT_IS_CANCEL(newRosterName))
       {
-        system("clear");
-        printf(YELLOW "Cancelling operation\n" RESET);
-        sleep(1);
-        system("clear");
+        __utils_operation_cancelled("ask_which_roster_and_preform_action");
         return 0; // TODO come back to this. might call a function instead
       }
       else
@@ -507,10 +498,7 @@ int ask_which_roster_and_preform_action(char *action)
     __utils_fgets_and_remove_newline(userInput.StrInput);
     if (INPUT_IS_CANCEL(userInput.StrInput))
     {
-      system("clear");
-      printf(YELLOW "Cancelling operation\n" RESET);
-      sleep(1);
-      system("clear");
+      __utils_operation_cancelled("ask_which_roster_and_preform_action");
       return 0; // TODO come back to this. might call a function instead
     }
     sprintf(roster.rosterNameWithPrefix, "Roster_%s", userInput.StrInput);
@@ -577,10 +565,7 @@ int ask_which_roster_and_preform_action(char *action)
       }
       else if (INPUT_IS_NO(confirmation) || INPUT_IS_CANCEL(confirmation))
       {
-        system("clear");
-        printf(YELLOW "Cancelling operation\n" RESET);
-        sleep(1);
-        system("clear");
+        __utils_operation_cancelled("ask_which_roster_and_preform_action");
         return 0; // TODO come back to this. might call a function instead
       }
       else
@@ -599,10 +584,7 @@ int ask_which_roster_and_preform_action(char *action)
     __utils_fgets_and_remove_newline(userInput.StrInput);
     if (INPUT_IS_CANCEL(userInput.StrInput))
     {
-      system("clear");
-      printf(YELLOW "Cancelling operation\n" RESET);
-      sleep(1);
-      system("clear");
+      __utils_operation_cancelled("ask_which_roster_and_preform_action");
       return 0; // TODO come back to this. might call a function instead
     }
     sprintf(roster.rosterNameWithPrefix, "Roster_%s", userInput.StrInput);
@@ -650,10 +632,7 @@ int ask_which_roster_and_preform_action(char *action)
         userInput.NumInput = atoi(userInput.StrInput);
         if (INPUT_IS_CANCEL(userInput.StrInput))
         {
-          system("clear");
-          printf(YELLOW "Cancelling operation\n" RESET);
-          sleep(1);
-          system("clear");
+          __utils_operation_cancelled("ask_which_roster_and_preform_action");
           return 0; // TODO come back to this. might call a function instead
         }
         switch (userInput.NumInput)
@@ -700,10 +679,7 @@ int ask_which_roster_and_preform_action(char *action)
     __utils_fgets_and_remove_newline(userInput.StrInput);
     if (INPUT_IS_CANCEL(userInput.StrInput))
     {
-      system("clear");
-      printf(YELLOW "Cancelling operation\n" RESET);
-      sleep(1);
-      system("clear");
+      __utils_operation_cancelled("ask_which_roster_and_preform_action");
       return 0; // TODO come back to this. might call a function instead
     }
 
@@ -744,10 +720,7 @@ int ask_which_roster_and_preform_action(char *action)
     __utils_fgets_and_remove_newline(userInput.StrInput);
     if (INPUT_IS_CANCEL(userInput.StrInput))
     {
-      system("clear");
-      printf(YELLOW "Cancelling operation\n" RESET);
-      sleep(1);
-      system("clear");
+      __utils_operation_cancelled("ask_which_roster_and_preform_action");
       return 0; // TODO come back to this. might call a function instead
     }
     sprintf(roster.rosterNameWithPrefix, "Roster_%s", userInput.StrInput);
@@ -784,10 +757,7 @@ int ask_which_roster_and_preform_action(char *action)
     __utils_fgets_and_remove_newline(userInput.StrInput);
     if (INPUT_IS_CANCEL(userInput.StrInput))
     {
-      system("clear");
-      printf(YELLOW "Cancelling operation\n" RESET);
-      sleep(1);
-      system("clear");
+      __utils_operation_cancelled("ask_which_roster_and_preform_action");
       return 0; // TODO come back to this. might call a function instead
     }
     sprintf(roster.rosterNameWithPrefix, "Roster_%s", userInput.StrInput);
@@ -842,10 +812,7 @@ int create_col(const char *rosterName, const char *colType)
 
   if (INPUT_IS_CANCEL(userInput.StrInput))
   {
-    system("clear");
-    printf(YELLOW "Cancelling operation\n" RESET);
-    sleep(1);
-    system("clear");
+    __utils_operation_cancelled("create_col");
     return 0; // TODO come back to this. might call a function instead
   }
   else
@@ -918,10 +885,7 @@ int delete_col(const char *rosterName)
 
   if (INPUT_IS_CANCEL(userInput.StrInput))
   {
-    system("clear");
-    printf(YELLOW "Cancelling operation\n" RESET);
-    sleep(1);
-    system("clear");
+    __utils_operation_cancelled("delete_col");
     return 0; // TODO come back to this. might call a function instead
   }
   else
@@ -1002,10 +966,7 @@ int choose_col_type(const char *rosterName)
     __utils_fgets_and_remove_newline(userInput.StrInput);
     if (INPUT_IS_CANCEL(userInput.StrInput))
     {
-      system("clear");
-      printf(YELLOW "Cancelling operation\n" RESET);
-      sleep(1);
-      system("clear");
+      __utils_operation_cancelled("choose_col_type");
       return 0; // TODO come back to this. might call a function instead
     }
     int numSelection = atoi(userInput.StrInput);
@@ -1057,10 +1018,9 @@ int choose_col_type(const char *rosterName)
  * check_roster_col_type(): Handles checking the type of data of
  *                          an existing column. A pretty bs function tbh.
  *
- * Note: see usage in
+ * Note: see usage in choose_which_col_to_sort()
  ************************************************************************************/
-const char check_roster_col_type(const char *rosterName, const char *colName)
-// todo make this function better. make type an int
+int check_roster_col_type(const char *rosterName, const char *colName)
 {
 
   int colTypeReturnValue = check_col_type(rosterName, colName);
@@ -1129,7 +1089,6 @@ int choose_which_col_to_sort(const char *rosterName)
  * handle_col_sort_logic(): Handles the logic for sorting a column.
  *
  *
- *
  * Note: see usage in choose_which_col_to_sort()
  ************************************************************************************/
 int handle_col_sort_logic(const char *colName)
@@ -1137,7 +1096,6 @@ int handle_col_sort_logic(const char *colName)
   puts("How would you like to sort this column?");
   puts("Enter the corresponding number for the sorting method.");
   puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
-  // todo handle canceling operation
   if (strcmp(rosterColumn.ColumnType, "BOOLEAN") == 0)
   {
     puts("1: True First");
@@ -1146,10 +1104,7 @@ int handle_col_sort_logic(const char *colName)
     userInput.NumInput = atoi(rosterColumn.ColumnSortingMethod);
     if (INPUT_IS_CANCEL(rosterColumn.ColumnSortingMethod))
     {
-      system("clear");
-      printf(YELLOW "Cancelling operation\n" RESET);
-      sleep(1);
-      system("clear");
+      __utils_operation_cancelled("handle_col_sort_logic");
       return 0; // TODO come back to this. might call a function instead
     }
     switch (userInput.NumInput)
@@ -1178,10 +1133,7 @@ int handle_col_sort_logic(const char *colName)
     userInput.NumInput = atoi(rosterColumn.ColumnSortingMethod);
     if (INPUT_IS_CANCEL(rosterColumn.ColumnSortingMethod))
     {
-      system("clear");
-      printf(YELLOW "Cancelling operation\n" RESET);
-      sleep(1);
-      system("clear");
+      __utils_operation_cancelled("handle_col_sort_logic");
       return 0; // TODO come back to this. might call a function instead if i do. make func type void
     }
     switch (userInput.NumInput)
@@ -1232,10 +1184,7 @@ int show_roster_data_with_warning(const char *rosterName)
   __utils_fgets_and_remove_newline(userInput.StrInput);
   if (INPUT_IS_CANCEL(userInput.StrInput) || INPUT_IS_NO(userInput.StrInput))
   {
-    system("clear");
-    printf(YELLOW "Cancelling operation\n" RESET);
-    sleep(1);
-    system("clear");
+    __utils_operation_cancelled("show_roster_data_with_warning");
     manage_roster();
   }
   else if (INPUT_IS_YES(userInput.StrInput))

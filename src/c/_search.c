@@ -20,6 +20,10 @@ Description : This source file contains the function used
 int searchingForStudent = TRUE;
 
 // TODO add desc for func
+/************************************************************************************
+ * search_for_student(): This function is used to search for a student in the database
+ *
+ ************************************************************************************/
 int search_for_student(void)
 {
   printf("Search for a student by name or ID...\n");
