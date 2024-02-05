@@ -44,6 +44,7 @@ int show_settings_menu(void)
   {
   case 1:
     __utils_runtime_logger("user entered the enable/disable runtime logging menu", "show_settings_menu");
+    check_and_load_config();
     handle_runtime_logging_logic();
     break;
   case 2:
@@ -52,10 +53,13 @@ int show_settings_menu(void)
     break;
   case 3:
     __utils_runtime_logger("user entered the enable/disable color menu", "show_settings_menu");
+
+    check_and_load_config();
     toggle_colors();
     break;
   case 4:
     __utils_runtime_logger("user entered the enable/disable automatic student ID generation menu", "show_settings_menu");
+    check_and_load_config();
     toggle_student_id_auto_generation();
     break;
   case 5:
@@ -142,7 +146,6 @@ int handle_rename_db_logic(const char *currentDBName)
         }
         else
         {
-
           __utils_error_logger("Error occurred when confirming database renaming", "handle_rename_db_logic", MODERATE);
         }
         break;
@@ -239,11 +242,20 @@ int handle_runtime_logging_logic(void)
     // TODO this is crashing somewhere around here....need to fix
     system("clear");
     show_current_step("Disable Runtime Logging", 1, 1);
-    printf("Currently runtime logging is " BOLD "%s enabled %s\n", green.colorCode, reset.colorCode);
+    printf("Currently runtime logging is " BOLD "%senabled %s\n", green.colorCode, reset.colorCode);
     printf("Would you like to disable runtime logging?[y/n]\n");
     printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n", yellow.colorCode, reset.colorCode);
     __utils_fgets_and_remove_newline(userInput.StrInput);
-    if (INPUT_IS_YES(userInput.StrInput))
+
+    if (INPUT_IS_CANCEL(userInput.StrInput))
+    {
+      __utils_operation_cancelled("handle_runtime_logging_logic");
+      printf("Returning to settings menu...\n");
+      sleep(1);
+      system("clear");
+      show_settings_menu();
+    }
+    else if (INPUT_IS_YES(userInput.StrInput))
     {
       system("clear");
       printf("Disabling runtime logging...\n");
@@ -269,6 +281,14 @@ int handle_runtime_logging_logic(void)
       fclose(runtimeLogFile);
       return 0;
     }
+    else
+    {
+      system("clear");
+      printf("Please enter a valid input\n");
+      sleep(1);
+      system("clear");
+      handle_runtime_logging_logic();
+    }
     if (INPUT_IS_NO(userInput.StrInput || INPUT_IS_CANCEL(userInput.StrInput)))
     {
       system("clear");
@@ -282,11 +302,19 @@ int handle_runtime_logging_logic(void)
   {
     system("clear");
     show_current_step("Enable runtime logging", 1, 1);
-    printf("Currently runtime logging is " BOLD "%s disabled%s\n", red.colorCode, reset.colorCode);
+    printf("Currently runtime logging is " BOLD "%sdisabled%s\n", red.colorCode, reset.colorCode);
     printf("Would you like to enable runtime logging?[y/n]\n");
     printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n", yellow.colorCode, reset.colorCode);
     __utils_fgets_and_remove_newline(userInput.StrInput);
-    if (INPUT_IS_YES(userInput.StrInput))
+    if (INPUT_IS_CANCEL(userInput.StrInput))
+    {
+      __utils_operation_cancelled("handle_runtime_logging_logic");
+      printf("Returning to settings menu...\n");
+      sleep(1);
+      system("clear");
+      show_settings_menu();
+    }
+    else if (INPUT_IS_YES(userInput.StrInput))
     {
       system("clear");
       printf("Enabling runtime logging...\n");
@@ -324,6 +352,14 @@ int handle_runtime_logging_logic(void)
       system("clear");
       show_settings_menu();
     }
+    else
+    {
+      system("clear");
+      printf("Please enter a valid input\n");
+      sleep(1);
+      system("clear");
+      handle_runtime_logging_logic();
+    }
   }
   else
   {
@@ -345,7 +381,7 @@ int toggle_colors(void)
   if (programSettings.colorEnabled == TRUE)
   {
     system("clear");
-    printf("Colors are currently " BOLD "%s enabled%s\n", green.colorCode, reset.colorCode);
+    printf("Colors are currently " BOLD "%senabled%s\n", green.colorCode, reset.colorCode);
     printf("Would you like to disable colors?[y/n]\n");
     printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n", yellow.colorCode, reset.colorCode);
     __utils_fgets_and_remove_newline(userInput.StrInput);
@@ -355,7 +391,7 @@ int toggle_colors(void)
       printf("Disabling colors...\n");
 
       programSettings.colorEnabled = FALSE;
-      printf("Colors have been %s disabled%s\n", red.colorCode, reset.colorCode);
+      printf("Colors have been %sdisabled%s\n", red.colorCode, reset.colorCode);
       // Set the global color codes to empty strings
       red.colorCode = "";
       green.colorCode = "";
@@ -630,7 +666,10 @@ int load_settings_config(const char *settingName, int settingValue)
   {
     if (strncmp(line, settingName, keyLength) == 0)
     {
+      // printf("Found the key\n");
+      // sleep(2);
       // Found the key, extract the value
+      printf("Scanning line: %s\n", line);
       sscanf(line, "%*[^=]=%d", &settingValue); // idk how this works but it does shoutout ChatGPT
       strcpy(programSettings.settingKeyName, settingName);
       programSettings.settingKeyValue = settingValue;
@@ -638,16 +677,15 @@ int load_settings_config(const char *settingName, int settingValue)
       break; // No need to continue searching
     }
   }
-
   fclose(settingsFile);
 
   if (keyFound)
   {
-    return TRUE;
+    return programSettings.settingKeyValue;
   }
   else
   {
-    return FALSE;
+    return -1;
   }
 }
 
@@ -657,13 +695,13 @@ int load_settings_config(const char *settingName, int settingValue)
  *
  * See usage in: show_settings_menu(),  _add_student.c. and _manage_rosters.c
  ************************************************************************************/
-int toggle_student_id_auto_generation()
+int toggle_student_id_auto_generation(void)
 {
   if (programSettings.autoStudentIDGenerationEnabled == TRUE)
   {
     system("clear");
     show_current_step("Disable Student ID Generation", 1, 1);
-    printf("Currently automatic student ID generation is " BOLD "%s enabled%s\n", green.colorCode, reset.colorCode);
+    printf("Currently automatic student ID generation is " BOLD "%senabled%s\n", green.colorCode, reset.colorCode);
     printf("Would you like to disable automatic student ID generation?[y/n]\n");
     printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n", yellow.colorCode, reset.colorCode);
     __utils_fgets_and_remove_newline(userInput.StrInput);
@@ -700,7 +738,7 @@ int toggle_student_id_auto_generation()
   {
     system("clear");
     show_current_step("Enable Student ID Generation", 1, 1);
-    printf("Currently automatic student ID generation is " BOLD "%s disabled%s\n", red.colorCode, reset.colorCode);
+    printf("Currently automatic student ID generation is " BOLD "%sdisabled%s\n", red.colorCode, reset.colorCode);
     printf("Would you like to enable automatic student ID generation?[y/n]\n");
     printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n", yellow.colorCode, reset.colorCode);
     __utils_fgets_and_remove_newline(userInput.StrInput);
@@ -732,5 +770,72 @@ int toggle_student_id_auto_generation()
       system("clear");
       show_settings_menu();
     }
+  }
+}
+
+/************************************************************************************
+ * check_and_load_config(): Checks if the settings.config file exists and loads the
+ *                          settings.config file.
+ *
+ * See usage in: show_settings_menu() and main.c
+ ************************************************************************************/
+int check_and_load_config(void)
+{
+  int foundSettingsConfig = read_from_dir_and_check_extension("../build", ".config");
+
+  if (foundSettingsConfig == TRUE)
+  {
+    int runtimeLoggingLoaded = load_settings_config("runtimeLoggingEnabled", programSettings.runtimeLoggingEnabled);
+    switch (runtimeLoggingLoaded)
+    {
+    case 0:
+      programSettings.runtimeLoggingEnabled = FALSE;
+      break;
+    case 1:
+      programSettings.runtimeLoggingEnabled = TRUE;
+      break;
+    }
+
+    load_settings_config("colorEnabled", programSettings.colorEnabled);
+    int colorEnabledLoaded = load_settings_config("colorEnabled", programSettings.colorEnabled);
+    switch (colorEnabledLoaded)
+    {
+    case 0:
+      programSettings.colorEnabled = FALSE;
+      break;
+    case 1:
+      programSettings.colorEnabled = TRUE;
+      break;
+    }
+
+    load_settings_config("autoStudentIDGenerationEnabled", programSettings.autoStudentIDGenerationEnabled);
+    int autoStudentIDGenerationEnabledLoaded = load_settings_config("autoStudentIDGenerationEnabled", programSettings.autoStudentIDGenerationEnabled);
+
+    switch (autoStudentIDGenerationEnabledLoaded)
+    {
+    case 0:
+      programSettings.autoStudentIDGenerationEnabled = FALSE;
+      break;
+    case 1:
+      programSettings.autoStudentIDGenerationEnabled = TRUE;
+      break;
+    }
+  }
+  else if (foundSettingsConfig == FALSE)
+  {
+    FILE *settingsConfig = fopen("../build/settings.config", "a");
+    if (settingsConfig == NULL)
+    {
+      perror("Error creating settingsConfig file");
+      return 1;
+    }
+    // setting the default values for the settings.config file if it doesn't already exist
+    programSettings.runtimeLoggingEnabled = TRUE;
+    programSettings.colorEnabled = TRUE;
+    programSettings.autoStudentIDGenerationEnabled = TRUE;
+    fprintf(settingsConfig, "# This config file has been generated by the Hallpass Hero CLI tool.\n# It is unadvised to edit this file manually.\n# To change the settings of your Hallpass Hero CLI tool, please use the settings menu.\n\n\n");
+    fprintf(settingsConfig, "runtimeLoggingEnabled=%d\n", programSettings.runtimeLoggingEnabled);
+    fprintf(settingsConfig, "colorEnabled=%d\n", programSettings.colorEnabled);
+    fclose(settingsConfig);
   }
 }

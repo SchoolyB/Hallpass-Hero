@@ -7,7 +7,6 @@ Author      : Marshall Burns a.k.a. Schooly
 Description : This source file contains several utility functions that are used
               throughout the 'C++' portion of the source code. This file also
               contains the typedefs for the structs used in the program.
-              TODO might move the funcs to the header file
 ===============================================================================
 */
 

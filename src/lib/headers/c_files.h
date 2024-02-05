@@ -56,5 +56,8 @@ int read_from_dir_and_check_extension(const char *directoryPath, const char *ext
 int store_setting(const char *settingName, int settingValue);
 int check_if_settings_config_keys_exist(const char *key);
 int update_config_key_value(const char *settingName, int newSettingValue);
+int load_settings_config(const char *settingName, int settingValue);
+int toggle_student_id_auto_generation(void);
+int check_and_load_config(void);
 
 #endif
