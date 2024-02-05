@@ -249,7 +249,6 @@ int handle_runtime_logging_logic(void)
 {
   if (programSettings.runtimeLoggingEnabled == TRUE)
   {
-    // TODO this is crashing somewhere around here....need to fix
     system("clear");
     show_current_step("Disable Runtime Logging", 1, 1);
     printf("Currently runtime logging is " BOLD "%senabled %s\n", green.colorCode, reset.colorCode);
