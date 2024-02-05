@@ -42,6 +42,14 @@ int show_settings_menu(void)
     userInput.NumInput = atoi(userInput.StrInput);
     settingsMenuRunning = FALSE;
   }
+  if (strcmp(userInput.StrInput, "main") == 0)
+  {
+    system("clear");
+    printf("Returning to main menu...\n");
+    sleep(1);
+    system("clear");
+    return 0;
+  }
   switch (userInput.NumInput)
   {
   case 1:
@@ -267,22 +275,19 @@ int handle_runtime_logging_logic(void)
       store_setting("runtimeLoggingEnabled", FALSE);
       sleep(2);
       system("clear");
-      time_t currentTime;
-      time(&currentTime);
-
-      FILE *runtimeLogFile = fopen("../logs/runtime.log", "a");
-      if (runtimeLogFile == NULL)
-      {
-        perror("Error creating runtimeLog file");
-        return 1;
-      }
-      fprintf(runtimeLogFile, "Logged @ %s", ctime(&currentTime));
-      fprintf(runtimeLogFile, "Runtime logging has been disabled\n");
-      fprintf(runtimeLogFile, "======================================================================================\n\n");
-      fflush(runtimeLogFile);
-      fclose(runtimeLogFile);
-      return 0;
+      __utils_runtime_logger("disabled runtime logging", "show_settings_menu");
+      show_settings_menu();
     }
+    else if (INPUT_IS_NO(userInput.StrInput))
+    {
+      system("clear");
+      __utils_runtime_logger("user chose not to toggle runtime logging", "show_settings_menu");
+      printf("Returning to settings menu...\n");
+      sleep(1);
+      system("clear");
+      show_settings_menu();
+    }
+
     else
     {
       system("clear");
@@ -326,24 +331,8 @@ int handle_runtime_logging_logic(void)
       store_setting("runtimeLoggingEnabled", TRUE);
       sleep(2);
       system("clear");
-
-      time_t currentTime;
-      time(&currentTime);
-
-      // Create the runtime.log file if it doesn't already exist
-      FILE *runtimeLogFile = fopen("../logs/runtime.log", "a");
-      if (runtimeLogFile == NULL)
-      {
-        perror("Error creating runtimeLog file");
-        return 1;
-      }
-      fprintf(runtimeLogFile, "Logged @ %s", ctime(&currentTime));
-      fprintf(runtimeLogFile, "Runtime logging has been enabled\n");
-      fprintf(runtimeLogFile, "======================================================================================\n\n");
-      fflush(runtimeLogFile);
-      fclose(runtimeLogFile);
-
-      return 0;
+      __utils_runtime_logger("enabled runtime logging", "show_settings_menu");
+      show_settings_menu();
     }
     else if (INPUT_IS_NO(userInput.StrInput))
     {
@@ -393,7 +382,7 @@ int toggle_colors(void)
       printf("Disabling colors...\n");
 
       programSettings.colorEnabled = FALSE;
-      printf("Colors have been %sdisabled%s\n", red.colorCode, reset.colorCode);
+      printf("Colors have been disabled\n");
       // Set the global color codes to empty strings
       red.colorCode = "";
       green.colorCode = "";
@@ -402,7 +391,7 @@ int toggle_colors(void)
       store_setting("colorEnabled", FALSE);
       sleep(2);
       system("clear");
-      return 0;
+      show_settings_menu();
     }
     else if (INPUT_IS_NO(userInput.StrInput))
     {
@@ -445,17 +434,17 @@ int toggle_colors(void)
       system("clear");
       printf("Enabling colors...\n");
       programSettings.colorEnabled = TRUE;
-      printf("%sColors have been enabled%s\n", green.colorCode, reset.colorCode);
       // Set the global color codes back to their respective values
       red.colorCode = RED;
       green.colorCode = GREEN;
       yellow.colorCode = YELLOW;
+      printf("Colors have been %senabled%s\n", green.colorCode, reset.colorCode);
 
       __utils_runtime_logger("enabled colors", "toggle_colors");
       store_setting("colorEnabled", TRUE);
       sleep(2);
       system("clear");
-      return 0;
+      show_settings_menu();
     }
     else if (INPUT_IS_NO(userInput.StrInput))
     {
