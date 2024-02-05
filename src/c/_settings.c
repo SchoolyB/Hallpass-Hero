@@ -27,6 +27,8 @@ int settingsMenuRunning = TRUE;
 int show_settings_menu(void)
 {
   settingsMenuRunning = TRUE;
+  __utils_runtime_logger("entered settings menu", "show_settings_menu");
+  __utils_check_for_sqlite_db();
   while (settingsMenuRunning == TRUE)
   {
     show_current_menu("Settings Menu");
@@ -666,9 +668,6 @@ int load_settings_config(const char *settingName, int settingValue)
   {
     if (strncmp(line, settingName, keyLength) == 0)
     {
-      // printf("Found the key\n");
-      // sleep(2);
-      // Found the key, extract the value
       printf("Scanning line: %s\n", line);
       sscanf(line, "%*[^=]=%d", &settingValue); // idk how this works but it does shoutout ChatGPT
       strcpy(programSettings.settingKeyName, settingName);
@@ -693,7 +692,7 @@ int load_settings_config(const char *settingName, int settingValue)
  * toggle_student_id_auto_generation(): Handles the logic for toggling the
  *                                      autoStudentIDGenerationEnabled setting.
  *
- * See usage in: show_settings_menu(),  _add_student.c. and _manage_rosters.c
+ * See usage in: show_settings_menu(),  _add_student.c. and _show_manage_roster_menus.c
  ************************************************************************************/
 int toggle_student_id_auto_generation(void)
 {

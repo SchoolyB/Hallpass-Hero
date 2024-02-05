@@ -33,6 +33,8 @@ int add_student_to_db(void)
 {
   globalTrigger.isTriggered = TRUE;
   addStudentMenuIsRunning = TRUE;
+  __utils_runtime_logger("Entered add_student_to_db", "add_student_to_db");
+  __utils_check_for_sqlite_db();
   while (addStudentMenuIsRunning == TRUE)
   {
     mainMenuProccess = FALSE;
@@ -158,7 +160,7 @@ int get_student_first_name(void)
     else
     {
       system("clear");
-      printf("Im sorry I didn't understand that please try again.");
+      printf("Invalid decision. Please try again.\n");
       sleep(1);
       system("clear");
       get_student_first_name();
@@ -235,7 +237,7 @@ int get_student_last_name(void)
     else
     {
       system("clear");
-      printf("Im sorry I didn't understand that please try again.");
+      printf("Invalid decision. Please try again.\n");
       sleep(1);
       system("clear");
       get_student_last_name();
@@ -272,7 +274,7 @@ int get_student_last_name(void)
     else
     {
       system("clear");
-      printf("Im sorry I didn't understand that please try again.");
+      printf("Invalid decision. Please try again.\n");
       sleep(1);
       system("clear");
       get_student_last_name();
@@ -534,7 +536,6 @@ int confirm_generated_student_id(char *studentID)
       show_current_step("Confirm Student Id", 6, 7);
       strcpy(NewStudent.StudentID, setStudentID);
       __utils_runtime_logger("Confirmed auto generated student id", "confirm_generated_student_id");
-      system("clear");
 
       /*Doing this allows me to use the full or part of
       functions from this file in other places in the project.
@@ -543,6 +544,50 @@ int confirm_generated_student_id(char *studentID)
       if (globalTrigger.isTriggered == FALSE)
       {
         ask_to_add_new_student_to_roster();
+      }
+      else
+      {
+        int rostersExist = get_table_count(programSettings.databaseInfo.dbPath);
+        if (rostersExist == FALSE)
+        {
+          system("clear");
+          printf("There are currently no rosters to add this student to...\n");
+          printf("%sAdding new student directly to database...%s\n", green.colorCode, reset.colorCode);
+          sleep(3);
+          system("clear");
+        }
+        else if (rostersExist = TRUE)
+        {
+          ask_which_roster_to_add_newly_created_student();
+        }
+        system("clear");
+        int result = insert_student_into_db(NewStudent.FirstName, NewStudent.LastName, NewStudent.StudentID);
+
+        if (result == 0)
+        {
+          printf("%sStudent successfully added to database.%s\n", green.colorCode, reset.colorCode);
+          __utils_runtime_logger("Successfully added new student to database", "ask_to_add_new_student_to_roster");
+          sleep(1);
+          system("clear");
+          addStudentMenuIsRunning = TRUE;
+          return 0;
+        }
+        else if (result == 1)
+        {
+          printf("Please try again.\n");
+          sleep(1);
+          system("clear");
+          addStudentMenuIsRunning = TRUE;
+          return 0;
+        }
+        else
+        {
+          printf("An error occurred when trying to check if rosters exist. Please try again.");
+          sleep(2);
+          system("clear");
+          addStudentMenuIsRunning = TRUE;
+          return 0;
+        }
       }
     }
 
@@ -559,7 +604,7 @@ int confirm_generated_student_id(char *studentID)
     else
     {
       confirmingStudentId = FALSE;
-      printf("Im sorry I didn't understand that please try again.");
+      printf("Invalid decision. Please try again.\n");
       sleep(1);
       system("clear");
       confirm_generated_student_id(studentID);
@@ -618,7 +663,7 @@ int confirm_manually_entered_student_id(char *studentID)
     else
     {
       confirmingStudentId = FALSE;
-      printf("Im sorry I didn't understand that please try again.");
+      printf("Invalid decision. Please try again.\n");
       sleep(1);
       system("clear");
       confirm_manually_entered_student_id(studentID);
@@ -647,7 +692,19 @@ int ask_to_add_new_student_to_roster(void)
   if (userInput.NumInput == 1 || INPUT_IS_YES(userInput.StrInput))
   {
     __utils_runtime_logger("Chose to add new student to a roster", "ask_to_add_new_student_to_roster");
-    ask_which_roster_to_add_newly_created_student();
+    int rostersExist = get_table_count(programSettings.databaseInfo.dbPath);
+    if (rostersExist == FALSE)
+    {
+      system("clear");
+      printf("There are currently no rosters to add this student to...\n");
+      printf("%sAdding new student directly to database...%s\n", green.colorCode, reset.colorCode);
+      sleep(2);
+      system("clear");
+    }
+    else if (rostersExist = TRUE)
+    {
+      ask_which_roster_to_add_newly_created_student();
+    }
     printf("%sAdding new student to database...%s\n", green.colorCode, reset.colorCode);
     sleep(2);
     system("clear");
@@ -666,6 +723,14 @@ int ask_to_add_new_student_to_roster(void)
     {
       printf("Please try again.\n");
       sleep(1);
+      system("clear");
+      addStudentMenuIsRunning = TRUE;
+      return 0;
+    }
+    else
+    {
+      printf("An error occurred when trying to check if rosters exist. Please try again.");
+      sleep(2);
       system("clear");
       addStudentMenuIsRunning = TRUE;
       return 0;
@@ -712,7 +777,7 @@ int ask_to_add_new_student_to_roster(void)
 int ask_which_roster_to_add_newly_created_student(void)
 {
   __utils_runtime_logger("Asked which roster to add new student to", "ask_which_roster_to_add_newly_created_student");
-  printf("Please enter the name of the roster you would like to add this student to.");
+  printf("Please enter the name of the roster you would like to add this student to.\n");
   system("clear");
   show_tables();
   __utils_fgets_and_remove_newline(userInput.StrInput);
@@ -726,7 +791,7 @@ int ask_which_roster_to_add_newly_created_student(void)
     {
       system("clear");
       printf("%sStudent successfully added to roster.%s\n", green.colorCode, reset.colorCode);
-      sleep(1);
+      sleep(2);
       system("clear");
       return 0;
     }
@@ -792,7 +857,7 @@ int handle_last_name_truncated_menu(void)
  * skip_and_add_to_roster(): Helper used to skip the process of adding a student
  *                           to a roster.
  *
- * Note: see usage in _manage_roster.c
+ * Note: see usage in _show_manage_roster_menu.c
  ************************************************************************************/
 int skip_and_add_to_roster(const char *rosterName)
 {

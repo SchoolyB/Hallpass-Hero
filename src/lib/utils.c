@@ -84,6 +84,23 @@ void __utils_operation_cancelled(const char *functionName)
 }
 
 /************************************************************************************
+ * __utils_check_for_sqlite_db(): Checks if a sqlite database exists in the build
+ *                                folder. If it does not then it creates the default
+ *                                db.sqlite file.
+ *
+ * See usage in ALL C source files and the main.c file.
+ ************************************************************************************/
+int __utils_check_for_sqlite_db(void)
+{
+  int databaseFound = read_from_dir_and_check_extension("../build", ".sqlite");
+  if (databaseFound == FALSE)
+  {
+    create_student_db_and_table();
+  }
+  return 0;
+}
+
+/************************************************************************************
  * show_current_menu(): Simply shows the current menu the user is in to prevent confusion
  ************************************************************************************/
 void show_current_menu(char *str)

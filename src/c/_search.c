@@ -19,13 +19,14 @@ Description : This source file contains the function used
 
 int searchingForStudent = TRUE;
 
-// TODO add desc for func
 /************************************************************************************
  * search_for_student(): This function is used to search for a student in the database
  *
  ************************************************************************************/
 int search_for_student(void)
 {
+  __utils_runtime_logger("entered search for student menu", "search_for_student");
+  __utils_check_for_sqlite_db();
   printf("Search for a student by name or ID...\n");
   printf("This is not case sensitive\n");
   __utils_fgets_and_remove_newline(userInput.StrInput);

@@ -24,6 +24,8 @@ int manage_student_db(void)
 {
   system("clear");
   manageStudentDBMenuIsRunning = TRUE;
+  __utils_runtime_logger("entered manage student db menu", "manage_student_db");
+  __utils_check_for_sqlite_db();
   while (manageStudentDBMenuIsRunning == TRUE)
   {
     show_current_menu("Manage Student Database");
@@ -69,7 +71,7 @@ int manage_student_db(void)
       }
       else
       {
-        // TODO NEW: Jan 24th 2024 Need to add a check that says something like "the entered student is aldo in roster 'name of roster' preforming this action will also delete the student from the roster. are you sure you want to continue?"
+        // TODO NEW: Jan 24th 2024 Need to add a check that says something like "the entered student is also in roster: 'name of roster' preforming this action will also delete the student from the roster. are you sure you want to continue?"
         strcpy(CurrentStudent.StudentID, userInput.StrInput);
         int studentExists = check_if_student_id_exists(CurrentStudent.StudentID, "students");
         if (studentExists == TRUE)

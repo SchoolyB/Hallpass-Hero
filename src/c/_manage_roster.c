@@ -23,7 +23,7 @@ Roster roster;
 static uint8_t mainMenuProccess;
 
 /************************************************************************************
- * manage_roster(): Handles the logic for managing a roster.
+ * show_manage_roster_menu(): Handles the logic for managing a roster.
  * Note: see usage in ./main.c
  * Note: Uses the following helper functions from db.hpp:
  * - show_tables() - shows all tables in the database
@@ -37,8 +37,7 @@ static uint8_t mainMenuProccess;
  * - check_if_col_exists() - checks if a column exists in a roster
  *
  ************************************************************************************/
-
-int manage_roster(void)
+int show_manage_roster_menu(void)
 {
   uint8_t manageRosterMenuIsOpen = TRUE;
   uint8_t showingFoundRosters = FALSE;
@@ -47,6 +46,8 @@ int manage_roster(void)
   uint8_t menuHeight = 10;
 
   system("clear");
+  __utils_runtime_logger("entered roster management menu", "show_manage_roster_menu");
+  __utils_check_for_sqlite_db();
   while (manageRosterMenuIsOpen == TRUE)
   {
     mainMenuProccess = FALSE;
@@ -99,8 +100,8 @@ int manage_roster(void)
           __utils_fgets_and_remove_newline(userInput.StrInput);
           if (INPUT_IS_CANCEL(userInput.StrInput))
           {
-            __utils_operation_cancelled("manage_roster");
-            return 0; // TODO come back to this. might call a function instead
+            __utils_operation_cancelled("show_manage_roster_menu");
+            show_manage_roster_menu();
           }
 
           sprintf(roster.rosterNameWithPrefix, "Roster_%s", userInput.StrInput);
@@ -141,7 +142,7 @@ int manage_roster(void)
                 puts("Returning to previous menu");
                 sleep(1);
                 system("clear");
-                manage_roster();
+                show_manage_roster_menu();
               case 3:
                 showingRosterData = FALSE;
                 system("clear");
@@ -178,9 +179,12 @@ int manage_roster(void)
       }
       else
       {
-        __utils_error_logger("Failed to get roster table count.", "manage_roster", MINOR);
-        printf(RED "Error: Failed to get roster table count.\n" RESET);
-        wait_for_char_input();
+        __utils_error_logger("Failed to get accurate roster table count.", "show_manage_roster_menu", MINOR);
+        printf(RED "Error: Failed to get accurate.\n" RESET);
+        system("clear");
+        sleep(2);
+        printf(RED "Please try again.\n" RESET);
+        show_manage_roster_menu();
       }
     }
     else if (userInput.NumInput == 2 || strcmp(userInput.StrInput, "rename roster") == 0 || strcmp(userInput.StrInput, "rename") == 0)
@@ -210,7 +214,7 @@ int manage_roster(void)
       }
       else
       {
-        __utils_error_logger("Failed to get roster table count.", "manage_roster", MINOR);
+        __utils_error_logger("Failed to get roster table count.", "show_manage_roster_menu", MINOR);
         printf(RED "Error: Failed to get roster table count.\n" RESET);
         wait_for_char_input();
       }
@@ -242,7 +246,7 @@ int manage_roster(void)
       }
       else
       {
-        __utils_error_logger("Failed to get roster table count.", "manage_roster", MINOR);
+        __utils_error_logger("Failed to get roster table count.", "show_manage_roster_menu", MINOR);
         printf(RED "Error: Failed to get roster table count.\n" RESET);
         wait_for_char_input();
       }
@@ -273,7 +277,7 @@ int manage_roster(void)
       }
       else
       {
-        __utils_error_logger("Failed to get roster table count.", "manage_roster", MINOR);
+        __utils_error_logger("Failed to get roster table count.", "show_manage_roster_menu", MINOR);
         printf(RED "Error: Failed to get roster table count.\n" RESET);
         wait_for_char_input();
       }
@@ -304,7 +308,7 @@ int manage_roster(void)
       }
       else
       {
-        __utils_error_logger("Failed to get roster table count.", "manage_roster", MINOR);
+        __utils_error_logger("Failed to get roster table count.", "show_manage_roster_menu", MINOR);
         printf(RED "Error: Failed to get roster table count.\n" RESET);
         wait_for_char_input();
       }
@@ -335,7 +339,7 @@ int manage_roster(void)
       }
       else
       {
-        __utils_error_logger("Failed to get roster table count.", "manage_roster", MINOR);
+        __utils_error_logger("Failed to get roster table count.", "show_manage_roster_menu", MINOR);
         printf(RED "Error: Failed to get roster table count.\n" RESET);
         wait_for_char_input();
       }
@@ -368,7 +372,7 @@ int manage_roster(void)
       }
       else
       {
-        __utils_error_logger("Failed to get roster table count.", "manage_roster", MINOR);
+        __utils_error_logger("Failed to get roster table count.", "show_manage_roster_menu", MINOR);
         printf(RED "Error: Failed to get roster table count.\n" RESET);
         wait_for_char_input();
       }
@@ -391,7 +395,7 @@ int manage_roster(void)
     {
       puts("Sorry, I didn't understand that.");
       puts("Please try again");
-      manage_roster();
+      show_manage_roster_menu();
     }
   }
 }
@@ -399,7 +403,7 @@ int manage_roster(void)
  * ask_which_roster_and_preform_action(): Handles the bulk of the logic for managing
  *                                        which action is to be preformed on a roster.
  *
- * Note: see usage in manage_roster()
+ * Note: see usage in show_manage_roster_menu()
  ************************************************************************************/
 int ask_which_roster_and_preform_action(char *action)
 {
@@ -413,7 +417,7 @@ int ask_which_roster_and_preform_action(char *action)
     if (INPUT_IS_CANCEL(userInput.StrInput))
     {
       __utils_operation_cancelled("ask_which_roster_and_preform_action");
-      return 0; // TODO come back to this. might call a function instead
+      show_manage_roster_menu();
     }
     strcpy(oldRosterName, userInput.StrInput);
     sprintf(roster.rosterNameWithPrefix, "Roster_%s", oldRosterName);
@@ -449,7 +453,7 @@ int ask_which_roster_and_preform_action(char *action)
       if (INPUT_IS_CANCEL(newRosterName))
       {
         __utils_operation_cancelled("ask_which_roster_and_preform_action");
-        return 0; // TODO come back to this. might call a function instead
+        show_manage_roster_menu();
       }
       else
       {
@@ -499,7 +503,7 @@ int ask_which_roster_and_preform_action(char *action)
     if (INPUT_IS_CANCEL(userInput.StrInput))
     {
       __utils_operation_cancelled("ask_which_roster_and_preform_action");
-      return 0; // TODO come back to this. might call a function instead
+      show_manage_roster_menu();
     }
     sprintf(roster.rosterNameWithPrefix, "Roster_%s", userInput.StrInput);
     int rosterExists = check_if_table_exists(roster.rosterNameWithPrefix);
@@ -566,7 +570,7 @@ int ask_which_roster_and_preform_action(char *action)
       else if (INPUT_IS_NO(confirmation) || INPUT_IS_CANCEL(confirmation))
       {
         __utils_operation_cancelled("ask_which_roster_and_preform_action");
-        return 0; // TODO come back to this. might call a function instead
+        show_manage_roster_menu();
       }
       else
       {
@@ -585,7 +589,7 @@ int ask_which_roster_and_preform_action(char *action)
     if (INPUT_IS_CANCEL(userInput.StrInput))
     {
       __utils_operation_cancelled("ask_which_roster_and_preform_action");
-      return 0; // TODO come back to this. might call a function instead
+      show_manage_roster_menu();
     }
     sprintf(roster.rosterNameWithPrefix, "Roster_%s", userInput.StrInput);
     int rosterExists = check_if_table_exists(roster.rosterNameWithPrefix);
@@ -633,7 +637,7 @@ int ask_which_roster_and_preform_action(char *action)
         if (INPUT_IS_CANCEL(userInput.StrInput))
         {
           __utils_operation_cancelled("ask_which_roster_and_preform_action");
-          return 0; // TODO come back to this. might call a function instead
+          show_manage_roster_menu();
         }
         switch (userInput.NumInput)
         {
@@ -680,7 +684,7 @@ int ask_which_roster_and_preform_action(char *action)
     if (INPUT_IS_CANCEL(userInput.StrInput))
     {
       __utils_operation_cancelled("ask_which_roster_and_preform_action");
-      return 0; // TODO come back to this. might call a function instead
+      show_manage_roster_menu();
     }
 
     sprintf(roster.rosterNameWithPrefix, "Roster_%s", userInput.StrInput);
@@ -721,7 +725,7 @@ int ask_which_roster_and_preform_action(char *action)
     if (INPUT_IS_CANCEL(userInput.StrInput))
     {
       __utils_operation_cancelled("ask_which_roster_and_preform_action");
-      return 0; // TODO come back to this. might call a function instead
+      show_manage_roster_menu();
     }
     sprintf(roster.rosterNameWithPrefix, "Roster_%s", userInput.StrInput);
     int rosterExists = check_if_table_exists(roster.rosterNameWithPrefix);
@@ -758,7 +762,7 @@ int ask_which_roster_and_preform_action(char *action)
     if (INPUT_IS_CANCEL(userInput.StrInput))
     {
       __utils_operation_cancelled("ask_which_roster_and_preform_action");
-      return 0; // TODO come back to this. might call a function instead
+      show_manage_roster_menu();
     }
     sprintf(roster.rosterNameWithPrefix, "Roster_%s", userInput.StrInput);
     int rosterExists = check_if_table_exists(roster.rosterNameWithPrefix);
@@ -813,7 +817,7 @@ int create_col(const char *rosterName, const char *colType)
   if (INPUT_IS_CANCEL(userInput.StrInput))
   {
     __utils_operation_cancelled("create_col");
-    return 0; // TODO come back to this. might call a function instead
+    show_manage_roster_menu();
   }
   else
   {
@@ -886,7 +890,7 @@ int delete_col(const char *rosterName)
   if (INPUT_IS_CANCEL(userInput.StrInput))
   {
     __utils_operation_cancelled("delete_col");
-    return 0; // TODO come back to this. might call a function instead
+    show_manage_roster_menu();
   }
   else
   {
@@ -967,7 +971,7 @@ int choose_col_type(const char *rosterName)
     if (INPUT_IS_CANCEL(userInput.StrInput))
     {
       __utils_operation_cancelled("choose_col_type");
-      return 0; // TODO come back to this. might call a function instead
+      show_manage_roster_menu();
     }
     int numSelection = atoi(userInput.StrInput);
     showingColSelectionMenu = FALSE;
@@ -1046,7 +1050,7 @@ int check_roster_col_type(const char *rosterName, const char *colName)
  *
  *
  *
- * Note: see usage in manage_roster()
+ * Note: see usage in show_manage_roster_menu()
  ************************************************************************************/
 int choose_which_col_to_sort(const char *rosterName)
 {
@@ -1105,7 +1109,7 @@ int handle_col_sort_logic(const char *colName)
     if (INPUT_IS_CANCEL(rosterColumn.ColumnSortingMethod))
     {
       __utils_operation_cancelled("handle_col_sort_logic");
-      return 0; // TODO come back to this. might call a function instead
+      show_manage_roster_menu();
     }
     switch (userInput.NumInput)
     {
@@ -1134,7 +1138,7 @@ int handle_col_sort_logic(const char *colName)
     if (INPUT_IS_CANCEL(rosterColumn.ColumnSortingMethod))
     {
       __utils_operation_cancelled("handle_col_sort_logic");
-      return 0; // TODO come back to this. might call a function instead if i do. make func type void
+      show_manage_roster_menu();
     }
     switch (userInput.NumInput)
     {
@@ -1159,7 +1163,7 @@ int handle_col_sort_logic(const char *colName)
  * show_roster_data_without_warning(): Displays a rosters data without the warning
  *                                     and without getting user confirmation.
 
- * Note: see usage in manage_roster()
+ * Note: see usage in show_manage_roster_menu()
  ************************************************************************************/
 int show_roster_data_without_warning(const char *rosterName)
 {
@@ -1171,7 +1175,7 @@ int show_roster_data_without_warning(const char *rosterName)
  * show_roster_data_with_warning(): Warns the user about displaying a rosters data
  *                                  and gets user confirmation to show said data.
  *
- * Note: see usage in manage_roster()
+ * Note: see usage in show_manage_roster_menu()
  ************************************************************************************/
 int show_roster_data_with_warning(const char *rosterName)
 {
@@ -1185,7 +1189,7 @@ int show_roster_data_with_warning(const char *rosterName)
   if (INPUT_IS_CANCEL(userInput.StrInput) || INPUT_IS_NO(userInput.StrInput))
   {
     __utils_operation_cancelled("show_roster_data_with_warning");
-    manage_roster();
+    show_manage_roster_menu();
   }
   else if (INPUT_IS_YES(userInput.StrInput))
   {
@@ -1221,7 +1225,7 @@ int check_if_roster_has_data(const char *rosterName)
     printf(YELLOW "The roster: " BOLD "%s" RESET YELLOW " does not have any data to display.\n" RESET, rosterName);
     printf("Please add a student to the roster and try again.\n");
     wait_for_char_input();
-    manage_roster();
+    show_manage_roster_menu();
   }
   else
   {
@@ -1273,7 +1277,7 @@ int handle_student_deletion_logic(const char *rosterName)
         printf(GREEN "Successfully deleted student: " BOLD "%s" RESET GREEN " from roster: " BOLD "%s\n" RESET, student.StudentID, rosterName);
         sleep(1);
         system("clear");
-        manage_roster();
+        show_manage_roster_menu();
       }
       else
       {

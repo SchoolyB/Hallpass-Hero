@@ -26,11 +26,13 @@ Description : This source file contains the function used
  ************************************************************************************/
 int create_new_roster(void)
 {
+  system("clear");
   uint8_t newRosterMenuIsRunning = TRUE;
   uint8_t showingFoundRosters = FALSE;
   uint8_t menuWidth = 70;
   uint8_t menuHeight = 10;
   __utils_runtime_logger("User entered the create new roster menu", "create_new_roster");
+  __utils_check_for_sqlite_db();
   while (newRosterMenuIsRunning == TRUE)
   {
     char newRosterOptions[4][50] = {
@@ -150,8 +152,11 @@ int create_new_roster(void)
     }
     else
     {
-      printf("Sorry, I didn't understand that.");
-      printf("Please try again");
+      system("clear");
+      printf("Invalid input please try again.\n");
+      sleep(1);
+      printf("Please try again\n");
+      system("clear");
       create_new_roster();
     }
   }

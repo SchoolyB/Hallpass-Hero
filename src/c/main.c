@@ -47,12 +47,7 @@ int main(void)
   globalTrigger.isTriggered = TRUE;
   /*Runs a check on start up to see if a sqlite file is already found
   in the build folder. If a file is not then create the default db.sqlite file*/
-  int databaseFound = read_from_dir_and_check_extension("../build", ".sqlite");
-  if (databaseFound == FALSE)
-  {
-    create_student_db_and_table();
-  }
-
+  __utils_check_for_sqlite_db();
   /*This appends the current database name to the dbPath variable
   so on startup the db name is already set if it already exists
   in the build folder, and if it doesn't then it will be created
@@ -71,9 +66,6 @@ int main(void)
     return 1;
   }
   fclose(errorLogFile);
-
-  // Checks if the settings.config file exists on start up
-  check_and_load_config();
 
   // Create the runtime.log file if it doesn't already exist
   FILE *runtimeLogFile = fopen("../logs/runtime.log", "a");
@@ -106,13 +98,11 @@ int main(void)
     {
       printf("| %s %-90s\n", MainMenuOptions[i], "");
     }
-    // printf("runtime logging enabled:%d\n", programSettings, programSettings.runtimeLoggingEnabled);
-    // printf("color enabled:%d\n", programSettings, programSettings.colorEnabled);
-    // puts("===========================================================================================");
     /*Here we are handling the input that the user makes on the main menu*/
     __utils_fgets_and_remove_newline(userInput.StrInput);
     userInput.NumInput = atoi(userInput.StrInput);
-
+    // check for the config file and load it
+    check_and_load_config();
     // to create a new roster
     if (userInput.NumInput == 1 || strcmp(userInput.StrInput, "new roster") == 0)
     {
@@ -125,7 +115,7 @@ int main(void)
     {
       __utils_runtime_logger("entered the manage roster menu", "main");
       system("clear");
-      manage_roster();
+      show_manage_roster_menu();
     }
     // to add a student to the student database
     else if (userInput.NumInput == 3 || strcmp(userInput.StrInput, "add student") == 0)
