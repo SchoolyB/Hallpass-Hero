@@ -82,17 +82,18 @@ extern "C"
   //--------------------------------------------------------------------------------//
 
   // Declaration of utility functions
-
   int __utils_error_logger(char *error_message, char *function, enum ErrorLevel level);
   int __utils_runtime_logger(char *action, char *functionName);
-  void __utils_remove_newline_char(char *param);
-  void __utils_clear_input_buffer();
+  void __utils_operation_cancelled(const char *functionName);
+  int __utils_check_for_sqlite_db(void);
   void show_current_menu(char *str);
   void show_current_step(char *str, int currentStep, int totalSteps);
-  int wait_for_char_input(void);
+  void __utils_remove_newline_char(char *param);
+  void __utils_clear_input_buffer();
   int list_all_students(void);
-  int search_for_student(void);
   int has_one_non_space_char(const char *str);
+  int wait_for_char_input(void);
+  int search_for_student(void);
 
   // this type allows the same input through each C source file. As opposed to constantly declaring char arrays
 
