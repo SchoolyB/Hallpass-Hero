@@ -466,8 +466,8 @@ int generate_student_id(char *FirstName, char *LastName)
     printf("%sEntered last name:" BOLD " %s%s%s"
            " longer than 10 characters, this will be shortened to" BOLD " %s in the student ID %s\n",
            yellow.colorCode,
-           NewStudent.LastName, reset.colorCode, yellow.colorCode, truncatedLastName);
-    printf("Are you sure you want to continue with this students last name?[y/n]%s\n");
+           NewStudent.LastName, truncatedLastName, reset.colorCode, yellow.colorCode, reset.colorCode);
+    printf("Are you sure you want to continue with this students last name?[y/n]\n");
     __utils_fgets_and_remove_newline(userInput.StrInput);
     if (INPUT_IS_YES(userInput.StrInput))
     {

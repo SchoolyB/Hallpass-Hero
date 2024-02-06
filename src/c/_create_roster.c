@@ -180,7 +180,7 @@ int get_and_confirm_roster_name(void)
   strcpy(rosterNameInput, userInput.StrInput);
   if (strlen(rosterNameInput) > 30)
   {
-    printf("%sSorry that name%s is too long please try again.\n" RESET);
+    printf("%sSorry that name is too long please try again.%s\n", yellow.colorCode, reset.colorCode);
     sleep(1);
     system("clear");
     __utils_error_logger("Entered roster name is too long", "get_and_confirm_roster_name", MINOR);
@@ -189,7 +189,7 @@ int get_and_confirm_roster_name(void)
   }
   else if (!has_one_non_space_char(rosterNameInput))
   {
-    printf("%sSorry that name%s is too short please try again.\n" RESET);
+    printf("%sSorry that name is too short please try again.%s\n", yellow.colorCode, reset.colorCode);
     sleep(1);
     system("clear");
     __utils_error_logger("Entered roster name is too short", "get_and_confirm_roster_name", MINOR);
