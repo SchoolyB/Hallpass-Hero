@@ -94,6 +94,7 @@ extern "C"
   int has_one_non_space_char(const char *str);
   int wait_for_char_input(void);
   int search_for_student(void);
+  int read_and_display_help_docs(const char *helpFile);
 
   // just some variables used when Idk what do name a variable or when I need to pass a variable to a function but I don't need the value
   typedef struct

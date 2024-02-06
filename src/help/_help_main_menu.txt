@@ -1,0 +1,42 @@
+Welcome to the Hallpass Hero main menu help documentation!
+
+From the main menu we you can choose one of several options that will lead you to different parts of the program.
+To learn more about these options continue reading below.
+
+Option 1: Create a new roster
+Entering the number '1' then clicking your 'enter' key will take you to the 'Create New Roster' Menu.
+This Menu allows you to create rosters which are used to store all public student information. This can include the student's name, student ID, days missed, assignments missed, grades on certain units, and any other information you would like to store. From this menu you can also view all created rosters, access menu specific help documentation, and return to the main menu. 
+
+
+Option 2: View and manage existing rosters
+Entering the number '2' then clicking your 'enter' key will take you to the 'View and Manage Roster' Menu.
+This Menu allows you view all created rosters, rename rosters, delete rosters, add students to rosters, remove students from rosters, create & delete custom columns for rosters, access menu specific help documentation, and return to the main menu.
+
+
+Option 3: Add students to the student database
+Entering the number '3' then clicking your 'enter' key will take you to the 'Add Students to Database' Menu.
+This menu allows you to add students directly to the student database. NOTE: Just because a student is in the student database does not mean they are in a roster. From this menu you can also view all students in the database, access menu specific help documentation, and return to the main menu
+
+
+Option 4: View and manage the student database
+Entering the number '4' then clicking your 'enter' key will take you to the 'View and Manage Student Database' Menu. 
+From this menu you can view all students in the database, update student information, delete students from the database, and return to the main menu.
+
+
+Option 5: Search for students
+Entering the number '5' then clicking your 'enter' key will take you to the 'Search for Students' Menu.
+This menu allows you to search for students in the student database by their student ID, first name, or last name.
+
+
+Option 6: Main menu help documentation
+Entering the number '6' then clicking your 'enter' key will take you to the 'Main Menu Help Documentation' which is what you are reading now.
+
+
+Option 7: Settings 
+Entering the number '7' then clicking your 'enter' key will take you to the 'Settings' Menu.
+This menu allows you to change the program's settings such as renaming the database, disabling/enabling color, runtime, logging, and automatic features of the program. You can also return to the main menu.
+
+
+Option 8: Exit the program
+Entering the number '8' then clicking your 'enter' key you will safely exit the program.
+

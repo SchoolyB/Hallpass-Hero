@@ -224,3 +224,25 @@ int hash_data(char *data)
 
   return hash;
 }
+
+int read_and_display_help_docs(const char *helpFile)
+{
+  FILE *f = fopen(helpFile, "r");
+  if (f == NULL)
+  {
+    __utils_error_logger("Could not open help file", "read_and_display_help_docs", MODERATE);
+    printf("%sError: Could not open help file: %s\n", red.colorCode, reset.colorCode);
+    printf("Please try again.\n");
+    perror("fopen");
+    wait_for_char_input(); // todo remove this
+    return 1;
+  }
+
+  char c;
+  while ((c = fgetc(f)) != EOF)
+  {
+    putchar(c);
+  }
+  fclose(f);
+  wait_for_char_input();
+}

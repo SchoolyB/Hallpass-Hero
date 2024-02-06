@@ -157,6 +157,7 @@ int handle_main_menu(void)
   {
     __utils_runtime_logger("entered the main menu's help menu", "main");
     system("clear");
+    read_and_display_help_docs("../src/help/_help_main_menu.txt");
     // do stuff
   }
   // to enter the settings menu
@@ -171,7 +172,7 @@ int handle_main_menu(void)
     system("clear");
     puts("See you soon!");
     __utils_runtime_logger("exited the program", "main");
-    mainMenuProccess = FALSE;
+    exit(0);
   }
   else
   {
