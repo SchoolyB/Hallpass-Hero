@@ -18,6 +18,8 @@ UserInput userInput = {FALSE};
 GlobalTrigger globalTrigger = {FALSE};
 ProgramSettings programSettings = {FALSE};
 DatabaseInfo databaseInfo = {FALSE};
+ThrowAways throwAways = {FALSE};
+Roster roster = {FALSE};
 
 Color red = {RED};
 Color green = {GREEN};
@@ -45,7 +47,7 @@ int main(void)
   time(&currentTime);
   char dbPath[40] = "../build/db.sqlite";
   programSettings.databaseInfo.dbPath = dbPath;
-  globalTrigger.isTriggered = TRUE;
+  globalTrigger.isAddingToStudentsTable = TRUE;
   /*Runs a check on start up to see if a sqlite file is already found
   in the build folder. If a file is not then create the default db.sqlite file*/
   __utils_check_for_sqlite_db();
@@ -135,7 +137,7 @@ int handle_main_menu(void)
     __utils_runtime_logger("entered the add student menu", "main");
     system("clear");
     system("clear");
-    add_student_to_db();
+    add_student_to_student_table();
   }
   // to view and manage the student database
   else if (userInput.NumInput == 4 || strcmp(userInput.StrInput, "manage student database") == 0)

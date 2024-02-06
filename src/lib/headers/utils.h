@@ -95,21 +95,19 @@ extern "C"
   int wait_for_char_input(void);
   int search_for_student(void);
 
-  // this type allows the same input through each C source file. As opposed to constantly declaring char arrays
-
-  /*This UserInput was previously a struct
-    but I made it a union. I was not using
-    both the int and char array at the same
-    time. I was only using one or the other.
-    So I made it a union to save memory.
-    - Marshall Burns Jan 30th 2024
-  */
+  // just some variables used when Idk what do name a variable or when I need to pass a variable to a function but I don't need the value
+  typedef struct
+  {
+    char throwAwayStr[32];
+    int throwAwayInt;
+  } ThrowAways;
 
   // this is only used to set the passed in tableName of the check_if_table_exists() function
   typedef struct
   {
     char TableName[50];
   } DesiredTableName;
+  // this type allows the same input through each C source file. As opposed to constantly declaring char arrays
   typedef struct
   {
     int NumInput;
@@ -165,7 +163,7 @@ extern "C"
   typedef struct
   {
     int studentCreationInterrupted;
-    int isTriggered;
+    int isAddingToStudentsTable; // modifies functions depending on if the user is adding students directly to the "students" table or to a roster
   } GlobalTrigger;
 
   typedef struct
@@ -186,6 +184,8 @@ extern "C"
     DatabaseInfo databaseInfo; // may not need this
   } ProgramSettings;
 
+  extern Roster roster;                   // initialized in main.c
+  extern ThrowAways throwAways;           // initialized in main.c
   extern UserInput userInput;             // initialized in main.c
   extern DatabaseInfo databaseInfo;       // initialized in main.c
   extern ProgramSettings programSettings; // initialized in main.c

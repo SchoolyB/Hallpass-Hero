@@ -19,7 +19,6 @@ Description : This source file contains all functions used
 #include "../lib/headers/c_files.h"
 
 Column rosterColumn;
-Roster roster;
 static uint8_t mainMenuProccess;
 
 /************************************************************************************
@@ -615,6 +614,7 @@ int ask_which_roster_and_preform_action(char *action)
     else if (rosterExists == TRUE)
     {
 
+      strcpy(throwAways.throwAwayStr, roster.rosterNameWithPrefix);
       system("clear");
       sleep(1);
       // do stuff
@@ -623,7 +623,7 @@ int ask_which_roster_and_preform_action(char *action)
 
       while (showingHowToAddStudentMenu == TRUE)
       {
-        create_student_db_and_table();
+        __utils_check_for_sqlite_db();
         show_current_step("Add student to roster", 2, 2);
         printf("How would you like to add a student to roster: " BOLD "%s?\n" RESET, roster.rosterNameWithPrefix);
         puts("Enter the corresponding number.");
@@ -646,20 +646,9 @@ int ask_which_roster_and_preform_action(char *action)
           break;
         case 2:
           system("clear");
-          globalTrigger.isTriggered = TRUE;
-          globalTrigger.studentCreationInterrupted = FALSE;
+          globalTrigger.isAddingToStudentsTable = FALSE;
           get_student_first_name();
-          if (globalTrigger.studentCreationInterrupted == FALSE)
-          {
-            skip_and_add_to_roster(roster.rosterNameWithPrefix);
-          }
-          else
-          {
-            system("clear");
-            printf(RED "Failed to add student to roster: " BOLD "%s\n" RESET, roster.rosterNameWithPrefix);
-            sleep(1);
-            system("clear");
-          }
+
           break;
         case 3:
           // todo add bulk data loader stuff
@@ -711,7 +700,7 @@ int ask_which_roster_and_preform_action(char *action)
       system("clear");
       sleep(1);
       // do stuff
-      globalTrigger.isTriggered = TRUE;
+      globalTrigger.isAddingToStudentsTable = TRUE;
 
       show_current_step("Remove student from roster", 2, 2);
       handle_student_deletion_logic(roster.rosterNameWithPrefix);
@@ -979,31 +968,31 @@ int choose_col_type(const char *rosterName)
     case 6: // in the event the user doesn't know. We just store it as TEXT
       strcpy(colType, "TEXT");
       system("clear");
-      show_current_step("Add student to roster", 3, 3);
+      show_current_step("Create new column", 3, 3);
       create_col(rosterName, colType);
       break;
     case 2:
       strcpy(colType, "INTEGER");
       system("clear");
-      show_current_step("Add student to roster", 3, 3);
+      show_current_step("Create new column", 3, 3);
       create_col(rosterName, colType);
       break;
     case 3:
       strcpy(colType, "REAL"); // the REAL data type is used to store floating-point values
       system("clear");
-      show_current_step("Add student to roster", 3, 3);
+      show_current_step("Create new column", 3, 3);
       create_col(rosterName, colType);
       break;
     case 4:
       strcpy(colType, "BOOLEAN");
       system("clear");
-      show_current_step("Add student to roster", 3, 3);
+      show_current_step("Create new column", 3, 3);
       create_col(rosterName, colType);
       break;
     case 5:
       strcpy(colType, "DATE");
       system("clear");
-      show_current_step("Add student to roster", 3, 3);
+      show_current_step("Create new column", 3, 3);
       create_col(rosterName, colType);
       break;
     default:
@@ -1263,7 +1252,7 @@ int handle_student_deletion_logic(const char *rosterName)
     puts("Please try again");
     sleep(1);
     system("clear");
-    globalTrigger.isTriggered = TRUE;
+    globalTrigger.isAddingToStudentsTable = TRUE;
     show_roster_data_without_warning(rosterName);
     system("clear"); // Super hacky way to not show data twice
     show_current_step("Remove student from roster", 2, 2);
