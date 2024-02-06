@@ -78,7 +78,7 @@ int add_student_to_db(void)
       printf("Returning to main menu.");
       sleep(1);
       system("clear");
-      return 0;
+      handle_main_menu();
     }
     else
     {

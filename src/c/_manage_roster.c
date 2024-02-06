@@ -149,7 +149,7 @@ int show_manage_roster_menu(void)
                 puts("Returning to main menu");
                 sleep(1);
                 system("clear");
-                return 0;
+                handle_main_menu();
               default:
                 system("clear");
                 puts("Invalid input please try again.");
@@ -389,12 +389,12 @@ int show_manage_roster_menu(void)
       puts("Returning to main menu.");
       sleep(1);
       system("clear");
-      return 0;
+      handle_main_menu();
     }
     else
     {
-      puts("Sorry, I didn't understand that.");
-      puts("Please try again");
+      puts("Sorry, I didn't understand that.\n");
+      puts("Please try again\n");
       show_manage_roster_menu();
     }
   }
@@ -652,7 +652,6 @@ int ask_which_roster_and_preform_action(char *action)
           if (globalTrigger.studentCreationInterrupted == FALSE)
           {
             skip_and_add_to_roster(roster.rosterNameWithPrefix);
-            break;
           }
           else
           {
@@ -660,9 +659,8 @@ int ask_which_roster_and_preform_action(char *action)
             printf(RED "Failed to add student to roster: " BOLD "%s\n" RESET, roster.rosterNameWithPrefix);
             sleep(1);
             system("clear");
-            break;
           }
-          // todo need to create a trigger of some sort that will not run the next function if the previous function does not finish executing
+          break;
         case 3:
           // todo add bulk data loader stuff
           system("clear");
@@ -1118,13 +1116,18 @@ int handle_col_sort_logic(const char *colName)
       printf(GREEN "Now sorting column: " BOLD "%s" RESET GREEN " in roster: " BOLD "%s" RESET GREEN " with true values first.\n " RESET, colName, roster.rosterNameWithPrefix);
       sort_roster_col_ascending(roster.rosterNameWithPrefix, colName); // sql interprets true as 1 and false as 0 so we can just sort ascending to show true first
       wait_for_char_input();
-      break;
+      printf("Returning to main menu.\n");
+      sleep(1);
+      system("clear");
+      handle_main_menu();
     case 2:
       system("clear");
       printf(GREEN "Now sorting column: " BOLD "%s" RESET GREEN " in roster: " BOLD "%s" RESET GREEN " with false values first.\n " RESET, colName, roster.rosterNameWithPrefix);
       sort_roster_col_descending(roster.rosterNameWithPrefix, colName); // sql interprets true as 1 and false as 0 so we can just sort descending to show false first
       wait_for_char_input();
-      break;
+      printf("Returning to main menu.\n");
+      sleep(1);
+      handle_main_menu();
     default:
       break;
     }
@@ -1153,6 +1156,7 @@ int handle_col_sort_logic(const char *colName)
       printf(GREEN "Now sorting column: " BOLD "%s" RESET GREEN " in roster: " BOLD "%s" RESET GREEN " in descending order.\n " RESET, colName, roster.rosterNameWithPrefix);
       sort_roster_col_descending(roster.rosterNameWithPrefix, colName);
       wait_for_char_input();
+      break;
     default:
       break;
     }

@@ -148,7 +148,7 @@ int create_new_roster(void)
       printf("Returning to main menu.");
       sleep(1);
       system("clear");
-      return 0;
+      handle_main_menu();
     }
     else
     {
@@ -251,59 +251,8 @@ int get_and_confirm_roster_name(void)
       system("clear");
       show_current_step("Name your new roster", 2, 2);
       printf("The name " BOLD "%s was not correct.\n", rosterNameInput, reset.colorCode);
-      printf("What would you like to do?\n");
-      // todo dont print this out...re-write this
-      printf("1: Try again\n");
-      printf("2: Help\n");
-      printf("3: Back\n");
-      printf("4: Main Menu\n");
-
-      __utils_fgets_and_remove_newline(userInput.StrInput);
-      userInput.NumInput = atoi(userInput.StrInput);
-      if (userInput.NumInput == 1 || strcmp(userInput.StrInput, "try again") == 0)
-      {
-        system("clear");
-        __utils_runtime_logger("Selected to try again", "get_and_confirm_roster_name");
-        printf("Ok please try again.\n");
-        sleep(1);
-        system("clear");
-        get_and_confirm_roster_name();
-      }
-      else if (userInput.NumInput == 2 || strcmp(userInput.StrInput, "help") == 0)
-      {
-        system("clear");
-        sleep(1);
-        // do stuff with help menu
-      }
-      else if (userInput.NumInput == 3 || strcmp(userInput.StrInput, "back") == 0)
-      {
-        system("clear");
-        printf("Going back to previous menu.\n");
-        sleep(1);
-        create_new_roster();
-      }
-      else if (userInput.NumInput == 4 || strcmp(userInput.StrInput, "main") == 0 || strcmp(userInput.StrInput, "main menu") == 0)
-      {
-        system("clear");
-        printf("Returning to main menu.\n");
-        sleep(1);
-        system("clear");
-        return 0;
-      }
-      else
-      {
-        printf("Invalid input please try again.\n");
-        sleep(1);
-        __utils_error_logger("Entered invalid input", "get_and_confirm_roster_name", MINOR);
-        system("clear");
-        get_and_confirm_roster_name();
-      }
-    }
-    else
-    {
-      printf("I did'nt understand that please try again\n");
-      sleep(1);
-      __utils_error_logger("Input entered was neither yes nor no", "get_and_confirm_roster_name", MINOR);
+      printf("Please try again.\n");
+      sleep(2);
       system("clear");
       get_and_confirm_roster_name();
     }
