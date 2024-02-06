@@ -7,7 +7,6 @@ Author      : Marshall Burns a.k.a. Schooly
 Description : This source file contains several utility functions that are used
               throughout the 'C' portion of the source code. This file also
               contains the typedefs for the structs used in the program.
-              TODO might move the funcs and typedefs to the header file
 ===============================================================================
 */
 
@@ -48,10 +47,7 @@ int __utils_error_logger(char *errorMessage, char *function, enum ErrorLevel lev
     printf(RED "Critical Error Occurred @ %s: For more information see logs/errors.log \n" RESET, ctime(&currentTime));
     fflush(errorLog);
     exit(1);
-
-  // Add cases for other error levels if needed
   default:
-    // Handle unknown error level
     break;
   }
 }
@@ -76,6 +72,32 @@ int __utils_runtime_logger(char *action, char *functionName)
 
   fprintf(runtimeLog, "======================================================================================\n\n");
   fflush(runtimeLog);
+}
+
+void __utils_operation_cancelled(const char *functionName)
+{
+  system("clear");
+  printf("%sCancelling operation.%s\n", yellow.colorCode, reset.colorCode);
+  __utils_runtime_logger("Cancelled operation", functionName);
+  sleep(1);
+  system("clear");
+}
+
+/************************************************************************************
+ * __utils_check_for_sqlite_db(): Checks if a sqlite database exists in the build
+ *                                folder. If it does not then it creates the default
+ *                                db.sqlite file.
+ *
+ * See usage in ALL C source files and the main.c file.
+ ************************************************************************************/
+int __utils_check_for_sqlite_db(void)
+{
+  int databaseFound = read_from_dir_and_check_extension("../build", ".sqlite");
+  if (databaseFound == FALSE)
+  {
+    create_student_db_and_table();
+  }
+  return 0;
 }
 
 /************************************************************************************
@@ -117,7 +139,9 @@ void __utils_clear_input_buffer()
   }
 }
 
-// TODO add desc for func
+/************************************************************************************
+ * list_all_students(): Lists all students in the student database
+ ************************************************************************************/
 int list_all_students(void)
 {
 
@@ -143,7 +167,11 @@ int list_all_students(void)
 
   return 0;
 }
-// todo need to check to see if this even works.
+
+/************************************************************************************
+ * check_for_special_chars(): Checks if the passed in string has any special
+ *                            characters. If it does it returns TRUE, else FALSE
+ ************************************************************************************/
 int check_for_special_chars(const char *str)
 {
   while (*str)
@@ -157,11 +185,6 @@ int check_for_special_chars(const char *str)
   return FALSE; // No special characters found
 }
 
-/*Helper function that takes in a string/input.
-Checks if the string has at least one non-space character
-i.e  "        "would return FALSE
-     "  a    " would return TRUE
-*/
 /************************************************************************************
  * has_one_non_space_char(): Helper function that checks if a string has at least
  * one non-space character.
@@ -179,10 +202,11 @@ int has_one_non_space_char(const char *str)
   return FALSE; // Only spaces found
 }
 
-// TODO add desc for func
+/************************************************************************************
+ * wait_for_char_input(): Simple function that waits for the user to press any key
+ ************************************************************************************/
 int wait_for_char_input(void)
 {
-  sleep(2);
   puts("Press any key to continue...");
   getchar();
   system("clear");
@@ -199,4 +223,26 @@ int hash_data(char *data)
   }
 
   return hash;
+}
+
+int read_and_display_help_docs(const char *helpFile)
+{
+  FILE *f = fopen(helpFile, "r");
+  if (f == NULL)
+  {
+    __utils_error_logger("Could not open help file", "read_and_display_help_docs", MODERATE);
+    printf("%sError: Could not open help file: %s\n", red.colorCode, reset.colorCode);
+    printf("Please try again.\n");
+    perror("fopen");
+    wait_for_char_input(); // todo remove this
+    return 1;
+  }
+
+  char c;
+  while ((c = fgetc(f)) != EOF)
+  {
+    putchar(c);
+  }
+  fclose(f);
+  wait_for_char_input();
 }

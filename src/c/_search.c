@@ -17,25 +17,29 @@ Description : This source file contains the function used
 #include "../lib/headers/db.hpp"
 #include "../lib/headers/c_files.h"
 
-UserInput searchInput;
 int searchingForStudent = TRUE;
 
-// TODO add desc for func
+/************************************************************************************
+ * search_for_student(): This function is used to search for a student in the database
+ *
+ ************************************************************************************/
 int search_for_student(void)
 {
-  puts("Search for a student by name or ID...");
-  printf("This is not case sensitive");
-  __utils_fgets_and_remove_newline(searchInput.StrInput);
-  searchInput.StrInput[0] = toupper(searchInput.StrInput[0]);
-  int result = query_student_db(searchInput.StrInput);
+  __utils_runtime_logger("entered search for student menu", "search_for_student");
+  __utils_check_for_sqlite_db();
+  printf("Search for a student by name or ID...\n");
+  printf("This is not case sensitive\n");
+  __utils_fgets_and_remove_newline(userInput.StrInput);
+  userInput.StrInput[0] = toupper(userInput.StrInput[0]);
+  int result = query_student_db(userInput.StrInput);
 
   if (result == 0)
   {
-    puts(GREEN "Successfully queried student database." RESET);
+    printf("%sSuccessfully queried student database.%s\n", green.colorCode, reset.colorCode);
   }
   else
   {
-    printf(RED "Unable to query student data base for search:" BOLD "%s" RESET RED ".Please try again\n" RESET, searchInput.StrInput);
+    printf("%sUnable to query student data base for search:" BOLD "%s %s%s.Please try again\n", red.colorCode, userInput.StrInput, reset.colorCode, red.colorCode);
     __utils_error_logger("Error occurred when trying to query student data base", "search_for_student", CRITICAL);
   }
   return 0;

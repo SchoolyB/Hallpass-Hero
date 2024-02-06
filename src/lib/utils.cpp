@@ -7,7 +7,6 @@ Author      : Marshall Burns a.k.a. Schooly
 Description : This source file contains several utility functions that are used
               throughout the 'C++' portion of the source code. This file also
               contains the typedefs for the structs used in the program.
-              TODO might move the funcs to the header file
 ===============================================================================
 */
 
@@ -47,18 +46,18 @@ int cpp_utils_error_logger(const char *message, const char *function, const CppE
   {
   case CppErrorLevel::MINOR:
     errorLog << "Logged @ " << timeString << endl;
-    errorLog << "Minor Error: " << message << " in function call" << function << endl;
+    errorLog << "Minor Error: " << message << " in function call " << function << "()" << endl;
     errorLog << "=============================================================" << endl;
     break;
   case CppErrorLevel::MODERATE:
     errorLog << "Logged @ " << timeString << endl;
-    errorLog << "Moderate Error: " << message << " in function call " << function << endl;
+    errorLog << "Moderate Error: " << message << " in function call " << function << "()" << endl;
     errorLog << "=============================================================" << endl;
     break;
   case CppErrorLevel::CRITICAL:
     errorLog << "Logged @ " << timeString << endl;
     errorLog << "=============================================================" << endl;
-    errorLog << "CRITICAL ERROR: " << message << " in function call" << function << endl;
+    errorLog << "CRITICAL ERROR: " << message << " in function call " << function << "()" << endl;
     break;
   default:
     break;

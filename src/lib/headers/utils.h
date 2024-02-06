@@ -36,16 +36,25 @@ extern "C"
 // Booleans
 #define FALSE 0
 #define TRUE 1
-//--------------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------------//
 
-// Colors
-#define RESET "\x1B[0m"
+  // Colors
+
 #define RED "\x1B[31m"
-#define BLUE "\x1B[34m"
 #define GREEN "\x1B[32m"
-#define PURPLE "\x1B[35m"
 #define YELLOW "\x1B[33m"
+#define RESET "\x1B[0m"
+  typedef struct
+  {
+    const char *colorCode;
+  } Color;
 
+  extern Color red;
+  extern Color green;
+  extern Color yellow;
+  extern Color reset;
+
+  // Error messages
 // fonts
 #define BOLD "\x1B[1m"
 #define UNDERLINE "\x1B[4m"
@@ -73,18 +82,32 @@ extern "C"
   //--------------------------------------------------------------------------------//
 
   // Declaration of utility functions
-
   int __utils_error_logger(char *error_message, char *function, enum ErrorLevel level);
   int __utils_runtime_logger(char *action, char *functionName);
-  void __utils_remove_newline_char(char *param);
-  void __utils_clear_input_buffer();
+  void __utils_operation_cancelled(const char *functionName);
+  int __utils_check_for_sqlite_db(void);
   void show_current_menu(char *str);
   void show_current_step(char *str, int currentStep, int totalSteps);
-  int wait_for_char_input(void);
+  void __utils_remove_newline_char(char *param);
+  void __utils_clear_input_buffer();
   int list_all_students(void);
-  int search_for_student(void);
   int has_one_non_space_char(const char *str);
+  int wait_for_char_input(void);
+  int search_for_student(void);
+  int read_and_display_help_docs(const char *helpFile);
 
+  // just some variables used when Idk what do name a variable or when I need to pass a variable to a function but I don't need the value
+  typedef struct
+  {
+    char throwAwayStr[32];
+    int throwAwayInt;
+  } ThrowAways;
+
+  // this is only used to set the passed in tableName of the check_if_table_exists() function
+  typedef struct
+  {
+    char TableName[50];
+  } DesiredTableName;
   // this type allows the same input through each C source file. As opposed to constantly declaring char arrays
   typedef struct
   {
@@ -141,7 +164,7 @@ extern "C"
   typedef struct
   {
     int studentCreationInterrupted;
-    int isTriggered;
+    int isAddingToStudentsTable; // modifies functions depending on if the user is adding students directly to the "students" table or to a roster
   } GlobalTrigger;
 
   typedef struct
@@ -154,11 +177,17 @@ extern "C"
 
   typedef struct
   {
+    char settingKeyName[50];
+    int settingKeyValue;
+    int autoStudentIDGenerationEnabled;
     int colorEnabled;
     int runtimeLoggingEnabled;
     DatabaseInfo databaseInfo; // may not need this
   } ProgramSettings;
 
+  extern Roster roster;                   // initialized in main.c
+  extern ThrowAways throwAways;           // initialized in main.c
+  extern UserInput userInput;             // initialized in main.c
   extern DatabaseInfo databaseInfo;       // initialized in main.c
   extern ProgramSettings programSettings; // initialized in main.c
   extern GlobalTrigger globalTrigger;     // initialized in main.c

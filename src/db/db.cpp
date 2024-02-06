@@ -72,7 +72,7 @@ int __throw_error_statement_step(string functionName, sqlite3 *database, int par
 //------------------------------------------CALLBACKS------------------------------------------//
 
 /************************************************************************************
- * table_exists_callback(): Used to check if a table exists in the db.sqlite database
+ * table_exists_callback(): Used to check if a table exists in the SQLite database
  ************************************************************************************/
 int table_exists_callback(void *exists, int argc, char **argv, char **columnNames)
 {
@@ -133,14 +133,14 @@ int print_all_student_data_in_roster_callback(void *data, int argc, char **argv,
 
 /************************************************************************************
  * print_table_names_callback(): Used to print the names of all tables currently in
- *                               the db.sqlite database
+ *                               the SQLite database
  ************************************************************************************/
 int print_table_names_callback(void *data, int argc, char **argv, char **azColName)
 {
   for (int i = 0; i < argc; i++)
   {
     // Exclude sqlite_sequence from the printed tables
-    if (strcmp(argv[i], "sqlite_sequence") != 0)
+    if (strcmp(argv[i], "sqlite_sequence") != 0 && strcmp(argv[i], "students") != 0)
     {
       cout << BOLD << (argv[i] ? argv[i] : "NULL") << RESET << "\n";
       hasTables = TRUE; // Set the flag to true when a table (other than sqlite_sequence) is found
@@ -155,7 +155,7 @@ int print_table_names_callback(void *data, int argc, char **argv, char **azColNa
 //------------------------------------------HELPER FUNCTIONS------------------------------------------//
 
 /************************************************************************************
- * check_if_table_exists(): Checks if the passed in roster exists in the db.sqlite
+ * check_if_table_exists(): Checks if the passed in roster exists in the SQLite
  * Note: See usage in: _create_roster.c
  *                     _manage_roster.c
  *                     _add_student.c
@@ -200,7 +200,7 @@ extern "C"
 {
 #include <sqlite3.h>
   /************************************************************************************
-   * create_new_roster_table(): Creates a new table in the db.sqlite database
+   * create_new_roster_table(): Creates a new table in the SQLite database
    * Note: See function usage in _create_roster.c
    ************************************************************************************/
   int create_new_roster_table(const char *rosterName)
@@ -239,7 +239,7 @@ extern "C"
   }
 
   /************************************************************************************
-   * show_tables(): Prints all rosters currently in the db.sqlite database
+   * show_tables(): Prints all rosters currently in the SQLite database
    * Note: See function usage in:
    *  _create_roster.c
    *  _manage_roster.c
@@ -318,7 +318,7 @@ extern "C"
   }
 
   /************************************************************************************
-   * rename_roster(): Renames a roster in the db.sqlite database
+   * rename_roster(): Renames a roster in the SQLite database
    * Note: See function usage in _manage_roster.c
    ************************************************************************************/
   int rename_roster(const char *oldRosterName, const char *newRosterName)
@@ -359,7 +359,6 @@ extern "C"
    * add_col_to_roster(): Adds the passed in col name to the passed in roster
    * Note: See function usage in  _manage_roster.c
    ************************************************************************************/
-  // todo marshall you are working on checking existing column types. you made a function called int check_col_type below. you need to use this func here as an example...
   int add_col_to_roster(const char *rosterName, const char *colName, const char *colType)
   {
     string rosterNameString(rosterName);
@@ -658,7 +657,7 @@ extern "C"
   }
 
   /************************************************************************************
-   * drop_table(): Drops a roster table from the db.sqlite database
+   * drop_table(): Drops a roster table from the SQLite database
    * Note: See function usage in  _manage_roster.c
    ************************************************************************************/
   int drop_table(const char *tableName)
@@ -696,7 +695,7 @@ extern "C"
   }
   /************************************************************************************
   * get_table_count(): This helper function returns 1 or 0 depending on if any tables
-                       were found in the db.sqlite database
+                       were found in the SQLite database
   * Note: See function usage in  _create_roster & _manage_roster.c
   ************************************************************************************/
   int get_table_count(const char *path)
@@ -747,10 +746,8 @@ extern "C"
     dbConnection = sqlite3_prepare_v2(database, addStudentToSQLTableChar, -1, &statement, nullptr);
     if (dbConnection != SQLITE_OK)
     {
-      cpp_utils_error_logger("Can't prepare SQL statement", "add_student_to_roster", CppErrorLevel::CRITICAL);
-      sqlite3_close(database);
-      // TODO come back to this prepare statement and fix error handling should not return -1
-      return -1;
+      __throw_error_prepare_statement("add_student_to_roster", database, dbConnection);
+      return -3;
     }
 
     sqlite3_bind_text(statement, 1, firstName, -1, SQLITE_STATIC);
@@ -817,7 +814,7 @@ extern "C"
 
   /************************************************************************************
    *  check_if_student_id_exists(): Checks if the passed in studentID exists in the
-   *                                 student db or a roster
+   *                                student db or a roster
    *
    * Note: See function usage in _manage_student_db.c & _manage_roster.c
    ************************************************************************************/
@@ -827,20 +824,18 @@ extern "C"
     string cppString(ID);
     string tableNameString(tableName);
     sqlite3 *database;
-
     // this should allow me to use this function for both the student db and the roster db
-    if (globalTrigger.isTriggered == TRUE)
+    if (globalTrigger.isAddingToStudentsTable == TRUE)
     {
       tableNameString = "students";
     }
-
     int dbConnection = sqlite3_open(programSettings.databaseInfo.dbPath, &database);
 
     if (dbConnection != SQLITE_OK)
     {
       sqlite3_close(database);
       cerr << "Failed to open SQLite3 database." << endl;
-      return 1;
+      return -1;
     }
 
     string SQLStudentIDExistsCheck = "SELECT * FROM " + tableNameString + " WHERE StudentID  ='" + cppString + "'";
@@ -870,7 +865,7 @@ extern "C"
 
   /************************************************************************************
    *  create_student_db_and_table(): Begins the process of adding a student to the
-   *                                 db.sqlite database
+   *                                 SQLite database
    * Note: See function usage in  _add_student.c
    ************************************************************************************/
   int create_student_db_and_table()
@@ -882,7 +877,6 @@ extern "C"
     if (dbConnection != SQLITE_OK)
     {
       __throw_error_opening_db("create_student_db_and_table", database, dbConnection);
-      return -1;
     }
     const char *addStudentToSQLTable = "CREATE TABLE IF NOT EXISTS students (id INTEGER PRIMARY KEY AUTOINCREMENT, FirstName, LastName,StudentID INTEGER)";
 
@@ -899,7 +893,7 @@ extern "C"
   }
 
   /************************************************************************************
-   * insert_student_into_db(): Inserts a student into the db.sqlite database using the
+   * insert_student_into_db(): Inserts a student into the SQLite database using the
    *                           data from the student struct.
    * Note: See function usage in  _add_student.c
    ************************************************************************************/
@@ -940,7 +934,7 @@ extern "C"
   }
 
   /************************************************************************************
-   * show_student_list(): Prints all students currently in the db.sqlite database
+   * show_student_list(): Prints all students currently in the SQLite database
    * Note: See function usage in _add_student.c & _manage_student.c
    ************************************************************************************/
   int show_all_students_in_student_db(const char *path)
@@ -953,13 +947,11 @@ extern "C"
       __throw_error_opening_db("show_all_students_in_student_db", database, dbConnection);
       return -1;
     }
-    print_student_list_heading();
     // Construct the SQL query to select all rows from the specified table
     string selectFromStudentSQLTable = "SELECT FirstName, LastName, StudentID FROM students";
 
     // Execute the query and invoke the callback function to print each row
     dbConnection = sqlite3_exec(database, selectFromStudentSQLTable.c_str(), print_all_students_in_student_db_callback, nullptr, nullptr);
-
     if (dbConnection != SQLITE_OK)
     {
       __throw_error_exec_query("show_all_students_in_student_db", database, dbConnection);
@@ -975,7 +967,7 @@ extern "C"
 
 /************************************************************************************
  *  query_student_db(): Takes in a string from the frontend and queries
- *                                      the db.sqlite database for a match
+ *                                      the SQLite database for a match
  * Note: See function usage in  _manage_student.c & _search.c
  ************************************************************************************/
 int query_student_db(const char *searchParam)
