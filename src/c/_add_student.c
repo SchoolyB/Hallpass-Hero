@@ -474,8 +474,6 @@ int generate_student_id(char *FirstName, char *LastName)
       system("clear");
       __utils_runtime_logger("Acknowledged student last name trucation", "generate_student_id");
       snprintf(setStudentID, sizeof(setStudentID), "%c%c%s%d%d%d", toupper(FirstName[0]), toupper(FirstName[1]), truncatedLastName, digit1, digit2, digit3);
-
-      // TODO need to find a way to allow the second argument in the check_if_student_id_exists() function to be a passed in roster name or the name of the 'students' table. Need to have it so either or can be passed in when needed. Maybe a global variable that can be set to either or depending on the situation.
       if (globalTrigger.isAddingToStudentsTable == TRUE)
       {
         /*if the user is adding a student directly to the "students" table then pass in the "students" table name*/

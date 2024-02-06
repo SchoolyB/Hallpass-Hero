@@ -140,9 +140,12 @@ int handle_rename_db_logic(const char *currentDBName)
         if (confirmed == TRUE)
         {
           sprintf(programSettings.databaseInfo.newDBName, "%s.sqlite", programSettings.databaseInfo.newDBName);
-          // todo do more here
           rename(programSettings.databaseInfo.currentDBName, programSettings.databaseInfo.newDBName);
           sprintf(programSettings.databaseInfo.dbPath, "../build/%s", programSettings.databaseInfo.newDBName);
+          system("clear");
+          printf("%sDatabase successfully renamed to " BOLD "%s%s\n", green.colorCode, programSettings.databaseInfo.newDBName, reset.colorCode);
+          sleep(2);
+          system("clear");
           __utils_runtime_logger("confirmed database renaming", "handle_rename_db_logic");
         }
         else if (confirmed == FALSE)
