@@ -13,8 +13,8 @@ Description : This source file contains all functions related to the settings me
 #include <time.h>
 #include <dirent.h>
 #include <sys/stat.h>
-#include "../lib/headers/utils.h"
-#include "../lib/headers/c_files.h"
+
+#include "../lib/headers/c/c_files.h"
 
 int settingsMenuRunning = TRUE;
 

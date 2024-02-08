@@ -11,8 +11,7 @@ Description : This source file contains the main function for the Hallpass Hero 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include "../lib/headers/utils.h"
-#include "../lib/headers/c_files.h"
+#include "../lib/headers/c/c_files.h"
 
 UserInput userInput = {FALSE};
 GlobalTrigger globalTrigger = {FALSE};

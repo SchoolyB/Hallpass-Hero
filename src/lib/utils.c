@@ -12,8 +12,8 @@ Description : This source file contains several utility functions that are used
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "headers/utils.h"
-#include "headers/db.hpp"
+#include "headers/c/c_files.h"
+#include "headers/cpp/cpp_files.hpp"
 /************************************************************************************
  * __utils_error_logger(): Logs errors errors that occur specifically in 'C' files
  * Note: For 'C++' code error logging see cpp_utils_error_logger in utils.cpp

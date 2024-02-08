@@ -19,11 +19,10 @@ set(SOURCES_C
     src/c/_search.c
     src/c/_settings.c
     src/lib/utils.c
-    # src/lib/Cuazar/lib/Cuazar.c
 )
 
 set(SOURCES_CPP
-    src/db/db.cpp
+    src/cpp/db.cpp
     src/lib/utils.cpp
 )
 
