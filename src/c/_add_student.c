@@ -57,8 +57,8 @@ int add_student_to_student_table(void)
       addStudentMenuIsRunning = FALSE;
       // check if the student table exists and if not create it
       __utils_check_for_sqlite_db();
-      // start the process of adding a student to the "students" table
-      get_student_first_name();
+      // ask the user how they would like to add the student to the roster
+      ask_how_to_add_student();
     }
     else if (userInput.NumInput == 2 || strcmp(userInput.StrInput, "view students") == 0 || strcmp(userInput.StrInput, "view") == 0)
     {
@@ -73,7 +73,7 @@ int add_student_to_student_table(void)
     else if (userInput.NumInput == 4 || strcmp(userInput.StrInput, "main menu") == 0 || strcmp(userInput.StrInput, "main") == 0)
     {
       system("clear");
-      printf("Returning to main menu.");
+      printf("Returning to main menu.\n");
       sleep(1);
       system("clear");
       handle_main_menu();
@@ -89,6 +89,69 @@ int add_student_to_student_table(void)
     }
   }
   return 0;
+}
+/************************************************************************************
+ * ask_to_add_new_student_to_roster(): Asks the user how they would like to add the
+ *                                     student to a roster.
+ * Note: see usage add_student_to_student_table() & _manage_roster.c
+ ************************************************************************************/
+void ask_how_to_add_student()
+{
+  int showingHowToAddStudentMenu = TRUE;
+
+  while (showingHowToAddStudentMenu == TRUE)
+  {
+    __utils_check_for_sqlite_db();
+    if (globalTrigger.isAddingToStudentsTable == TRUE)
+    {
+      show_current_step("Add student to database", 1, 2);
+      printf("How would you like to add a student to the database?\n");
+    }
+    else
+    {
+      show_current_step("Add student to roster", 1, 2);
+      printf("How would you like to add a student to roster: " BOLD "%s?\n" RESET, roster.rosterNameWithPrefix);
+    }
+    printf("Enter the corresponding number.\n");
+    printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n\n", yellow.colorCode, reset.colorCode);
+    printf("1. Search the student database for a student\n");
+    printf("2. Manually add a student\n");
+    printf("3. Use the bulk data loader to add multiple students\n");
+    __utils_fgets_and_remove_newline(userInput.StrInput);
+    userInput.NumInput = atoi(userInput.StrInput);
+    if (INPUT_IS_CANCEL(userInput.StrInput))
+    {
+      __utils_operation_cancelled("ask_which_roster_and_preform_action");
+      show_manage_roster_menu();
+    }
+    switch (userInput.NumInput)
+    {
+    case 1:
+      // todo use search function from _search_student.c
+      break;
+    case 2:
+      system("clear");
+      globalTrigger.isAddingToStudentsTable = FALSE;
+      get_student_first_name();
+
+      break;
+    case 3:
+      system("clear");
+      if (globalTrigger.isAddingToStudentsTable == TRUE)
+      {
+        globalTrigger.isBulkLoadingDataToStudentsTable = TRUE;
+      }
+      else
+      {
+        globalTrigger.isBulkLoadingDataToStudentsTable = FALSE;
+      }
+      handle_bulk_data_loader_menu();
+      break;
+    default:
+      break;
+    }
+    showingHowToAddStudentMenu == FALSE;
+  }
 }
 
 /************************************************************************************
@@ -146,7 +209,7 @@ int get_student_first_name(void)
     else if (INPUT_IS_NO(userInput.StrInput))
     {
       system("clear");
-      printf("Ok lets try again.");
+      printf("Ok lets try again.\n");
       sleep(1);
       system("clear");
       __utils_runtime_logger("did not confirm students first name", "get_student_first_name");
@@ -259,7 +322,7 @@ int get_student_last_name(void)
     else if (INPUT_IS_NO(userInput.StrInput))
     {
       system("clear");
-      printf("Ok lets try again.");
+      printf("Ok lets try again.\n");
       sleep(1);
       system("clear");
       get_student_last_name();

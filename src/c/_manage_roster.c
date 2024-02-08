@@ -619,50 +619,8 @@ int ask_which_roster_and_preform_action(char *action)
       sleep(1);
       // do stuff
       // todo OLD:  Marsh, the problem to come back to... there are a couple things that need to happen for this action. 1. We need to search for the student. 2. handle multiple results in the event that there are people with the same name. one way to do that might be to do a for loop. add a number too each entry in the query then let the user enter the number associated with the query.  3. Then take that students firstName, lastName, and studentID and copy it into the new roster. 4. prob more complicated than this idk lol. Have fun
-      int showingHowToAddStudentMenu = TRUE;
-
-      while (showingHowToAddStudentMenu == TRUE)
-      {
-        __utils_check_for_sqlite_db();
-        show_current_step("Add student to roster", 2, 2);
-        printf("How would you like to add a student to roster: " BOLD "%s?\n" RESET, roster.rosterNameWithPrefix);
-        puts("Enter the corresponding number.");
-        puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
-        printf("\n");
-        puts("1. Search the student database for a student");
-        puts("2. Manually add a student");
-        puts("3. Use the bulk data loader to add multiple students");
-        __utils_fgets_and_remove_newline(userInput.StrInput);
-        userInput.NumInput = atoi(userInput.StrInput);
-        if (INPUT_IS_CANCEL(userInput.StrInput))
-        {
-          __utils_operation_cancelled("ask_which_roster_and_preform_action");
-          show_manage_roster_menu();
-        }
-        switch (userInput.NumInput)
-        {
-        case 1:
-          // todo use search function from _search_student.c
-          break;
-        case 2:
-          system("clear");
-          globalTrigger.isAddingToStudentsTable = FALSE;
-          get_student_first_name();
-
-          break;
-        case 3:
-          // todo add bulk data loader stuff
-          system("clear");
-          puts(YELLOW "THIS FEATURE IS NOT YET IMPLEMENTED" RESET);
-          sleep(2);
-          system("clear");
-          exit(0);
-          break;
-        default:
-          break;
-        }
-        showingHowToAddStudentMenu == FALSE;
-      }
+      globalTrigger.isAddingToStudentsTable = FALSE;
+      ask_how_to_add_student();
     }
   }
   else if (strcmp(action, "remove student from roster") == 0)

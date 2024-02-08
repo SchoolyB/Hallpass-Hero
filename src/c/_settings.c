@@ -478,6 +478,7 @@ int toggle_colors(void)
  * read_from_dir_and_check_extension(): Reads from the directory and checks if the
  *                                      file has the specified extension.
  *
+// TODO move this func to utils.c
  * See usage in: handle_rename_db_logic() & main.c
  ************************************************************************************/
 int read_from_dir_and_check_extension(const char *directoryPath, const char *extension)
@@ -505,11 +506,21 @@ int read_from_dir_and_check_extension(const char *directoryPath, const char *ext
       return -1;
     }
 
-    // Check if the entry is a regular file with the specified extension
     if (S_ISREG(statbuf.st_mode) && strstr(entry->d_name, extension) != NULL)
     {
-      strcpy(programSettings.databaseInfo.currentDBName, entry->d_name);
-      return 1;
+      if (globalTrigger.isUsingBulkLoader == FALSE)
+      {
+        // storing the string value of the found file and file name in the programSettings struct
+        strcpy(programSettings.databaseInfo.currentDBName, entry->d_name);
+        return 1;
+      }
+      else if (globalTrigger.isUsingBulkLoader == TRUE)
+      {
+        // storing the string value of the found file and file path in the jsonDataFile struct whenever the function is called
+        strcpy(jsonDataFile.FileName, entry->d_name);
+        strcpy(jsonDataFile.FilePath, filePath);
+        return 1;
+      }
     }
   }
 

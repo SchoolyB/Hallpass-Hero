@@ -19,7 +19,7 @@ ProgramSettings programSettings = {FALSE};
 DatabaseInfo databaseInfo = {FALSE};
 ThrowAways throwAways = {FALSE};
 Roster roster = {FALSE};
-
+JSONDataFile jsonDataFile = {FALSE};
 Color red = {RED};
 Color green = {GREEN};
 Color yellow = {YELLOW};
@@ -60,6 +60,7 @@ int main(void)
   // Creates the logs dir on startup if it doesn't already exist
   mkdir("../logs", 0777);
 
+  mkdir("../build/data", 0777);
   // Create the errors.log file if it doesn't already exist
   FILE *errorLogFile = fopen("../logs/errors.log", "a");
   if (errorLogFile == NULL)
@@ -99,11 +100,11 @@ int main(void)
 int handle_main_menu(void)
 {
   system("clear");
-  puts("Welcome to the Hallpass Hero main menu!");
-  puts("Please select one of the options below:");
+  printf("Welcome to the Hallpass Hero main menu!\n");
+  printf("Please select one of the options below:\n");
 
   // showing main menu options
-  puts("===========================================================================================");
+  printf("===========================================================================================\n");
   for (int i = 0; i < 8; ++i)
   {
     printf("| %s %-90s\n", MainMenuOptions[i], "");
@@ -169,15 +170,15 @@ int handle_main_menu(void)
   else if (userInput.NumInput == 8 || strcmp(userInput.StrInput, "exit") == 0)
   {
     system("clear");
-    puts("See you soon!");
+    printf("See you soon!");
     __utils_runtime_logger("exited the program", "main");
     exit(0);
   }
   else
   {
     __utils_error_logger("Invalid decision made on while on main menu", "main", MINOR);
-    puts("Sorry, I didn't understand that.");
-    puts("Please try again");
+    printf("Sorry, I didn't understand that.");
+    printf("Please try again");
     system("clear");
   }
 }

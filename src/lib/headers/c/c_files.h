@@ -72,6 +72,7 @@ enum ErrorLevel
 // Prototypes
 /*_add_student.c*/
 int add_student_to_student_table(void);
+void ask_how_to_add_student();
 int get_student_first_name(void);
 int get_student_last_name(void);
 int ask_about_student_id(void);
@@ -82,6 +83,9 @@ int confirm_manually_entered_student_id(char *studentID);
 int ask_to_add_new_student_to_roster(void);
 int ask_which_roster_to_add_newly_created_student(void);
 int handle_last_name_truncated_menu(void);
+
+/*_bulk_data_loader.c*/
+int handle_bulk_data_loader_menu(void);
 
 /*_create_roster.c*/
 int create_new_roster(void);
@@ -127,6 +131,7 @@ int __utils_error_logger(char *error_message, char *function, enum ErrorLevel le
 int __utils_runtime_logger(char *action, char *functionName);
 void __utils_operation_cancelled(const char *functionName);
 int __utils_check_for_sqlite_db(void);
+int __utils_check_for_bulk_loader_data_file(void);
 void show_current_menu(char *str);
 void show_current_step(char *str, int currentStep, int totalSteps);
 void __utils_remove_newline_char(char *param);
@@ -136,6 +141,7 @@ int has_one_non_space_char(const char *str);
 int wait_for_char_input(void);
 int search_for_student(void);
 int read_and_display_help_docs(const char *helpFile);
+int iota();
 
 // just some variables used when Idk what do name a variable or when I need to pass a variable to a function but I don't need the value
 typedef struct
@@ -155,6 +161,7 @@ typedef struct
   int NumInput;
   char StrInput[50];
 } UserInput;
+
 // typedef struct
 // {
 //   char RelationshipToStudent[20];
@@ -183,10 +190,11 @@ typedef struct
 
 typedef struct
 {
-  char Str1[100];
-  char Str2[100];
-
-} GenericDataType;
+  int fileNumIota;
+  char FileName[32];
+  char FilePath[32];
+  char FileSizeInBytes[20]; // may not need this
+} JSONDataFile;
 
 typedef struct
 {
@@ -207,6 +215,7 @@ typedef struct
   int studentCreationInterrupted;
   int isAddingToStudentsTable; // modifies functions depending on if the user is adding students directly to the "students" table or to a roster
 
+  int isUsingBulkLoader;                // this trigger only affects what information from a directory is stored into the JSONDataFile the programSettings.databaseInfo struct respectively
   int isBulkLoadingDataToStudentsTable; // will modify functions to handle bulk data loading. allowing me to use the same functions for both bulk data loading to a roster and to the students table
 } GlobalTrigger;
 
@@ -228,6 +237,7 @@ typedef struct
   DatabaseInfo databaseInfo; // may not need this
 } ProgramSettings;
 
+extern JSONDataFile jsonDataFile;       // initialized in main.c
 extern Roster roster;                   // initialized in main.c
 extern ThrowAways throwAways;           // initialized in main.c
 extern UserInput userInput;             // initialized in main.c

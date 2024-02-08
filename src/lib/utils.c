@@ -95,9 +95,31 @@ int __utils_check_for_sqlite_db(void)
   int databaseFound = read_from_dir_and_check_extension("../build", ".sqlite");
   if (databaseFound == FALSE)
   {
+    __utils_error_logger("Could not find database", "check_for_sqlite_db", MINOR);
+    __utils_runtime_logger("Creating database", "check_for_sqlite_db");
     create_student_db_and_table();
   }
   return 0;
+}
+
+int __utils_check_for_bulk_loader_data_file(void)
+{
+  int dataFileFound = read_from_dir_and_check_extension("../build/data", ".json");
+
+  if (dataFileFound == FALSE)
+  {
+    __utils_error_logger("Could not find bulk data loader directory", "check_for_bulk_loader_data_file", MINOR);
+    __utils_runtime_logger("Creating bulk data loader directory", "check_for_bulk_loader_data_file");
+    jsonDataFile.fileNumIota = 0;
+    generate_bulk_data_loader_file("data.json", jsonDataFile.fileNumIota);
+    return FALSE;
+  }
+
+  else if (dataFileFound == TRUE)
+  {
+    __utils_runtime_logger("Bulk data loader file found", "check_for_bulk_loader_data_file");
+    return TRUE;
+  }
 }
 
 /************************************************************************************
