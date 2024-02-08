@@ -206,6 +206,8 @@ typedef struct
 {
   int studentCreationInterrupted;
   int isAddingToStudentsTable; // modifies functions depending on if the user is adding students directly to the "students" table or to a roster
+
+  int isBulkLoadingDataToStudentsTable; // will modify functions to handle bulk data loading. allowing me to use the same functions for both bulk data loading to a roster and to the students table
 } GlobalTrigger;
 
 typedef struct
