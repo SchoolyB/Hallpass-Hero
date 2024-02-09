@@ -39,8 +39,11 @@ int handle_bulk_data_loader_menu(void)
         {
         case FALSE: // file not found
           system("clear");
-          printf("%sBulk data loader file not found. New file generated%s\n", yellow.colorCode, reset.colorCode);
-          sleep(2);
+          printf("%sBulk data loader file not found. %s\n", yellow.colorCode, reset.colorCode);
+          sleep(1);
+          printf("%sGenerating new file...%s\n", green.colorCode, reset.colorCode);
+          printf("New file successfully generated\n");
+          sleep(1);
           system("clear");
           // todo do more
           break;
@@ -74,7 +77,7 @@ int handle_bulk_data_loader_menu(void)
           }
           break;
         }
-        // 1.generate a new file
+        // 1.generate a new file DONE
         // 2. allow the user to enter as much data as they want from the ui
         // 3. store that data into a file
         break;
@@ -119,8 +122,6 @@ void generate_bulk_data_loader_file(const char *fileName, const char *fileStatus
 
   // storing the file name and path in the jsonDataFile struct on file generation
   snprintf(jsonDataFile.FileName, sizeof(jsonDataFile.FileName), "%s_%s", fileStatus, fileName);
-  printf("jsonDataFile.FileName: %s\n", jsonDataFile.FileName);
-  wait_for_char_input();
   sprintf(jsonDataFile.FilePath, "%s", filePath);
 
   fclose(file);
@@ -192,13 +193,12 @@ int handle_non_empty_data_file(void)
     int fileExists = __utils_check_for_bulk_loader_data_file();
     if (fileExists == TRUE)
     {
-
       // need to change the name of the already existing file to inactive
       rename(jsonDataFile.FilePath, "../build/data/inactive_data.json");
       generate_bulk_data_loader_file("data.json", "active");
       printf("%sNew file successfully generated%s\n", green.colorCode, reset.colorCode);
-      printf("Active data file now set to: " BOLD "%s%s\n", jsonDataFile.FileName, reset.colorCode);
-      printf("Active data file path now set to: " BOLD "%s%s\n", jsonDataFile.FilePath, reset.colorCode);
+      sleep(2);
+      system("clear");
       // todo need to handle what would happen in the event that there are several inactive files. Currently this will just overwrite the first "inactive" file
     }
     break;
@@ -248,8 +248,12 @@ int overwrite_existing_data_file(const char *filePath)
   }
   else if (INPUT_IS_NO(userInput.StrInput))
   {
-    __utils_operation_cancelled("Overwriting existing data file");
-    return 0;
+    system("clear");
+    __utils_runtime_logger("chose not to overwrite bulk data loader json file", "overwrite_existing_data_file");
+    printf("Returning to the bulk data loader menu...\n");
+    sleep(2);
+    system("clear");
+    handle_bulk_data_loader_menu();
   }
   else
   {

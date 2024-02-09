@@ -122,7 +122,10 @@ void ask_how_to_add_student()
     if (INPUT_IS_CANCEL(userInput.StrInput))
     {
       __utils_operation_cancelled("ask_which_roster_and_preform_action");
-      show_manage_roster_menu();
+      printf("Returning to add student menu.\n");
+      sleep(1);
+      system("clear");
+      add_student_to_student_table();
     }
     switch (userInput.NumInput)
     {
