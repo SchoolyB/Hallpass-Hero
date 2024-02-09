@@ -12,6 +12,9 @@ Description : This source file contains several utility functions that are used
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <dirent.h>
+#include <sys/stat.h>
 #include "headers/c/c_files.h"
 #include "headers/cpp/cpp_files.hpp"
 /************************************************************************************
@@ -44,7 +47,7 @@ int __utils_error_logger(char *errorMessage, char *function, enum ErrorLevel lev
     fprintf(errorLog, "Logged @ %s", ctime(&currentTime));
     fprintf(errorLog, "CRITICAL ERROR: %s, in function call: %s()\n", errorMessage, function);
     fprintf(errorLog, "======================================================================================\n");
-    printf(RED "Critical Error Occurred @ %s: For more information see logs/errors.log \n" RESET, ctime(&currentTime));
+    printf(RED "Critical Error occurred @ %s: For more information see logs/errors.log \n" RESET, ctime(&currentTime));
     fflush(errorLog);
     exit(1);
   default:
@@ -74,6 +77,11 @@ int __utils_runtime_logger(char *action, char *functionName)
   fflush(runtimeLog);
 }
 
+/************************************************************************************
+ * __utils_operation_cancelled(): Logs when an operation is cancelled and displays
+ *                               a message to the user.
+ *
+ ************************************************************************************/
 void __utils_operation_cancelled(const char *functionName)
 {
   system("clear");
@@ -102,6 +110,14 @@ int __utils_check_for_sqlite_db(void)
   return 0;
 }
 
+/************************************************************************************
+ * __utils_check_for_bulk_loader_data_file(): Checks if a bulk data loader file exists
+ *                                            in the build/data directory. If it does not
+ *                                            then it creates the default active_data.json
+ *                                            file.
+ *
+ * See usage in main.c
+ ************************************************************************************/
 int __utils_check_for_bulk_loader_data_file(void)
 {
   int dataFileFound = read_from_dir_and_check_extension("../build/data", ".json");
@@ -111,7 +127,7 @@ int __utils_check_for_bulk_loader_data_file(void)
     __utils_error_logger("Could not find bulk data loader directory", "check_for_bulk_loader_data_file", MINOR);
     __utils_runtime_logger("Creating bulk data loader directory", "check_for_bulk_loader_data_file");
     jsonDataFile.fileNumIota = 0;
-    generate_bulk_data_loader_file("data.json", jsonDataFile.fileNumIota);
+    generate_bulk_data_loader_file("data.json", "active");
     return FALSE;
   }
 
@@ -120,6 +136,97 @@ int __utils_check_for_bulk_loader_data_file(void)
     __utils_runtime_logger("Bulk data loader file found", "check_for_bulk_loader_data_file");
     return TRUE;
   }
+}
+
+/************************************************************************************
+ * read_from_dir_and_check_extension(): Reads from the directory and checks if the
+ *                                      file has the specified extension.
+ *
+ * See usage in: handle_rename_db_logic() & main.c
+ ************************************************************************************/
+int read_from_dir_and_check_extension(const char *directoryPath, const char *extension)
+{
+  DIR *dir;
+  struct dirent *entry;
+  struct stat statbuf;
+
+  dir = opendir(directoryPath);
+
+  if (dir == NULL)
+  {
+    return -1;
+  }
+
+  // Iterate through the directory entries
+  while ((entry = readdir(dir)) != NULL)
+  {
+    char filePath[256];
+    snprintf(filePath, sizeof(filePath), "%s/%s", directoryPath, entry->d_name);
+
+    if (stat(filePath, &statbuf) == -1)
+    {
+      closedir(dir);
+      return -1;
+    }
+
+    if (S_ISREG(statbuf.st_mode) && strstr(entry->d_name, extension) != NULL)
+    {
+      if (globalTrigger.isUsingBulkLoader == FALSE)
+      {
+        // storing the string value of the found file and file name in the programSettings struct
+        strcpy(programSettings.databaseInfo.currentDBName, entry->d_name);
+        return 1;
+      }
+      else if (globalTrigger.isUsingBulkLoader == TRUE)
+      {
+        // storing the string value of the found file and file path in the jsonDataFile struct whenever the function is called
+        strcpy(jsonDataFile.FileName, entry->d_name);
+        strcpy(jsonDataFile.FilePath, filePath);
+        return 1;
+      }
+    }
+  }
+
+  closedir(dir);
+  return 0;
+}
+
+/************************************************************************************
+ * search_for_prefix_in_file_name(): Searches for the passed in word in the file name
+ *                                   could technically be used to search for any string
+ *                                   in a file name.
+ *
+ * See usage in: handle_rename_db_logic()
+ ************************************************************************************/
+int search_for_prefix_in_file_name(const char *targetWord)
+{
+  DIR *dir = opendir("../build/data");
+
+  if (dir == NULL)
+  {
+    perror("Error opening directory");
+    return 1;
+  }
+  struct dirent *entry;
+
+  while ((entry = readdir(dir)) != NULL)
+  {
+    if (strstr(entry->d_name, targetWord) != NULL)
+    {
+      char fileName[256];
+      char filePath[256];
+      // copy the name of the entry into the fileName variable
+      strcpy(fileName, entry->d_name);
+      // store the value of the fileName and filePath variables in the jsonDataFile struct
+      sprintf(jsonDataFile.FileName, "%s", fileName);
+      sprintf(jsonDataFile.FilePath, "../build/data/%s", fileName);
+      break;
+    }
+  }
+
+  closedir(dir);
+
+  return 0;
 }
 
 /************************************************************************************

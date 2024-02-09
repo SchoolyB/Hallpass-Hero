@@ -475,60 +475,6 @@ int toggle_colors(void)
 }
 
 /************************************************************************************
- * read_from_dir_and_check_extension(): Reads from the directory and checks if the
- *                                      file has the specified extension.
- *
-// TODO move this func to utils.c
- * See usage in: handle_rename_db_logic() & main.c
- ************************************************************************************/
-int read_from_dir_and_check_extension(const char *directoryPath, const char *extension)
-{
-  DIR *dir;
-  struct dirent *entry;
-  struct stat statbuf;
-
-  dir = opendir(directoryPath);
-
-  if (dir == NULL)
-  {
-    return -1;
-  }
-
-  // Iterate through the directory entries
-  while ((entry = readdir(dir)) != NULL)
-  {
-    char filePath[256];
-    snprintf(filePath, sizeof(filePath), "%s/%s", directoryPath, entry->d_name);
-
-    if (stat(filePath, &statbuf) == -1)
-    {
-      closedir(dir);
-      return -1;
-    }
-
-    if (S_ISREG(statbuf.st_mode) && strstr(entry->d_name, extension) != NULL)
-    {
-      if (globalTrigger.isUsingBulkLoader == FALSE)
-      {
-        // storing the string value of the found file and file name in the programSettings struct
-        strcpy(programSettings.databaseInfo.currentDBName, entry->d_name);
-        return 1;
-      }
-      else if (globalTrigger.isUsingBulkLoader == TRUE)
-      {
-        // storing the string value of the found file and file path in the jsonDataFile struct whenever the function is called
-        strcpy(jsonDataFile.FileName, entry->d_name);
-        strcpy(jsonDataFile.FilePath, filePath);
-        return 1;
-      }
-    }
-  }
-
-  closedir(dir);
-  return 0;
-}
-
-/************************************************************************************
  * store_setting(): Used to store the passed in settings value into the key-value pair
  *                  in the settings.config file.
  *

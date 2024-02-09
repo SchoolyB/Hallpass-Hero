@@ -86,6 +86,11 @@ int handle_last_name_truncated_menu(void);
 
 /*_bulk_data_loader.c*/
 int handle_bulk_data_loader_menu(void);
+void generate_bulk_data_loader_file(const char *fileName, const char *fileStatus);
+int check_if_data_file_is_empty(void);
+int handle_non_empty_data_file(void);
+int overwrite_existing_data_file(const char *filePath);
+int clear_data_file(const char *filePath);
 
 /*_create_roster.c*/
 int create_new_roster(void);
@@ -118,7 +123,6 @@ int handle_rename_db_logic(const char *currentDBName);
 int confirm_db_rename(const char *newDBName);
 int handle_runtime_logging_logic(void);
 int toggle_colors(void);
-int read_from_dir_and_check_extension(const char *directoryPath, const char *extension);
 int store_setting(const char *settingName, int settingValue);
 int check_if_settings_config_keys_exist(const char *key);
 int update_config_key_value(const char *settingName, int newSettingValue);
@@ -132,6 +136,8 @@ int __utils_runtime_logger(char *action, char *functionName);
 void __utils_operation_cancelled(const char *functionName);
 int __utils_check_for_sqlite_db(void);
 int __utils_check_for_bulk_loader_data_file(void);
+int read_from_dir_and_check_extension(const char *directoryPath, const char *extension);
+int search_for_prefix_in_file_name(const char *targetWord);
 void show_current_menu(char *str);
 void show_current_step(char *str, int currentStep, int totalSteps);
 void __utils_remove_newline_char(char *param);
@@ -141,7 +147,6 @@ int has_one_non_space_char(const char *str);
 int wait_for_char_input(void);
 int search_for_student(void);
 int read_and_display_help_docs(const char *helpFile);
-int iota();
 
 // just some variables used when Idk what do name a variable or when I need to pass a variable to a function but I don't need the value
 typedef struct

@@ -4,7 +4,6 @@
 
 int handle_bulk_data_loader_menu(void)
 {
-  globalTrigger.isUsingBulkLoader = TRUE;
   int bulkDataLoaderMenuProccess = TRUE;
   while (bulkDataLoaderMenuProccess == TRUE)
   {
@@ -25,7 +24,7 @@ int handle_bulk_data_loader_menu(void)
       if (INPUT_IS_CANCEL(userInput.StrInput))
       {
         __utils_operation_cancelled("Bulk Data Loader: Student Database");
-        return 0;
+        handle_bulk_data_loader_menu();
       }
       switch (userInput.NumInput)
       {
@@ -47,20 +46,31 @@ int handle_bulk_data_loader_menu(void)
           break;
         case TRUE: // file and dir found
           system("clear");
-          printf("%sData file: " BOLD "%s %s%sfound%s\n", green.colorCode, jsonDataFile.FileName, reset.colorCode, green.colorCode, reset.colorCode);
-          int fileIsEmpty = check_if_data_file_is_empty();
-          if (fileIsEmpty == FALSE)
+          int resultOfSearch = search_for_prefix_in_file_name("active_data");
+          switch (resultOfSearch)
           {
-            system("clear");
-            handle_non_empty_data_file();
-          }
-          else
-          {
-            system("clear");
-            printf("%sData file is empty%s\n", green.colorCode, reset.colorCode);
+          case 0:
+            printf("%sData file: " BOLD "%s %s%sfound%s\n", green.colorCode, jsonDataFile.FileName, reset.colorCode, green.colorCode, reset.colorCode);
             sleep(2);
-            system("clear");
-            // todo add data...
+            int fileIsEmpty = check_if_data_file_is_empty();
+            if (fileIsEmpty == FALSE)
+            {
+              system("clear");
+              handle_non_empty_data_file();
+            }
+            else
+            {
+              printf("%sData file: " BOLD "%s%s%s is empty%s\n", green.colorCode, jsonDataFile.FileName, reset.colorCode, green.colorCode, reset.colorCode);
+              sleep(2);
+              system("clear");
+              // todo add data...
+            }
+            break;
+          case 1:
+            break;
+          default:
+            __utils_error_logger("failed to search for prefix in file name", "handle_bulk_data_loader_menu", MINOR);
+            break;
           }
           break;
         }
@@ -86,15 +96,17 @@ int handle_bulk_data_loader_menu(void)
   }
 }
 
-void manually_load_student_data(void)
-{
-  // this function will need to allow the user to enter as much data as they want
-}
-
-void generate_bulk_data_loader_file(const char *fileName, int num)
+/************************************************************************************
+ * generate_bulk_data_loader_file(): Generates a new bulk data loader .json file
+ *                                   with the file name and status passed as arguments.
+ *                                    - fileStatus: "active" or "inactive"
+ *
+ * See usage in handle_bulk_data_loader_menu()
+ ************************************************************************************/
+void generate_bulk_data_loader_file(const char *fileName, const char *fileStatus)
 {
   char filePath[100];
-  snprintf(filePath, sizeof(filePath), "../build/data/%d_%s", num, fileName);
+  snprintf(filePath, sizeof(filePath), "../build/data/%s_%s", fileStatus, fileName);
 
   FILE *file = fopen(filePath, "a");
   if (file == NULL)
@@ -106,7 +118,9 @@ void generate_bulk_data_loader_file(const char *fileName, int num)
   __utils_runtime_logger("Created bulk data loader json file", "generate_bulk_data_loader_file");
 
   // storing the file name and path in the jsonDataFile struct on file generation
-  snprintf(jsonDataFile.FileName, sizeof(jsonDataFile.FileName), "%d_%s", num, fileName);
+  snprintf(jsonDataFile.FileName, sizeof(jsonDataFile.FileName), "%s_%s", fileStatus, fileName);
+  printf("jsonDataFile.FileName: %s\n", jsonDataFile.FileName);
+  wait_for_char_input();
   sprintf(jsonDataFile.FilePath, "%s", filePath);
 
   fclose(file);
@@ -117,7 +131,7 @@ void generate_bulk_data_loader_file(const char *fileName, int num)
  *
  * See usage in handle_bulk_data_loader_menu()
  ************************************************************************************/
-int check_if_data_file_is_empty()
+int check_if_data_file_is_empty(void)
 {
   __utils_runtime_logger("checking if bulk data loader json file is empty", "check_if_data_file_is_empty");
   FILE *file = fopen(jsonDataFile.FilePath, "r");
@@ -146,7 +160,14 @@ int check_if_data_file_is_empty()
   }
 }
 
-int handle_non_empty_data_file()
+/************************************************************************************
+ * handle_non_empty_data_file(): This function handles the menu that appears in
+ *                               the event that the bulk data loader .json file is
+ *                               not empty.
+ *
+ * See usage in handle_bulk_data_loader_menu()
+ ************************************************************************************/
+int handle_non_empty_data_file(void)
 {
   system("clear");
   __utils_runtime_logger("entered handle non empty data file menu", "handle_non_empty_data_file");
@@ -159,7 +180,11 @@ int handle_non_empty_data_file()
 
   __utils_fgets_and_remove_newline(userInput.StrInput);
   userInput.NumInput = atoi(userInput.StrInput);
-
+  if (INPUT_IS_CANCEL(userInput.StrInput))
+  {
+    __utils_operation_cancelled("handle_non_empty_data_file");
+    return 0;
+  }
   switch (userInput.NumInput)
   {
   case 1:
@@ -167,11 +192,14 @@ int handle_non_empty_data_file()
     int fileExists = __utils_check_for_bulk_loader_data_file();
     if (fileExists == TRUE)
     {
-      generate_bulk_data_loader_file("data.json", jsonDataFile.fileNumIota++);
+
+      // need to change the name of the already existing file to inactive
+      rename(jsonDataFile.FilePath, "../build/data/inactive_data.json");
+      generate_bulk_data_loader_file("data.json", "active");
       printf("%sNew file successfully generated%s\n", green.colorCode, reset.colorCode);
-      printf("Data file now set to: " BOLD "%s%s\n", jsonDataFile.FileName, reset.colorCode);
-      printf("Data file path now set to: " BOLD "%s%s\n", jsonDataFile.FilePath, reset.colorCode);
-      // sleep(3);
+      printf("Active data file now set to: " BOLD "%s%s\n", jsonDataFile.FileName, reset.colorCode);
+      printf("Active data file path now set to: " BOLD "%s%s\n", jsonDataFile.FilePath, reset.colorCode);
+      // todo need to handle what would happen in the event that there are several inactive files. Currently this will just overwrite the first "inactive" file
     }
     break;
   case 2:
@@ -180,13 +208,19 @@ int handle_non_empty_data_file()
     break;
   case 3:
     system("clear");
-    // todo overwrite the existing file
     overwrite_existing_data_file(jsonDataFile.FilePath);
     handle_bulk_data_loader_menu();
     break;
   }
 }
 
+/************************************************************************************
+ * overwrite_existing_data_file(): This function handles the menu that appears in
+ *                                 the event that the user wants to overwrite the
+ *                                 active bulk data loader .json file.
+ *
+ * See usage in handle_non_empty_data_file()
+ ************************************************************************************/
 int overwrite_existing_data_file(const char *filePath)
 {
   system("clear");
@@ -225,6 +259,11 @@ int overwrite_existing_data_file(const char *filePath)
   }
 }
 
+/************************************************************************************
+ * clear_data_file(): Clears the passed in  bulk data loader .json file.
+ *
+ * See usage in overwrite_existing_data_file()
+ ************************************************************************************/
 int clear_data_file(const char *filePath)
 {
   FILE *file = fopen(filePath, "w");
