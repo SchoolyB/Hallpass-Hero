@@ -14,3 +14,4 @@ Makefile
 /logs/
 .vscode/
 *.sql
+__pycache__
