@@ -85,13 +85,13 @@ int main(void)
   fprintf(runtimeLogFile, "======================================================================================\n\n");
   fflush(runtimeLogFile);
   fclose(runtimeLogFile);
+  check_and_load_config();
 
   int mainMenuProccess = TRUE;
   while (mainMenuProccess == TRUE)
   {
-    handle_main_menu();
     /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-START OF MAIN MENU+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-
+    handle_main_menu();
     /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-END OF MAIN MENU+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
   }
   return 0;

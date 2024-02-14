@@ -738,9 +738,11 @@ int check_and_load_config(void)
     {
     case 0:
       programSettings.runtimeLoggingEnabled = FALSE;
+      __utils_runtime_logger("runtime logging read as disabled in config file, setting runtime logging to false", "check_and_load_config");
       break;
     case 1:
       programSettings.runtimeLoggingEnabled = TRUE;
+      __utils_runtime_logger("runtime logging read as enabled in config file, setting runtime logging to true", "check_and_load_config");
       break;
     }
 
@@ -750,9 +752,17 @@ int check_and_load_config(void)
     {
     case 0:
       programSettings.colorEnabled = FALSE;
+      __utils_runtime_logger("colors read as disabled in config file, setting color to false", "check_and_load_config");
+      red.colorCode = "";
+      green.colorCode = "";
+      yellow.colorCode = "";
       break;
     case 1:
       programSettings.colorEnabled = TRUE;
+      __utils_runtime_logger("colors read as enabled in config file, setting color to true", "check_and_load_config");
+      red.colorCode = RED;
+      green.colorCode = GREEN;
+      yellow.colorCode = YELLOW;
       break;
     }
 
@@ -763,9 +773,11 @@ int check_and_load_config(void)
     {
     case 0:
       programSettings.autoStudentIDGenerationEnabled = FALSE;
+      __utils_runtime_logger("auto student ID generation read as disabled in config file, setting auto student ID generation to false", "check_and_load_config");
       break;
     case 1:
       programSettings.autoStudentIDGenerationEnabled = TRUE;
+      __utils_runtime_logger("auto student ID generation read as enabled in config file, setting auto student ID generation to true", "check_and_load_config");
       break;
     }
   }
