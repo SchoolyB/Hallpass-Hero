@@ -19,12 +19,12 @@ set(SOURCES_C
     src/c/_manage_student_db.c
     src/c/_search.c
     src/c/_settings.c
-    src/lib/utils.c
+    src/lib/utils/utils.c
 )
 
 set(SOURCES_CPP
     src/cpp/db.cpp
-    src/lib/utils.cpp
+    src/lib/utils/utils.cpp
 )
 
 # C++ source file library

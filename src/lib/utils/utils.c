@@ -15,8 +15,8 @@ Description : This source file contains several utility functions that are used
 #include <string.h>
 #include <dirent.h>
 #include <sys/stat.h>
-#include "headers/c/c_files.h"
-#include "headers/cpp/cpp_files.hpp"
+#include "../headers/c/c_files.h"
+#include "../headers/cpp/cpp_files.hpp"
 /************************************************************************************
  * __utils_error_logger(): Logs errors errors that occur specifically in 'C' files
  * Note: For 'C++' code error logging see cpp_utils_error_logger in utils.cpp
