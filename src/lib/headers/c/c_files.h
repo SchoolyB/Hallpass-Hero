@@ -91,6 +91,7 @@ int check_if_data_file_is_empty(void);
 int handle_non_empty_data_file(void);
 int overwrite_existing_data_file(const char *filePath);
 int clear_data_file(const char *filePath);
+int __bulk_handle_data_entry();
 
 /*_create_roster.c*/
 int create_new_roster(void);
@@ -138,6 +139,7 @@ int __utils_check_for_sqlite_db(void);
 int __utils_check_for_bulk_loader_data_file(void);
 int read_from_dir_and_check_extension(const char *directoryPath, const char *extension);
 int search_for_prefix_in_file_name(const char *targetWord);
+void show_bulk_loader_current_status(char *str);
 void show_current_menu(char *str);
 void show_current_step(char *str, int currentStep, int totalSteps);
 void __utils_remove_newline_char(char *param);

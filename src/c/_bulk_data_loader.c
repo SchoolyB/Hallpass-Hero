@@ -66,7 +66,7 @@ int handle_bulk_data_loader_menu(void)
               printf("%sData file: " BOLD "%s%s%s is empty%s\n", green.colorCode, jsonDataFile.FileName, reset.colorCode, green.colorCode, reset.colorCode);
               sleep(2);
               system("clear");
-              // todo add data...
+              __bulk_handle_data_entry();
             }
             break;
           case 1:
@@ -280,5 +280,56 @@ int clear_data_file(const char *filePath)
   {
     fclose(file);
     return 0;
+  }
+}
+
+/************************************************************************************
+ * __bulk_handle_data_entry(): Handles the input for bulk student data submission
+ *
+ * See usage in
+ ************************************************************************************/
+int __bulk_handle_data_entry()
+{
+  system("clear");
+  show_bulk_loader_current_status("Adding students to database");
+  printf("%sPlease read and follow the steps below carefully%s\n", yellow.colorCode, reset.colorCode);
+  printf("%sTo cancel this operation enter 'cancel'%s\n\n", yellow.colorCode, reset.colorCode);
+
+  printf("1. Enter the desired first name of the student\n");
+  printf("2. Confirm the first name you just entered\n");
+  printf("3. Enter the desired last name(if no last name enter 'none')\n");
+  printf("4. Confirm the last name you just entered\n");
+  if (programSettings.autoStudentIDGenerationEnabled == TRUE)
+  {
+    printf("5. Confirm the automatically generated student ID\n");
+  }
+  else if (programSettings.autoStudentIDGenerationEnabled == FALSE)
+  {
+    printf("5. Enter and confirm the desired ID for the student\n");
+  }
+  printf("6. Enter the word " BOLD "'next' to move on to the next student entry %s\n", reset.colorCode);
+  printf("7. If you are completely finished adding students enter the word " BOLD "'complete'.%s\n", reset.colorCode);
+  printf("Doing so will insert the entered data into the data file.\n");
+  printf("\n");
+  printf("\n");
+
+  printf("When you are ready to begin enter the word 'start'\n");
+  __utils_fgets_and_remove_newline(userInput.StrInput);
+  if (INPUT_IS_CANCEL(userInput.StrInput))
+  {
+    __utils_operation_cancelled("__bulk_handle_data_entry");
+    return 0;
+  }
+  else if (strcmp(userInput.StrInput, "start") == 0)
+  {
+    // start proccess
+    // todo need to store each entry into an array in json
+  }
+  else
+  {
+    system("clear");
+    printf("Invalid decision. Please try again\n");
+    sleep(1);
+    __bulk_handle_data_entry();
   }
 }
