@@ -87,7 +87,7 @@ For Red Hat-based systems you could try
 sudo yum install sqlite-devel
 ```
 
-For Arch Linux you could try the 
+For Arch Linux you could try
 ```sh
 sudo pacman -S sqlite
 ```
