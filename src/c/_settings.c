@@ -13,7 +13,6 @@ Description : This source file contains all functions related to the settings me
 #include <time.h>
 #include <dirent.h>
 #include <sys/stat.h>
-
 #include "../lib/headers/c/c_files.h"
 
 int settingsMenuRunning = TRUE;
@@ -63,7 +62,6 @@ int show_settings_menu(void)
     break;
   case 3:
     __utils_runtime_logger("user entered the enable/disable color menu", "show_settings_menu");
-
     check_and_load_config();
     toggle_colors();
     break;
@@ -406,9 +404,10 @@ int toggle_colors(void)
     else if (INPUT_IS_CANCEL(userInput.StrInput))
     {
       __utils_operation_cancelled("toggle_colors");
+      printf("Returning to settings menu...\n");
       sleep(1);
       system("clear");
-      return -1;
+      show_settings_menu();
     }
 
     // This is here only because of the cancel message above
@@ -461,7 +460,10 @@ int toggle_colors(void)
     {
 
       __utils_operation_cancelled("toggle_colors");
-      return -1;
+      printf("Returning to settings menu...\n");
+      sleep(1);
+      system("clear");
+      show_settings_menu();
     }
     else
     {
