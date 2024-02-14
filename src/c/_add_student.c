@@ -151,6 +151,11 @@ void ask_how_to_add_student()
       handle_bulk_data_loader_menu();
       break;
     default:
+      system("clear");
+      printf("Invalid decision. Please try again.\n");
+      sleep(1);
+      system("clear");
+      ask_how_to_add_student();
       break;
     }
     showingHowToAddStudentMenu == FALSE;
