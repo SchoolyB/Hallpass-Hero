@@ -232,6 +232,7 @@ int search_for_prefix_in_file_name(const char *targetWord)
  * show_bulk_loader_current_status(): a constant header that shows if the user is bulk
  *                                    loading data to a roster or to the student db
  ************************************************************************************/
+// todo might make this a python function
 void show_bulk_loader_current_status(char *str)
 {
   printf("Bulk Data Loader Status:" BOLD " %s%s\n", str, reset.colorCode);
