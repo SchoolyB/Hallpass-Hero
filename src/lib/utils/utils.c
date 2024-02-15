@@ -20,6 +20,7 @@ Description : This source file contains several utility functions that are used
 /************************************************************************************
  * __utils_error_logger(): Logs errors errors that occur specifically in 'C' files
  * Note: For 'C++' code error logging see cpp_utils_error_logger in utils.cpp
+ * Note: For 'Python' code error logging see utils.py
  ************************************************************************************/
 int __utils_error_logger(char *errorMessage, char *function, enum ErrorLevel level)
 {

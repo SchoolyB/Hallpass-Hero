@@ -3,12 +3,11 @@ import time
 import json
 from enum import Enum
 
-filePath = "../build/data/active_data.json"
-
-# The current session number of the bulk data loader
-globalSessionNumber = None
-# The total number of students ever uploaded to the system
-globalTotalStudentNumber = None
+dataFilePath = "../build/data/active_data.json"
+settingsConfigPath = "../../build/settings.config"
+statsLogFilePath = "../../logs/stats.log"
+errorLogFilePath = "../../logs/errors.log"
+runtimeLogFilePath = "../../logs/runtime.log"
 
 class ErrorLevel(Enum):
     MINOR = 0
@@ -22,35 +21,24 @@ class Colors:
     RESET = "\033[0m"
 
 
+# todo these triggers will prob be stored in the settings.config file like the C settings ares 
+class GlobalTriggers:
+  # A global flag that when enabled will skip the confirmation of the student information
+  SkipBulkLoaderInfoConfirmation = None
+  # A global flag that when enabled will skip the menu that appears after a student is entered
+  # this will allow the user to enter as many students as they want without having to go through the menu
+  SkipBulkLoaderPostEntryMenu = None #will hold a value of 1 or 0, 1 for true and 0 for false
+
+
+
+######################################################################
+# clear(): clears the terminal screen
+#
+######################################################################
 def clear():
     # this only works on unix based systems
     os.system("clear")
 
-
-# increments the session number by one
-def update_bulk_data_loader_session():
-    bulkDataLoaderSessionNumber = globalSessionNumber 
-    bulkDataLoaderSessionNumber += 1
-    return bulkDataLoaderSessionNumber
-
-# increments the total students processed number by one
-def update_total_student_number():
-    bulkDataLoaderTotalStudentNumber = globalTotalStudentNumber
-    bulkDataLoaderTotalStudentNumber += 1
-    return bulkDataLoaderTotalStudentNumber
-
-# increments the student number of the current session by one
-def session_student_iota():
-    bulkDataLoaderSessionStudentNumber = 0
-    bulkDataLoaderSessionStudentNumber += 1
-    return bulkDataLoaderSessionStudentNumber
-
-
-# todo this func will read from the stats.log file and return the student number count key value
-# def check_total_student_number():
-
-#todo this func will read from the stats.log file and return the current session number key value 
-# def check_total_session_number():
 
 
 
@@ -63,22 +51,22 @@ def session_student_iota():
 def check_file_for_valid_json(filePath):
     # try to open the file and load the JSON data
     try:
-        with open(filePath, "r") as file:
+        with open(dataFilePath, "r") as file:
             jsonData = json.load(file)
         return True
     # if there is an error, print the error and return False
     except json.JSONDecodeError as error:
-        print(f"Error Decoding JSON in {filePath}: {error}")
+        print(f"Error Decoding JSON in {dataFilePath}: {error}")
         return False
     # if the file is not found, print the error and return False
     except FileNotFoundError as error:
-        print(f"File Not Found: {filePath}")
+        print(f"File Not Found: {dataFilePath}")
         return False
 
 
 
 ######################################################################
-# insert_json_array: simply inserts a blank json array into the passed
+# insert_json_a//rray: simply inserts a blank json array into the passed
 #                    in file  
 #
 # see usage in 
@@ -88,15 +76,19 @@ def insert_json_array(filePath):
     with open(filePath, "w") as file:
        json.dump([], file)
   except FileNotFoundError as error:
-    print(f"File Not Found: {filePath}")
+    print(f"File Not Found: {dataFilePath}")
     return False
 
 
                
-
+######################################################################
+# __utils_error_logger(): Used to log error messages to the error log
+#                        file
+#
+######################################################################
 def __utils_error_logger(errorMessage, function, ErrorLevel):
     try:
-        with open("../../../logs/errors.log", "a") as file:    
+        with open(errorLogFilePath, "a") as file:    
             match ErrorLevel:
                 case ErrorLevel.MINOR: 
                    file.write(f"Logged @ {time.ctime()}\n")
@@ -120,9 +112,15 @@ def __utils_error_logger(errorMessage, function, ErrorLevel):
     except:
         print("Error: Could not write to error log file") 
 
+
+
+######################################################################
+# __utils_runtime_logger(): Logs runtime activity
+#
+######################################################################                
 def __utils_runtime_logger(action, function):
     try:
-        with open("../../../logs/runtime.log", "a") as file:
+        with open(runtimeLogFilePath, "a") as file:
             file.write(f"Logged @ {time.ctime()}\n")
             file.write(f"User Action: User {action} in function call {function}()\n")
             file.write("======================================================================================\n")
@@ -130,6 +128,12 @@ def __utils_runtime_logger(action, function):
     except:
         print("Error: Could not write to runtime log file")
 
+
+######################################################################
+# __utils_operation_cancelled(): Logs when an operation is cancelled
+#                                and displays a message to the user
+#
+######################################################################
 def __utils_operation_cancelled(functionName):
     clear()
     print(f"{Colors.YELLOW}Cancelling operation{Colors.RESET}")
@@ -138,19 +142,95 @@ def __utils_operation_cancelled(functionName):
     clear()
 
 
+######################################################################
+# __utils_operation_completed(): When a feature requires multiple steps
+#                                use this
+#
+######################################################################
 def show_current_step(str, currentStep, totalSteps):
     print(f"{str} Step:{currentStep}/{totalSteps}")
     print("--------------------------------------------------")
 
 
+######################################################################
+# has_one_non_space_char(): Helper function that checks if a string has
+#                           at least one non space character
+#
+######################################################################    
 def has_one_non_space_char(str):
     for char in str:
         if char != " ":
             return True
     return False
 
+######################################################################
+# update_stats_file(): Updates the stats.log file to maintain a running
+#                      total of students processed as well as total 
+#                      sessions of the bulk data loader have been run
+#                      
+#
+######################################################################
 def update_stats_file():
-    with open(filePath, "w") as file:
+    with open(statsLogFilePath, "w") as file:
         file.write("Current Bulk Data Loader Session: " + str(update_bulk_data_loader_session()) + "\n")
         #todo not quite done with this. technically this should be a running total not the current session total
         file.write("Total Students Processed: " + str(session_student_iota()) + "\n")
+
+######################################################################
+# get_settings_values_from_config(): Reads the settings.config file and
+#                                    sets the global trigger values. 
+#
+# Note: This only reads the settings named SkipBulkLoaderInfoConfirmation
+#       and SkipBulkLoaderPostEntryMenu in the settings.config file
+######################################################################
+def get_settings_values_from_config():
+    with open(settingsConfigPath) as file:
+        for line in file:
+            key, value = map(str.strip, line.split("=", 1))
+            if key == "SkipBulkLoaderInfoConfirmation":
+                GlobalTriggers.SkipBulkLoaderInfoConfirmation = value
+                return GlobalTriggers.SkipBulkLoaderInfoConfirmation
+            elif key == "SkipBulkLoaderPostEntryMenu":
+                GlobalTriggers.SkipBulkLoaderPostEntryMenu = value
+                return GlobalTriggers.SkipBulkLoaderPostEntryMenu
+
+
+######################################################################
+# check_if_settings_values_exist(): Checks if the settings.config file
+#                                   contains the settings:
+#                                   SkipBulkLoaderInfoConfirmation
+#                                   SkipBulkLoaderPostEntryMenu
+#
+######################################################################
+def check_if_settings_values_exist():
+    try:
+     with open(settingsConfigPath, "r") as file:
+        content = file.read()
+        if "SkipBulkLoaderInfoConfirmation" in content and "SkipBulkLoaderPostEntryMenu" in content:
+            return True
+        else:
+            return False
+    except:
+        print(f"File Not Found: {settingsConfigPath}")
+        return -1
+
+######################################################################
+# add_settings_to_config_on_startup(): Adds the settings key value pairs
+#                                      to the settings.config file on
+#                                      startup
+# See usage in startup.py
+######################################################################
+def add_settings_to_config_on_startup():
+    __utils_runtime_logger("Started", "add_settings_to_config_on_startup")
+    try:
+        with open(settingsConfigPath, "a") as file:
+            valuesExist = check_if_settings_values_exist()
+            if valuesExist == True:
+                file.close()
+            else:
+                file.write("SkipBulkLoaderInfoConfirmation=0\n")
+                file.write("SkipBulkLoaderPostEntryMenu=0\n")
+                file.close()
+    except FileNotFoundError as error:
+        print(f"File Not Found: {settingsConfigPath}")
+        return False
