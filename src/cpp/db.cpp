@@ -12,10 +12,9 @@ Description : This source file contains all functions that interact with the dat
 
 #include <iostream>
 #include <sqlite3.h>
-#include "../lib/headers/db.hpp"
-#include "../lib/headers/utils.h"
-#include "../lib/headers/utils.hpp"
-
+#include <unistd.h>
+#include "../lib/headers/c/c_files.h"
+#include "../lib/headers/cpp/cpp_files.hpp"
 using namespace std;
 
 int hasTables = FALSE;
@@ -198,7 +197,6 @@ int print_student_list_heading(void)
 }
 extern "C"
 {
-#include <sqlite3.h>
   /************************************************************************************
    * create_new_roster_table(): Creates a new table in the SQLite database
    * Note: See function usage in _create_roster.c

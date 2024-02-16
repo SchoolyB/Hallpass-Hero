@@ -12,8 +12,8 @@ Notes       : This uses extern "C" linkage to allow the C++ functions to be
 ===============================================================================
 */
 
-#ifndef DB_HPP
-#define DB_HPP
+#ifndef CPP_FILES_HPP
+#define CPP_FILES_HPP
 
 // Declaration of C++ functions with extern "C" linkage
 #ifdef __cplusplus
@@ -24,6 +24,16 @@ int __throw_error_opening_db(std::string functionName, sqlite3 *database, int pa
 int __throw_error_exec_query(std::string functionName, sqlite3 *database, int param);
 int __throw_error_prepare_statement(std::string functionName, sqlite3 *database, int param);
 int __throw_error_statement_step(std::string functionName, sqlite3 *database, int param, sqlite3_stmt);
+
+enum class CppErrorLevel
+{
+  MINOR,
+  MODERATE,
+  CRITICAL
+};
+
+int cpp_utils_error_logger(const char *message, const char *function, const CppErrorLevel level);
+void CPP_UTILS_SLEEP(int seconds);
 extern "C"
 {
 #include <sqlite3.h>
@@ -65,7 +75,8 @@ extern "C"
   int insert_student_into_db(const char *FirstName, const char *LastName, const char *StudentID);
   int show_all_students_in_student_db(const char *path);
   int query_student_db(const char *searchParam);
+
 #ifdef __cplusplus
 } // extern "C"
-#endif /* DB_HPP */
+#endif /* CPP_FILES_HPP */
 #endif

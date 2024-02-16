@@ -13,8 +13,7 @@ Description : This source file contains all functions related to the settings me
 #include <time.h>
 #include <dirent.h>
 #include <sys/stat.h>
-#include "../lib/headers/utils.h"
-#include "../lib/headers/c_files.h"
+#include "../lib/headers/c/c_files.h"
 
 int settingsMenuRunning = TRUE;
 
@@ -63,7 +62,6 @@ int show_settings_menu(void)
     break;
   case 3:
     __utils_runtime_logger("user entered the enable/disable color menu", "show_settings_menu");
-
     check_and_load_config();
     toggle_colors();
     break;
@@ -406,9 +404,10 @@ int toggle_colors(void)
     else if (INPUT_IS_CANCEL(userInput.StrInput))
     {
       __utils_operation_cancelled("toggle_colors");
+      printf("Returning to settings menu...\n");
       sleep(1);
       system("clear");
-      return -1;
+      show_settings_menu();
     }
 
     // This is here only because of the cancel message above
@@ -461,7 +460,10 @@ int toggle_colors(void)
     {
 
       __utils_operation_cancelled("toggle_colors");
-      return -1;
+      printf("Returning to settings menu...\n");
+      sleep(1);
+      system("clear");
+      show_settings_menu();
     }
     else
     {
@@ -472,49 +474,6 @@ int toggle_colors(void)
       toggle_colors();
     }
   }
-}
-
-/************************************************************************************
- * read_from_dir_and_check_extension(): Reads from the directory and checks if the
- *                                      file has the specified extension.
- *
- * See usage in: handle_rename_db_logic() & main.c
- ************************************************************************************/
-int read_from_dir_and_check_extension(const char *directoryPath, const char *extension)
-{
-  DIR *dir;
-  struct dirent *entry;
-  struct stat statbuf;
-
-  dir = opendir(directoryPath);
-
-  if (dir == NULL)
-  {
-    return -1;
-  }
-
-  // Iterate through the directory entries
-  while ((entry = readdir(dir)) != NULL)
-  {
-    char filePath[256];
-    snprintf(filePath, sizeof(filePath), "%s/%s", directoryPath, entry->d_name);
-
-    if (stat(filePath, &statbuf) == -1)
-    {
-      closedir(dir);
-      return -1;
-    }
-
-    // Check if the entry is a regular file with the specified extension
-    if (S_ISREG(statbuf.st_mode) && strstr(entry->d_name, extension) != NULL)
-    {
-      strcpy(programSettings.databaseInfo.currentDBName, entry->d_name);
-      return 1;
-    }
-  }
-
-  closedir(dir);
-  return 0;
 }
 
 /************************************************************************************
@@ -779,9 +738,11 @@ int check_and_load_config(void)
     {
     case 0:
       programSettings.runtimeLoggingEnabled = FALSE;
+      __utils_runtime_logger("runtime logging read as disabled in config file, setting runtime logging to false", "check_and_load_config");
       break;
     case 1:
       programSettings.runtimeLoggingEnabled = TRUE;
+      __utils_runtime_logger("runtime logging read as enabled in config file, setting runtime logging to true", "check_and_load_config");
       break;
     }
 
@@ -791,9 +752,17 @@ int check_and_load_config(void)
     {
     case 0:
       programSettings.colorEnabled = FALSE;
+      __utils_runtime_logger("colors read as disabled in config file, setting color to false", "check_and_load_config");
+      red.colorCode = "";
+      green.colorCode = "";
+      yellow.colorCode = "";
       break;
     case 1:
       programSettings.colorEnabled = TRUE;
+      __utils_runtime_logger("colors read as enabled in config file, setting color to true", "check_and_load_config");
+      red.colorCode = RED;
+      green.colorCode = GREEN;
+      yellow.colorCode = YELLOW;
       break;
     }
 
@@ -804,9 +773,11 @@ int check_and_load_config(void)
     {
     case 0:
       programSettings.autoStudentIDGenerationEnabled = FALSE;
+      __utils_runtime_logger("auto student ID generation read as disabled in config file, setting auto student ID generation to false", "check_and_load_config");
       break;
     case 1:
       programSettings.autoStudentIDGenerationEnabled = TRUE;
+      __utils_runtime_logger("auto student ID generation read as enabled in config file, setting auto student ID generation to true", "check_and_load_config");
       break;
     }
   }

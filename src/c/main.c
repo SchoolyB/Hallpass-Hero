@@ -11,8 +11,7 @@ Description : This source file contains the main function for the Hallpass Hero 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include "../lib/headers/utils.h"
-#include "../lib/headers/c_files.h"
+#include "../lib/headers/c/c_files.h"
 
 UserInput userInput = {FALSE};
 GlobalTrigger globalTrigger = {FALSE};
@@ -20,7 +19,7 @@ ProgramSettings programSettings = {FALSE};
 DatabaseInfo databaseInfo = {FALSE};
 ThrowAways throwAways = {FALSE};
 Roster roster = {FALSE};
-
+JSONDataFile jsonDataFile = {FALSE};
 Color red = {RED};
 Color green = {GREEN};
 Color yellow = {YELLOW};
@@ -61,6 +60,7 @@ int main(void)
   // Creates the logs dir on startup if it doesn't already exist
   mkdir("../logs", 0777);
 
+  mkdir("../build/data", 0777);
   // Create the errors.log file if it doesn't already exist
   FILE *errorLogFile = fopen("../logs/errors.log", "a");
   if (errorLogFile == NULL)
@@ -85,13 +85,22 @@ int main(void)
   fprintf(runtimeLogFile, "======================================================================================\n\n");
   fflush(runtimeLogFile);
   fclose(runtimeLogFile);
+  check_and_load_config();
+
+  // Change the working directory to the python directory to run the startup script
+  const char *workingDirectory = "../src/python/";
+  if (chdir(workingDirectory) != 0)
+  {
+    perror("Error changing directory");
+    return EXIT_FAILURE;
+  }
+  int result = system("python3 startup.py");
 
   int mainMenuProccess = TRUE;
   while (mainMenuProccess == TRUE)
   {
-    handle_main_menu();
     /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-START OF MAIN MENU+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-
+    handle_main_menu();
     /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-END OF MAIN MENU+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
   }
   return 0;
@@ -100,11 +109,11 @@ int main(void)
 int handle_main_menu(void)
 {
   system("clear");
-  puts("Welcome to the Hallpass Hero main menu!");
-  puts("Please select one of the options below:");
+  printf("Welcome to the Hallpass Hero main menu!\n");
+  printf("Please select one of the options below:\n");
 
   // showing main menu options
-  puts("===========================================================================================");
+  printf("===========================================================================================\n");
   for (int i = 0; i < 8; ++i)
   {
     printf("| %s %-90s\n", MainMenuOptions[i], "");
@@ -170,15 +179,15 @@ int handle_main_menu(void)
   else if (userInput.NumInput == 8 || strcmp(userInput.StrInput, "exit") == 0)
   {
     system("clear");
-    puts("See you soon!");
+    printf("See you soon!");
     __utils_runtime_logger("exited the program", "main");
     exit(0);
   }
   else
   {
     __utils_error_logger("Invalid decision made on while on main menu", "main", MINOR);
-    puts("Sorry, I didn't understand that.");
-    puts("Please try again");
+    printf("Sorry, I didn't understand that.");
+    printf("Please try again");
     system("clear");
   }
 }

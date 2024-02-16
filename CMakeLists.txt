@@ -13,18 +13,18 @@ include_directories(${SQLite3_INCLUDE_DIRS})
 set(SOURCES_C
     src/c/main.c
     src/c/_add_student.c
+    src/c/_bulk_data_loader.c
     src/c/_create_roster.c
     src/c/_manage_roster.c
     src/c/_manage_student_db.c
     src/c/_search.c
     src/c/_settings.c
-    src/lib/utils.c
-    # src/lib/Cuazar/lib/Cuazar.c
+    src/lib/utils/utils.c
 )
 
 set(SOURCES_CPP
-    src/db/db.cpp
-    src/lib/utils.cpp
+    src/cpp/db.cpp
+    src/lib/utils/utils.cpp
 )
 
 # C++ source file library
