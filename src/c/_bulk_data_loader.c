@@ -322,8 +322,7 @@ int __bulk_handle_data_entry()
   }
   else if (strcmp(userInput.StrInput, "start") == 0)
   {
-    // start proccess
-    // todo need to store each entry into an array in json
+    system("cd ../src/python/ && python3 startup.py");
   }
   else
   {

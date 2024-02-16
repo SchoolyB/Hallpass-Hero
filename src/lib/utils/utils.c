@@ -32,20 +32,20 @@ int __utils_error_logger(char *errorMessage, char *function, enum ErrorLevel lev
   switch (level)
   {
   case MINOR:
-    fprintf(errorLog, "Logged @ %s", ctime(&currentTime));
+    fprintf(errorLog, "From C Logged @ %s", ctime(&currentTime));
     fprintf(errorLog, "Minor Error: %s, in function call: %s()\n", errorMessage, function);
     fprintf(errorLog, "======================================================================================\n");
     fflush(errorLog);
     return 0;
     break;
   case MODERATE:
-    fprintf(errorLog, "Logged @ %s", ctime(&currentTime));
+    fprintf(errorLog, "From C Logged @ %s", ctime(&currentTime));
     fprintf(errorLog, "Moderate Error: %s, in function call: %s()\n", errorMessage, function);
     fprintf(errorLog, "======================================================================================\n");
     fflush(errorLog);
     return 1;
   case CRITICAL:
-    fprintf(errorLog, "Logged @ %s", ctime(&currentTime));
+    fprintf(errorLog, "From C Logged @ %s", ctime(&currentTime));
     fprintf(errorLog, "CRITICAL ERROR: %s, in function call: %s()\n", errorMessage, function);
     fprintf(errorLog, "======================================================================================\n");
     printf(RED "Critical Error occurred @ %s: For more information see logs/errors.log \n" RESET, ctime(&currentTime));
@@ -70,7 +70,7 @@ int __utils_runtime_logger(char *action, char *functionName)
   time_t currentTime;
   time(&currentTime);
 
-  fprintf(runtimeLog, "Logged @ %s", ctime(&currentTime));
+  fprintf(runtimeLog, "From C/C++ Logged @ %s", ctime(&currentTime));
 
   fprintf(runtimeLog, "User Action: User %s, in function call: %s()\n", action, functionName);
 

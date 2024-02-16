@@ -87,15 +87,6 @@ int main(void)
   fclose(runtimeLogFile);
   check_and_load_config();
 
-  // Change the working directory to the python directory to run the startup script
-  const char *workingDirectory = "../src/python/";
-  if (chdir(workingDirectory) != 0)
-  {
-    perror("Error changing directory");
-    return EXIT_FAILURE;
-  }
-  int result = system("python3 startup.py");
-
   int mainMenuProccess = TRUE;
   while (mainMenuProccess == TRUE)
   {
