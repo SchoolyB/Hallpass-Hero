@@ -295,20 +295,20 @@ int __bulk_handle_data_entry()
   printf("%sPlease read and follow the steps below carefully%s\n", yellow.colorCode, reset.colorCode);
   printf("%sTo cancel this operation enter 'cancel'%s\n\n", yellow.colorCode, reset.colorCode);
 
-  printf("1. Enter the desired first name of the student\n");
-  printf("2. Confirm the first name you just entered\n");
-  printf("3. Enter the desired last name(if no last name enter 'none')\n");
-  printf("4. Confirm the last name you just entered\n");
+  printf("1.Enter the desired first name of the student\n");
+  printf("2.Confirm the first name you just entered\n");
+  printf("3.Enter the desired last name(if no last name enter 'none')\n");
+  printf("4.Confirm the last name you just entered\n");
   if (programSettings.autoStudentIDGenerationEnabled == TRUE)
   {
-    printf("5. Confirm the automatically generated student ID\n");
+    printf("5.Confirm the automatically generated student ID\n");
   }
   else if (programSettings.autoStudentIDGenerationEnabled == FALSE)
   {
-    printf("5. Enter and confirm the desired ID for the student\n");
+    printf("5.Enter and confirm the desired ID for the student\n");
   }
-  printf("6. Enter the word " BOLD "'next' to move on to the next student entry %s\n", reset.colorCode);
-  printf("7. If you are completely finished adding students enter the word " BOLD "'complete'.%s\n", reset.colorCode);
+  printf("6.Enter the word " BOLD "'next'%sto move on to the next student entry\n", reset.colorCode);
+  printf("7.If you are completely finished adding students enter the word " BOLD "'complete'.%s\n", reset.colorCode);
   printf("Doing so will insert the entered data into the data file.\n");
   printf("\n");
   printf("\n");
@@ -322,8 +322,7 @@ int __bulk_handle_data_entry()
   }
   else if (strcmp(userInput.StrInput, "start") == 0)
   {
-    // start proccess
-    // todo need to store each entry into an array in json
+    system("cd ../src/python/ && python3 startup.py");
   }
   else
   {

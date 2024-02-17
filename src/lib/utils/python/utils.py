@@ -1,6 +1,17 @@
+#===============================================================================
+#File Name   : utils.py
+#-------------------------------------------------------------------------------
+#Author      : Marshall Burns a.k.a. Schooly
+#-------------------------------------------------------------------------------
+#Description : This file contains several utility functions, variables, 
+#              enums, and variables that are used throughout the 'Python'
+#              portion of the source code.
+#===============================================================================
+
 import os
 import time
 import json
+import sys
 from enum import Enum
 
 dataFilePath = "../build/data/active_data.json"
@@ -9,26 +20,13 @@ statsLogFilePath = "../../logs/stats.log"
 errorLogFilePath = "../../logs/errors.log"
 runtimeLogFilePath = "../../logs/runtime.log"
 
+sys.path.append("../../../python/")
+import settings
+
 class ErrorLevel(Enum):
     MINOR = 0
     MODERATE = 1
     CRITICAL = 2
-
-class Colors:
-    RED = "\033[91m"
-    GREEN = "\033[92m"
-    YELLOW = "\033[93m"
-    RESET = "\033[0m"
-
-
-# todo these triggers will prob be stored in the settings.config file like the C settings ares 
-class GlobalTriggers:
-  # A global flag that when enabled will skip the confirmation of the student information
-  SkipBulkLoaderInfoConfirmation = None
-  # A global flag that when enabled will skip the menu that appears after a student is entered
-  # this will allow the user to enter as many students as they want without having to go through the menu
-  SkipBulkLoaderPostEntryMenu = None #will hold a value of 1 or 0, 1 for true and 0 for false
-
 
 
 ######################################################################
@@ -38,9 +36,6 @@ class GlobalTriggers:
 def clear():
     # this only works on unix based systems
     os.system("clear")
-
-
-
 
 ######################################################################
 # check_file_for_valid_json(): Helper function to make sure the passed
@@ -63,8 +58,6 @@ def check_file_for_valid_json(filePath):
         print(f"File Not Found: {dataFilePath}")
         return False
 
-
-
 ######################################################################
 # insert_json_a//rray: simply inserts a blank json array into the passed
 #                    in file  
@@ -78,56 +71,56 @@ def insert_json_array(filePath):
   except FileNotFoundError as error:
     print(f"File Not Found: {dataFilePath}")
     return False
-
-
-               
+     
 ######################################################################
 # __utils_error_logger(): Used to log error messages to the error log
 #                        file
 #
 ######################################################################
-def __utils_error_logger(errorMessage, function, ErrorLevel):
+def __utils_error_logger(errorMessage, function, errorLevel):
     try:
         with open(errorLogFilePath, "a") as file:    
-            match ErrorLevel:
+            match errorLevel:
                 case ErrorLevel.MINOR: 
-                   file.write(f"Logged @ {time.ctime()}\n")
+                   file.write(f"From Python Logged @ {time.ctime()}\n")
                    file.write(f"Minor Error: {errorMessage} in function call {function}()\n")
                    file.write("======================================================================================\n")
                    file.close()
                    return ErrorLevel.MINOR
                 case ErrorLevel.MODERATE:
-                    file.write(f"Logged @ {time.ctime()}\n")
+                    file.write(f"From Python Logged @ {time.ctime()}\n")
                     file.write(f"Moderate Error: {errorMessage} in function call {function}()\n")
                     file.write("======================================================================================\n")
                     file.close()
                     return ErrorLevel.MODERATE
                 case ErrorLevel.CRITICAL:
-                    file.write(f"Logged @ {time.ctime()}\n")
+                    file.write(f"From Python Logged @ {time.ctime()}\n")
                     file.write(f"Critical Error: {errorMessage} in function call {function}()\n")
                     file.write("======================================================================================\n")
                     file.close()
-                    print(f"{Colors.RED}Critical Error occurred @ {time.ctime()}: For more information see logs/errors.log\n")
-                    exit() 
-    except:
-        print("Error: Could not write to error log file") 
-
-
+                    print(f"{settings.Colors.RED}Critical Error occurred @ {time.ctime()}: For more information see logs/errors.log{settings.Colors.RESET}\n")
+                    exit() #exits the Python script not the entire program
+    except FileNotFoundError as error:
+        print(f"File Not Found: {errorLogFilePath}")
+        return -1 
 
 ######################################################################
 # __utils_runtime_logger(): Logs runtime activity
 #
 ######################################################################                
 def __utils_runtime_logger(action, function):
-    try:
-        with open(runtimeLogFilePath, "a") as file:
-            file.write(f"Logged @ {time.ctime()}\n")
-            file.write(f"User Action: User {action} in function call {function}()\n")
-            file.write("======================================================================================\n")
-            file.close()
-    except:
-        print("Error: Could not write to runtime log file")
-
+    if(settings.GlobalSettings.RuntimeLoggingEnabled == 1):
+        try:
+            with open(runtimeLogFilePath, "a") as file:
+                file.write(f"From Python Logged @ {time.ctime()}\n")
+                # Note: the action param isn't always a user action. It can be an action the program takes as well
+                file.write(f"User Action: User {action} in function call {function}()\n")
+                file.write("======================================================================================\n")
+                file.close()
+        except:
+            __utils_error_logger("Could not write to runtime log file", "__utils_runtime_logger", ErrorLevel.CRITICAL)
+    elif( settings.GlobalSettings.RuntimeLoggingEnabled == 0):
+        return 0
 
 ######################################################################
 # __utils_operation_cancelled(): Logs when an operation is cancelled
@@ -136,11 +129,10 @@ def __utils_runtime_logger(action, function):
 ######################################################################
 def __utils_operation_cancelled(functionName):
     clear()
-    print(f"{Colors.YELLOW}Cancelling operation{Colors.RESET}")
+    print(f"{settings.GlobalSettings.Colors.YELLOW}Cancelling operation{settings.GlobalSettings.Colors.RESET}")
     __utils_runtime_logger("Cancelled operation", functionName)
     time.sleep(1)
     clear()
-
 
 ######################################################################
 # __utils_operation_completed(): When a feature requires multiple steps
@@ -150,7 +142,6 @@ def __utils_operation_cancelled(functionName):
 def show_current_step(str, currentStep, totalSteps):
     print(f"{str} Step:{currentStep}/{totalSteps}")
     print("--------------------------------------------------")
-
 
 ######################################################################
 # has_one_non_space_char(): Helper function that checks if a string has
@@ -188,12 +179,11 @@ def get_settings_values_from_config():
         for line in file:
             key, value = map(str.strip, line.split("=", 1))
             if key == "SkipBulkLoaderInfoConfirmation":
-                GlobalTriggers.SkipBulkLoaderInfoConfirmation = value
-                return GlobalTriggers.SkipBulkLoaderInfoConfirmation
+                settings.GlobalSettings.SkipBulkLoaderInfoConfirmation = value
+                return settings.GlobalSettings.SkipBulkLoaderInfoConfirmation
             elif key == "SkipBulkLoaderPostEntryMenu":
-                GlobalTriggers.SkipBulkLoaderPostEntryMenu = value
-                return GlobalTriggers.SkipBulkLoaderPostEntryMenu
-
+                settings.GlobalSettings.SkipBulkLoaderPostEntryMenu = value
+                return settings.GlobalSettings.SkipBulkLoaderPostEntryMenu
 
 ######################################################################
 # check_if_settings_values_exist(): Checks if the settings.config file
@@ -206,31 +196,10 @@ def check_if_settings_values_exist():
     try:
      with open(settingsConfigPath, "r") as file:
         content = file.read()
-        if "SkipBulkLoaderInfoConfirmation" in content and "SkipBulkLoaderPostEntryMenu" in content:
+        if "skipBulkLoaderInfoConfirmation" in content and "skipBulkLoaderPostEntryMenu" in content:
             return True
         else:
             return False
     except:
         print(f"File Not Found: {settingsConfigPath}")
         return -1
-
-######################################################################
-# add_settings_to_config_on_startup(): Adds the settings key value pairs
-#                                      to the settings.config file on
-#                                      startup
-# See usage in startup.py
-######################################################################
-def add_settings_to_config_on_startup():
-    __utils_runtime_logger("Started", "add_settings_to_config_on_startup")
-    try:
-        with open(settingsConfigPath, "a") as file:
-            valuesExist = check_if_settings_values_exist()
-            if valuesExist == True:
-                file.close()
-            else:
-                file.write("SkipBulkLoaderInfoConfirmation=0\n")
-                file.write("SkipBulkLoaderPostEntryMenu=0\n")
-                file.close()
-    except FileNotFoundError as error:
-        print(f"File Not Found: {settingsConfigPath}")
-        return False
