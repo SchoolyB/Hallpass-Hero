@@ -20,6 +20,8 @@ sys.path.append("../lib/utils/python")
 import settings
 import utils
 
+bulkLoaderDataFilePath = "../../build/data/active_data.json"
+
 
      
 class Student:
@@ -28,7 +30,8 @@ class Student:
   StudentID = None
 
 def main():
-
+  # Clear the instructions from the terminal
+  utils.clear()
   # The current session number of the bulk data loader
   totalSessionsCompleted = None
   # The total number of students ever uploaded to the system
@@ -89,51 +92,136 @@ def main():
   def get_student_information(type):
     # Get the first name
     if type == "first name":
-      print(f"{settings.Colors.YELLOW}To cancel this operation enter 'cancel'{settings.Colors.RESET}")
       userInput = input(f"Enter the student's {type}: \n")
-      if userInput == "cancel":
-        utils.__utils_operation_cancelled("get_student_information")
-      else:
-        Student.FirstName = userInput
-        print(f"You entered {userInput}")
+      hasNonSpaceChar = utils.has_one_non_space_char(userInput)
+      if(hasNonSpaceChar == False):
+        print(f"{settings.Colors.RED}The student's first name cannot be empty{settings.Colors.RESET}")
+        time.sleep(2)
+        utils.clear()
+        get_student_information("first name")
+      elif (hasNonSpaceChar == True):
+        if userInput == "cancel":
+          utils.__utils_operation_cancelled("get_student_information")
+        else:
+          Student.FirstName = userInput
+          
         
     # Get the last name 
     elif type == "last name":
-      print(f"{settings.Colors.YELLOW}To cancel this operation enter 'cancel'{settings.Colors.RESET}")
+      utils.clear()
+      print(f"First Name: {Student.FirstName}")
+      print("Enter the student's last name")
       print("If the student doesn't have a last name enter 'none'")
       userInput = input(f"Enter the student's {type}: \n")
-      if userInput == "cancel":
-        utils.__utils_operation_cancelled("get_student_information")
-      if(userInput == "none"):
-         print(f"{settings.Colors.YELLOW}The student's last name will be set to 'none'{settings.Colors.RESET}")
-         Student.LastName = "none"
-      else:
-         Student.LastName = userInput
+      hasNonSpaceChar = utils.has_one_non_space_char(userInput)
+      if(hasNonSpaceChar == False):
+        print(f"{settings.Colors.RED}The student's last name cannot be empty{settings.Colors.RESET}")
+        time.sleep(2)
+        utils.clear()
+        get_student_information("last name")
+      elif (hasNonSpaceChar == True):
+        if userInput == "cancel":
+          utils.__utils_operation_cancelled("get_student_information")
+        if(userInput == "none"):
+           print(f"{settings.Colors.YELLOW}The student's last name will be set to 'none'{settings.Colors.RESET}")
+           Student.LastName = "none"
+        else:
+           Student.LastName = userInput
     # Get the ID 
     #todo unfortunately I get the automatic generation of the student id is done in the C code so I will have to basically create a new function in Python to generate the student id....  or I can store the student id from the c code in a memory address and then retrieve it from the python code
     elif type == "student id":
-      print(f"{settings.Colors.YELLOW}To cancel this operation enter 'cancel'{settings.Colors.RESET}")
+      utils.clear()
+      print(f"First Name: {Student.FirstName}")
+      print(f"Last Name: {Student.LastName}")
       userInput = input(f"Enter the student's {type}: \n")
-      if userInput == "cancel":
-        utils.__utils_operation_cancelled("get_student_information")
-      Student.StudentID = userInput
+      hasNonSpaceChar = utils.has_one_non_space_char(userInput)
+      if(hasNonSpaceChar == False):
+        print(f"{settings.Colors.RED}The student's id cannot be empty{settings.Colors.RESET}")
+        time.sleep(2)
+        utils.clear()
+        get_student_information("student id")
+      elif (hasNonSpaceChar == True):
+        if userInput == "cancel":
+          utils.__utils_operation_cancelled("get_student_information")
+        Student.StudentID = userInput
     
   def confirm_student_information(firstName, lastName, studentId):
-    print(f"Are you sure you want to process the following student information?[y/n]")
-    print(f"First Name: {firstName}")
-    print(f"Last Name: {lastName}")
-    print(f"Student ID: {studentId}")
-    confirmation = input()
-    if confirmation == "y" or confirmation == "Y":
-     return True
-    elif confirmation == "n" or confirmation == "N":
-     return False
+    utils.clear()
+    # If the setting to skip the confirmation is disabled
+    if(settings.GlobalSettings.SkipBulkLoaderInfoConfirmation == 0):
+      print(f"Are you sure you want to process the following student information?[y/n]")
+      print(f"First Name: {firstName}")
+      print(f"Last Name: {lastName}")
+      print(f"Student ID: {studentId}")
+      confirmation = input()
+      if confirmation == "y" or confirmation == "Y":
+        #  insert the data into json
+       print(f"{settings.Colors.GREEN}Adding student to bulk data loader{settings.Colors.RESET}")
+       pass #todo remove this line only here to prevent an error for now
+      elif confirmation == "n" or confirmation == "N":
+       handle_non_confirmation()
+      else:
+        utils.clear()
+        print("Invalid input. Please try again")
+        time.sleep(1)
+        confirm_student_information(firstName, lastName, studentId)
+        
+        #If the setting to skip the confirmation is enabled 
+    elif(settings.GlobalSettings.SkipBulkLoaderInfoConfirmation == 1):
+      #  insert the data into json
+       print(f"{settings.Colors.GREEN}Adding student to bulk data loader{settings.Colors.RESET}")
+       pass #todo remove this line only here to prevent an error for now
+  
+  def handle_non_confirmation():
+    utils.clear()
+    print(f"{settings.Colors.YELLOW}You have chosen not to process the following student information:{settings.Colors.RESET}")
+    print(f"First Name: {Student.FirstName}")
+    print(f"Last Name: {Student.LastName}")
+    print(f"Student ID: {Student.StudentID}")
+    print("")
+    print("What would you like to do?")
+    print("Please enter the corresponding number.")
+    print("")
+    print("1.Re-enter student information")
+    print("2.Confirm this student information")
+
+    userInput = input()
+    if userInput == "1":
+      handle_reentry()
+    elif userInput == "2":
+      confirm_student_information(Student.FirstName, Student.LastName, Student.StudentID)
     else:
       utils.clear()
       print("Invalid input. Please try again")
       time.sleep(1)
-      confirm_student_information(firstName, lastName, studentId)
-      
+      handle_non_confirmation()
+
+
+  def handle_reentry():
+    utils.clear()
+    print("What information would you like to re-enter?")
+    print("Please enter the corresponding number.")
+    print("1.First Name")
+    print("2.Last Name")
+    print("3.Student ID")
+    userInput = input()
+    if userInput == "1":
+      get_student_information("first name")
+      confirm_student_information(Student.FirstName, Student.LastName, Student.StudentID)
+    elif userInput == "2":
+      get_student_information("last name")
+      confirm_student_information(Student.FirstName, Student.LastName, Student.StudentID)
+    elif userInput == "3":
+      get_student_information("student id")
+      confirm_student_information(Student.FirstName, Student.LastName, Student.StudentID)
+    else:
+      utils.clear()
+      print("Invalid input. Please try again")
+      time.sleep(1)
+      handle_reentry()
+
+
+  print(f"{settings.Colors.YELLOW}To cancel this operation enter 'cancel'{settings.Colors.RESET}")
   get_student_information("first name")
   get_student_information("last name")
   get_student_information("student id")

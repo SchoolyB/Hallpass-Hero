@@ -55,16 +55,11 @@ def get_and_set_settings():
     
     # Convert the string values to integers
     GlobalSettings.RuntimeLoggingEnabled = int(GlobalSettings.RuntimeLoggingEnabled)
-    print(f"RuntimeLoggingEnabled: {GlobalSettings.RuntimeLoggingEnabled}")
     GlobalSettings.AutoStudentIDGenerationEnabled = int(GlobalSettings.AutoStudentIDGenerationEnabled)
-    print(f"AutoStudentIDGenerationEnabled: {GlobalSettings.AutoStudentIDGenerationEnabled}")
     GlobalSettings.ColorsEnabled = int(GlobalSettings.ColorsEnabled)
-    print(f"ColorsEnabled: {GlobalSettings.ColorsEnabled}")
     GlobalSettings.SkipBulkLoaderInfoConfirmation = int(GlobalSettings.SkipBulkLoaderInfoConfirmation)
-    print(f"SkipBulkLoaderInfoConfirmation: {GlobalSettings.SkipBulkLoaderInfoConfirmation}")
     GlobalSettings.SkipBulkLoaderPostEntryMenu = int(GlobalSettings.SkipBulkLoaderPostEntryMenu)
-    print(f"SkipBulkLoaderPostEntryMenu: {GlobalSettings.SkipBulkLoaderPostEntryMenu}")
-
+    
     if(GlobalSettings.ColorsEnabled == 0):
         Colors.RED = ""
         Colors.GREEN = ""
