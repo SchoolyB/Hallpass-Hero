@@ -12,7 +12,6 @@ Description : This source file contains the function used
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-
 #include "../lib/headers/cpp/cpp_files.hpp"
 #include "../lib/headers/c/c_files.h"
 

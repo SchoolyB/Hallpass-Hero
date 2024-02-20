@@ -14,7 +14,6 @@ Description : This source file contains the function used
 #include <time.h>
 #include <ctype.h>
 #include "../lib/headers/c/c_files.h"
-
 #include "../lib/headers/cpp/cpp_files.hpp"
 
 int addStudentMenuIsRunning;

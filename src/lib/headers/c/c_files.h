@@ -241,7 +241,9 @@ typedef struct
   int autoStudentIDGenerationEnabled;
   int colorEnabled;
   int runtimeLoggingEnabled;
-  DatabaseInfo databaseInfo; // may not need this
+  int skipBulkLoaderInfoConfirmation;
+  int skipBulkDataLoaderEntryPrompt; // might delete this
+  DatabaseInfo databaseInfo;
 } ProgramSettings;
 
 extern JSONDataFile jsonDataFile;       // initialized in main.c

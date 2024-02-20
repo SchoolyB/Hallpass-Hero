@@ -10,7 +10,9 @@ For developers there a few things to note:
 - You must be running some flavor of Linux
 - You must have [CMake](https://cmake.org/) installed
 - You must have [SQLite3](https://www.sqlite.org/index.html) installed
-    - If you run into problems with CMake not finding SQLite3 when compiling, see [Extra Info]()
+    - If you run into problems with CMake not finding SQLite3 when compiling, see [Extra Info](#extra-info)
+
+- For contributing to the project, please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for guidelines on making pull requests and issues.
 
 
 #### Step 1

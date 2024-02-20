@@ -6,7 +6,7 @@
 #Description : This file contains all functions that are used to modify the
 #              settings.config file
 #              
-# Note: These only modify the settings that are used in the Python portion of the
+# Note: These only modify the settings that  are used in the Python portion of the
 #       source code. The settings that are used in the C portion of the source code
 #       are modified in the _settings.c.              
 #===============================================================================
@@ -41,17 +41,18 @@ class GlobalSettings:
 # See usage in main()
 ######################################################################
 def get_and_set_settings():
-    opt1 = get_setting("runtimeLoggingEnabled", "get_and_set_settings", GlobalSettings.RuntimeLoggingEnabled, "RuntimeLoggingEnabled")
-    opt2 = get_setting("autoStudentIDGenerationEnabled", "get_and_set_settings", GlobalSettings.AutoStudentIDGenerationEnabled, "AutoStudentIDGenerationEnabled")
-    opt3 = get_setting("colorEnabled", "get_and_set_settings", GlobalSettings.ColorsEnabled, "ColorsEnabled")
-    opt4 = get_setting("skipBulkLoaderInfoConfirmation", "get_and_set_settings", GlobalSettings.SkipBulkLoaderInfoConfirmation, "SkipBulkLoaderInfoConfirmation")
-    opt5 = get_setting("skipBulkLoaderPostEntryMenu", "get_and_set_settings", GlobalSettings.SkipBulkLoaderPostEntryMenu, "SkipBulkLoaderPostEntryMenu")
+    utils.__utils_runtime_logger("attempted to get and set all setting values from settings.config", "get_and_set_settings")
+    setting1 = get_setting("runtimeLoggingEnabled", "get_and_set_settings", GlobalSettings.RuntimeLoggingEnabled, "RuntimeLoggingEnabled")
+    setting2 = get_setting("autoStudentIDGenerationEnabled", "get_and_set_settings", GlobalSettings.AutoStudentIDGenerationEnabled, "AutoStudentIDGenerationEnabled")
+    setting3 = get_setting("colorEnabled", "get_and_set_settings", GlobalSettings.ColorsEnabled, "ColorsEnabled")
+    setting4 = get_setting("skipBulkLoaderInfoConfirmation", "get_and_set_settings", GlobalSettings.SkipBulkLoaderInfoConfirmation, "SkipBulkLoaderInfoConfirmation")
+    setting5 = get_setting("skipBulkLoaderPostEntryMenu", "get_and_set_settings", GlobalSettings.SkipBulkLoaderPostEntryMenu, "SkipBulkLoaderPostEntryMenu")
 
-    GlobalSettings.RuntimeLoggingEnabled = opt1
-    GlobalSettings.AutoStudentIDGenerationEnabled = opt2
-    GlobalSettings.ColorsEnabled = opt3
-    GlobalSettings.SkipBulkLoaderInfoConfirmation = opt4
-    GlobalSettings.SkipBulkLoaderPostEntryMenu = opt5
+    GlobalSettings.RuntimeLoggingEnabled = setting1
+    GlobalSettings.AutoStudentIDGenerationEnabled = setting2
+    GlobalSettings.ColorsEnabled = setting3
+    GlobalSettings.SkipBulkLoaderInfoConfirmation = setting4
+    GlobalSettings.SkipBulkLoaderPostEntryMenu = setting5
     
     # Convert the string values to integers
     GlobalSettings.RuntimeLoggingEnabled = int(GlobalSettings.RuntimeLoggingEnabled)
@@ -70,7 +71,6 @@ def get_and_set_settings():
         Colors.GREEN = "\033[92m"
         Colors.YELLOW = "\033[93m"
         Colors.RESET = "\033[0m"
-    utils.__utils_runtime_logger("Initiated settings retrieval", "get_and_set_settings")
 
 
 ######################################################################
@@ -80,17 +80,18 @@ def get_and_set_settings():
 # See usage in startup.py
 ######################################################################
 def add_settings_to_config():
-    utils.__utils_runtime_logger("attempted to add bulk loader specific settings to settings.config ", "add_settings_to_config")
     try:
         with open(utils.settingsConfigPath, "a") as file:
             #Check if the key value pairs already exist in the settings.config file
-            valuesExist = utils.check_if_settings_values_exist() 
+            valuesExist = utils.check_if_bulk_data_loader_settings_exist() 
             if valuesExist == True:
+                utils.__utils_runtime_logger("settings.config already contains bulk data loader specific settings", "add_settings_to_config")
                 file.close()
             elif(valuesExist == False):
                 #If they dont exist then add them to the settings.config file
                 file.write("skipBulkLoaderInfoConfirmation=0\n")
                 file.write("skipBulkLoaderPostEntryMenu=0\n")
+                utils.__utils_runtime_logger("successfully added bulk data loader specific settings to settings.config", "add_settings_to_config")
                 file.close()
     except FileNotFoundError as error:
         print(f"File Not Found: {utils.settingsConfigPath}")
@@ -119,6 +120,7 @@ def get_setting(settingName, functionName, defaultSettingValue, logMessage):
 
 # Initialize the settings on startup
 def main():
+    utils.__utils_runtime_logger("attempted to initiate settings retrieval", "settings.main()")
     add_settings_to_config()
     get_and_set_settings()
 
