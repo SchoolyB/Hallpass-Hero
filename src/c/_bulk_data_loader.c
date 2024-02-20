@@ -292,7 +292,7 @@ int __bulk_handle_data_entry()
 {
   system("clear");
   show_bulk_loader_current_status("Adding students to database");
-  printf("%sPlease read and follow the steps below carefully%s\n", yellow.colorCode, reset.colorCode);
+  printf("%sPlease read the following steps carefully%s\n", yellow.colorCode, reset.colorCode);
   printf("%sTo cancel this operation enter 'cancel'%s\n\n", yellow.colorCode, reset.colorCode);
 
   printf("1.Enter the desired first name of the student\n");

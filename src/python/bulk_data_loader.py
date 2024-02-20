@@ -31,14 +31,14 @@ class Statistic:
   TotalStudentsProcessed = None
   TotalSessionsCompleted = None
   CurrentSessionNumber = None
-  CurrentSessionStudentsProcessed = None
+  studentsProcessedInCurrentSession = None
   CurrentSessionStartTime = None
   CurrentSessionEndTime = None
   PreviousSessionStartTime = None
   PreviousSessionEndTime = None 
 
 def main():
-
+  utils.__utils_runtime_logger("attempted to run bulk data loader", "bulk_data_loader.main()")
   utils.clear()
   utils.check_and_populate_stats_file()
       # Second is begin the bulk data loader process
@@ -118,7 +118,7 @@ def main():
         #  todo insert the data into json
        print(f"{settings.Colors.GREEN}Adding student to bulk data loader{settings.Colors.RESET}")
        utils.increment_stat_value("TotalStudentsProcessed")
-       utils.increment_stat_value("CurrentSessionStudentsProcessed")
+       utils.increment_stat_value("studentsProcessedInCurrentSession")
       elif confirmation == "n" or confirmation == "N":
        handle_non_confirmation()
       else:
@@ -132,7 +132,7 @@ def main():
       #  insert the data into json
         print(f"{settings.Colors.GREEN}Adding student to bulk data loader{settings.Colors.RESET}")
         utils.increment_stat_value("TotalStudentsProcessed")
-        utils.increment_stat_value("CurrentSessionStudentsProcessed")
+        utils.increment_stat_value("studentsProcessedInCurrentSession")
        
 
   ######################################################################

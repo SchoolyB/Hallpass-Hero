@@ -14,7 +14,6 @@ Description : This source file contains all functions used
 #include <stdint.h>
 #include <time.h>
 #include <stdarg.h>
-
 #include "../lib/headers/cpp/cpp_files.hpp"
 #include "../lib/headers/c/c_files.h"
 

@@ -32,11 +32,13 @@ int show_settings_menu(void)
   {
     show_current_menu("Settings Menu");
     printf("Enter the number of the option you would like to select:\n");
-    printf("1. Enable/Disable Runtime Logging\n");
-    printf("2. Rename Database\n");
+    printf("1. Rename Database\n");
+    printf("2. Enable/Disable Runtime Logging\n");
     printf("3. Enable/Disable Color\n");
     printf("4. Enable/Disable Student ID Generation\n");
-    printf("5. Main Menu\n");
+    printf("5. Enable/Disable Skipping Bulk Data Loader Confirmation\n");
+    printf("6. Enable/Disable Skipping Bulk Data Loader Entry Prompt\n"); // TODO might delete this option from both UI and python script
+    printf("7. Main Menu\n");
     __utils_fgets_and_remove_newline(userInput.StrInput);
     userInput.NumInput = atoi(userInput.StrInput);
     settingsMenuRunning = FALSE;
@@ -52,13 +54,13 @@ int show_settings_menu(void)
   switch (userInput.NumInput)
   {
   case 1:
+    __utils_runtime_logger("chose to rename the database", "show_settings_menu");
+    handle_rename_db_logic(databaseInfo.currentDBName);
+    break;
+  case 2:
     __utils_runtime_logger("user entered the enable/disable runtime logging menu", "show_settings_menu");
     check_and_load_config();
     handle_runtime_logging_logic();
-    break;
-  case 2:
-    __utils_runtime_logger("chose to rename the database", "show_settings_menu");
-    handle_rename_db_logic(databaseInfo.currentDBName);
     break;
   case 3:
     __utils_runtime_logger("user entered the enable/disable color menu", "show_settings_menu");
@@ -71,6 +73,16 @@ int show_settings_menu(void)
     toggle_student_id_auto_generation();
     break;
   case 5:
+    __utils_runtime_logger("user entered the enable/disable skipping bulk data loader confirmation menu", "show_settings_menu");
+    check_and_load_config();
+    toggle_skip_bulk_data_loader_confirmation();
+    break;
+  case 6:
+    __utils_runtime_logger("user entered the enable/disable skipping bulk data loader entry prompt menu", "show_settings_menu");
+    check_and_load_config();
+    toggle_skip_bulk_data_loader_entry_prompt();
+    break;
+  case 7:
     system("clear");
     printf("Returning to main menu...\n");
     sleep(1);
@@ -79,10 +91,9 @@ int show_settings_menu(void)
     break;
   default:
     system("clear");
-    printf("Invalid input\n");
+    printf("Invalid decision please try again\n");
     sleep(1);
     system("clear");
-    printf("Please try again.\n");
     show_settings_menu();
   }
 }
@@ -187,10 +198,8 @@ int handle_rename_db_logic(const char *currentDBName)
   }
   else if (INPUT_IS_CANCEL(userInput.StrInput))
   {
-    system("clear");
     __utils_operation_cancelled("handle_rename_db_logic");
-    sleep(1);
-    system("clear");
+    show_settings_menu();
   }
   else
   {
@@ -477,6 +486,169 @@ int toggle_colors(void)
 }
 
 /************************************************************************************
+ * toggle_skip_bulk_data_loader_confirmation(): Handles the logic for toggling the
+ *                                              skipBulkLoaderInfoConfirmation setting.
+ *
+ * See usage in: show_settings_menu()
+ ************************************************************************************/
+int toggle_skip_bulk_data_loader_confirmation()
+{
+  if (programSettings.skipBulkLoaderInfoConfirmation == TRUE)
+  {
+    system("clear");
+    show_current_step("Disable Skipping Bulk Data Loader Confirmation", 1, 1);
+    printf("Currently the bulk data loader confirmation is " BOLD "%senabled%s\n", green.colorCode, reset.colorCode);
+    printf("Would you like to disable the bulk data loader confirmation?[y/n]\n");
+    printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n", yellow.colorCode, reset.colorCode);
+    __utils_fgets_and_remove_newline(userInput.StrInput);
+
+    if (INPUT_IS_CANCEL(userInput.StrInput))
+    {
+      __utils_operation_cancelled("toggle_skip_bulk_data_loader_confirmation");
+      printf("Returning to settings menu...\n");
+      show_settings_menu();
+    }
+    else if (INPUT_IS_YES(userInput.StrInput))
+    {
+      system("clear");
+      programSettings.skipBulkLoaderInfoConfirmation = FALSE;
+      store_setting("skipBulkLoaderInfoConfirmation", FALSE);
+      printf("The bulk data loader confirmation has been %s disabled%s\n", red.colorCode, reset.colorCode);
+      __utils_runtime_logger("disabled the bulk data loader confirmation", "toggle_skip_bulk_data_loader_confirmation");
+      sleep(2);
+      system("clear");
+      show_settings_menu();
+    }
+    else if (INPUT_IS_NO(userInput.StrInput))
+    {
+      system("clear");
+      printf("Returning to settings menu...\n");
+      sleep(1);
+      system("clear");
+      show_settings_menu();
+    }
+  }
+  else if (programSettings.skipBulkLoaderInfoConfirmation == FALSE)
+  {
+    system("clear");
+    show_current_step("Enable Skipping Bulk Data Loader Confirmation", 1, 1);
+    printf("Currently the bulk data loader confirmation is " BOLD "%sdisabled%s\n", red.colorCode, reset.colorCode);
+    printf("Would you like to enable the bulk data loader confirmation?[y/n]\n");
+    printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n", yellow.colorCode, reset.colorCode);
+    __utils_fgets_and_remove_newline(userInput.StrInput);
+
+    if (INPUT_IS_CANCEL(userInput.StrInput))
+    {
+      __utils_operation_cancelled("toggle_skip_bulk_data_loader_confirmation");
+      printf("Returning to settings menu...\n");
+      sleep(1);
+      system("clear");
+      show_settings_menu();
+    }
+    else if (INPUT_IS_YES(userInput.StrInput))
+    {
+      system("clear");
+      programSettings.skipBulkLoaderInfoConfirmation = TRUE;
+      store_setting("skipBulkLoaderInfoConfirmation", TRUE);
+      printf("The bulk data loader confirmation has been %s enabled%s\n", green.colorCode, reset.colorCode);
+      __utils_runtime_logger("enabled the bulk data loader confirmation", "toggle_skip_bulk_data_loader_confirmation");
+      sleep(2);
+      system("clear");
+      show_settings_menu();
+    }
+    else if (INPUT_IS_NO(userInput.StrInput))
+    {
+      system("clear");
+      printf("Returning to settings menu...\n");
+      sleep(1);
+      system("clear");
+      show_settings_menu();
+    }
+  }
+}
+
+/************************************************************************************
+ * toggle_skip_bulk_data_loader_entry_prompt(): Handles the logic for toggling the
+ *                                              skipBulkDataLoaderEntryPrompt setting.
+ *
+ * See usage in: show_settings_menu()
+ ************************************************************************************/
+int toggle_skip_bulk_data_loader_entry_prompt(void)
+{
+  if (programSettings.skipBulkDataLoaderEntryPrompt == TRUE)
+  {
+    system("clear");
+    show_current_step("Disable Skipping Bulk Data Loader Entry Prompt", 1, 1);
+    printf("Currently the bulk data loader entry prompt is " BOLD "%senabled%s\n", green.colorCode, reset.colorCode);
+    printf("Would you like to disable the bulk data loader entry prompt?[y/n]\n");
+    printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n", yellow.colorCode, reset.colorCode);
+    __utils_fgets_and_remove_newline(userInput.StrInput);
+
+    if (INPUT_IS_CANCEL(userInput.StrInput))
+    {
+      __utils_operation_cancelled("toggle_skip_bulk_data_loader_entry_prompt");
+      printf("Returning to settings menu...\n");
+      show_settings_menu();
+    }
+    else if (INPUT_IS_YES(userInput.StrInput))
+    {
+      system("clear");
+      programSettings.skipBulkDataLoaderEntryPrompt = FALSE;
+      store_setting("skipBulkLoaderPostEntryMenu", FALSE);
+      printf("The bulk data loader entry prompt has been %s disabled%s\n", red.colorCode, reset.colorCode);
+      __utils_runtime_logger("disabled the bulk data loader entry prompt", "toggle_skip_bulk_data_loader_entry_prompt");
+      sleep(2);
+      system("clear");
+      show_settings_menu();
+    }
+    else if (INPUT_IS_NO(userInput.StrInput))
+    {
+      system("clear");
+      printf("Returning to settings menu...\n");
+      sleep(1);
+      system("clear");
+      show_settings_menu();
+    }
+  }
+  else if (programSettings.skipBulkDataLoaderEntryPrompt == FALSE)
+  {
+    system("clear");
+    show_current_step("Enable Skipping Bulk Data Loader Entry Prompt", 1, 1);
+    printf("Currently the bulk data loader entry prompt is " BOLD "%sdisabled%s\n", red.colorCode, reset.colorCode);
+    printf("Would you like to enable the bulk data loader entry prompt?[y/n]\n");
+    printf("%sTo cancel this operation enter" BOLD "'cancel'%s\n", yellow.colorCode, reset.colorCode);
+    __utils_fgets_and_remove_newline(userInput.StrInput);
+
+    if (INPUT_IS_CANCEL(userInput.StrInput))
+    {
+      __utils_operation_cancelled("toggle_skip_bulk_data_loader_entry_prompt");
+      printf("Returning to settings menu...\n");
+      sleep(1);
+      system("clear");
+      show_settings_menu();
+    }
+    else if (INPUT_IS_YES(userInput.StrInput))
+    {
+      system("clear");
+      programSettings.skipBulkDataLoaderEntryPrompt = TRUE;
+      store_setting("skipBulkLoaderPostEntryMenu", TRUE);
+      printf("The bulk data loader entry prompt has been %s enabled%s\n", green.colorCode, reset.colorCode);
+      __utils_runtime_logger("enabled the bulk data loader entry prompt", "toggle_skip_bulk_data_loader_entry_prompt");
+      sleep(2);
+      system("clear");
+      show_settings_menu();
+    }
+    else if (INPUT_IS_NO(userInput.StrInput))
+    {
+      system("clear");
+      printf("Returning to settings menu...\n");
+      sleep(1);
+      system("clear");
+      show_settings_menu();
+    }
+  }
+}
+/************************************************************************************
  * store_setting(): Used to store the passed in settings value into the key-value pair
  *                  in the settings.config file.
  *
@@ -633,6 +805,7 @@ int load_settings_config(const char *settingName, int settingValue)
   }
   else
   {
+    __utils_error_logger("could not load setting", "load_settings_config", MODERATE);
     return -1;
   }
 }
@@ -723,16 +896,17 @@ int toggle_student_id_auto_generation(void)
 
 /************************************************************************************
  * check_and_load_config(): Checks if the settings.config file exists and loads the
- *                          settings.config file. Also adds the default values to   *                          the config file
+ *                          settings.config file. Also adds the default values to
+ *                          the config file
  *
  * See usage in: show_settings_menu() and main.c
  ***********************************************************************************/
 int check_and_load_config(void)
 {
   int foundSettingsConfig = read_from_dir_and_check_extension("../build", ".config");
-
   if (foundSettingsConfig == TRUE)
   {
+    // Load the runtimeLoggingEnabled setting from the settings.config file
     int runtimeLoggingLoaded = load_settings_config("runtimeLoggingEnabled", programSettings.runtimeLoggingEnabled);
     switch (runtimeLoggingLoaded)
     {
@@ -746,7 +920,7 @@ int check_and_load_config(void)
       break;
     }
 
-    load_settings_config("colorEnabled", programSettings.colorEnabled);
+    // Load the colorEnabled setting from the settings.config file
     int colorEnabledLoaded = load_settings_config("colorEnabled", programSettings.colorEnabled);
     switch (colorEnabledLoaded)
     {
@@ -766,9 +940,8 @@ int check_and_load_config(void)
       break;
     }
 
-    load_settings_config("autoStudentIDGenerationEnabled", programSettings.autoStudentIDGenerationEnabled);
+    // Load the autoStudentIDGenerationEnabled setting from the settings.config file
     int autoStudentIDGenerationEnabledLoaded = load_settings_config("autoStudentIDGenerationEnabled", programSettings.autoStudentIDGenerationEnabled);
-
     switch (autoStudentIDGenerationEnabledLoaded)
     {
     case 0:
@@ -778,6 +951,34 @@ int check_and_load_config(void)
     case 1:
       programSettings.autoStudentIDGenerationEnabled = TRUE;
       __utils_runtime_logger("auto student ID generation read as enabled in config file, setting auto student ID generation to true", "check_and_load_config");
+      break;
+    }
+
+    // Load the skipBulkLoaderInfoConfirmation setting from the settings.config file
+    int skipBulkLoaderInfoConfirmationLoaded = load_settings_config("skipBulkLoaderInfoConfirmation", programSettings.skipBulkLoaderInfoConfirmation);
+    switch (skipBulkLoaderInfoConfirmationLoaded)
+    {
+    case 0:
+      programSettings.skipBulkLoaderInfoConfirmation = FALSE;
+      __utils_runtime_logger("skip bulk data loader confirmation read as disabled in config file, setting skip bulk data loader confirmation to false", "check_and_load_config");
+      break;
+    case 1:
+      programSettings.skipBulkLoaderInfoConfirmation = TRUE;
+      __utils_runtime_logger("skip bulk data loader confirmation read as enabled in config file, setting skip bulk data loader confirmation to true", "check_and_load_config");
+      break;
+    }
+
+    // Load the skipBulkDataLoaderEntryPrompt setting from the settings.config file
+    int skipBulkDataLoaderEntryPromptLoaded = load_settings_config("skipBulkLoaderPostEntryMenu", programSettings.skipBulkDataLoaderEntryPrompt);
+    switch (skipBulkDataLoaderEntryPromptLoaded)
+    {
+    case 0:
+      programSettings.skipBulkDataLoaderEntryPrompt = FALSE;
+      __utils_runtime_logger("skip bulk data loader entry prompt read as disabled in config file, setting skip bulk data loader entry prompt to false", "check_and_load_config");
+      break;
+    case 1:
+      programSettings.skipBulkDataLoaderEntryPrompt = TRUE;
+      __utils_runtime_logger("skip bulk data loader entry prompt read as enabled in config file, setting skip bulk data loader entry prompt to true", "check_and_load_config");
       break;
     }
   }
@@ -797,6 +998,8 @@ int check_and_load_config(void)
     fprintf(settingsConfig, "runtimeLoggingEnabled=%d\n", programSettings.runtimeLoggingEnabled);
     fprintf(settingsConfig, "colorEnabled=%d\n", programSettings.colorEnabled);
     fprintf(settingsConfig, "autoStudentIDGenerationEnabled=%d\n", programSettings.autoStudentIDGenerationEnabled);
+    fprintf(settingsConfig, "skipBulkLoaderInfoConfirmation=%d\n", programSettings.skipBulkLoaderInfoConfirmation);
+    fprintf(settingsConfig, "skipBulkLoaderPostEntryMenu=%d\n", programSettings.skipBulkDataLoaderEntryPrompt);
     fclose(settingsConfig);
   }
 }
