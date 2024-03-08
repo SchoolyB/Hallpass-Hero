@@ -23,11 +23,16 @@ runtimeLogFilePath = "../../logs/runtime.log"
 sys.path.append("../../../python/")
 import settings
 import bulk_data_loader
+
 class ErrorLevel(Enum):
     MINOR = 0
     MODERATE = 1
     CRITICAL = 2
 
+class Font:
+    BOLD = "\033[1m"
+    UNDERLINE = "\033[4m"
+    END = "\033[0m"
 ######################################################################
 # clear(): clears the terminal screen
 #
@@ -385,7 +390,7 @@ def __utils_runtime_logger(action, function):
 ######################################################################
 def __utils_operation_cancelled(functionName):
     clear()
-    print(f"{settings.GlobalSettings.Colors.YELLOW}Cancelling operation{settings.GlobalSettings.Colors.RESET}")
+    print(f"{settings.Colors.YELLOW}Cancelling operation{settings.Colors.RESET}")
     __utils_runtime_logger("Cancelled operation", functionName)
     time.sleep(1)
     clear()
@@ -451,3 +456,9 @@ def check_if_bulk_data_loader_settings_exist():
         return -1
 
 
+def check_for_special_chars(str):
+    specialChars = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "-", "+", "=", "{", "}", "[", "]", ":", ";", "'", "<", ">", ",", ".", "?", "/", "|", "\\", "`", "~"]
+    for char in str:
+        if char in specialChars:
+            return True
+    return False

@@ -15,6 +15,7 @@ import time
 from enum import Enum
 import time
 import settings
+import random
 
 # Import the utils module from the lib/utils/python directory 
 sys.path.append("../lib/utils/python")
@@ -24,8 +25,10 @@ bulkLoaderDataFilePath = "../../build/data/active_data.json"
      
 class Student:
   FirstName = None
+  TruncatedLastName = None
   LastName = None
   StudentID = None
+
 
 class Statistic:
   TotalStudentsProcessed = None
@@ -41,22 +44,34 @@ def main():
   utils.__utils_runtime_logger("attempted to run bulk data loader", "bulk_data_loader.main()")
   utils.clear()
   utils.check_and_populate_stats_file()
-      # Second is begin the bulk data loader process
+  ######################################################################
+  # get_student_information(): Gets the student's first name, last name,  
+  #                            and student ID
+  #
+  # see usage in handle_main_loop()
+  ######################################################################
   def get_student_information(type):
     # Get the first name
     if type == "first name":
       userInput = input(f"Enter the student's {type}: \n")
       hasNonSpaceChar = utils.has_one_non_space_char(userInput)
-      if(hasNonSpaceChar == False):
-        print(f"{settings.Colors.RED}The student's first name cannot be empty{settings.Colors.RESET}")
+      if(utils.check_for_special_chars(userInput) == True):
+        print(f"{settings.Colors.RED}The student's first name cannot contain special characters{settings.Colors.RESET}")
         time.sleep(2)
         utils.clear()
         get_student_information("first name")
-      elif (hasNonSpaceChar == True):
-        if userInput == "cancel":
-          utils.__utils_operation_cancelled("get_student_information")
-        else:
-          Student.FirstName = userInput
+      else:
+        if(hasNonSpaceChar == False):
+          print(f"{settings.Colors.YELLOW}The student's first name cannot be empty{settings.Colors.RESET}")
+          time.sleep(2)
+          utils.clear()
+          get_student_information("first name")
+        elif (hasNonSpaceChar == True):
+          if userInput == "cancel":
+            utils.__utils_operation_cancelled("get_student_information")
+            exit()
+          else:
+            Student.FirstName = userInput.capitalize()
           
         
     # Get the last name 
@@ -64,40 +79,123 @@ def main():
       utils.clear()
       print(f"First Name: {Student.FirstName}")
       print("Enter the student's last name")
-      print("If the student doesn't have a last name enter 'none'")
+      print(f"{settings.Colors.YELLOW}If the student doesn't have a last name enter 'none' {settings.Colors.RESET}")
       userInput = input(f"Enter the student's {type}: \n")
       hasNonSpaceChar = utils.has_one_non_space_char(userInput)
-      if(hasNonSpaceChar == False):
-        print(f"{settings.Colors.RED}The student's last name cannot be empty{settings.Colors.RESET}")
+      if(utils.check_for_special_chars(userInput) == True):
+        print(f"{settings.Colors.RED}The student's last name cannot contain special characters{settings.Colors.RESET}")
         time.sleep(2)
         utils.clear()
         get_student_information("last name")
-      elif (hasNonSpaceChar == True):
-        if userInput == "cancel":
-          utils.__utils_operation_cancelled("get_student_information")
-        if(userInput == "none"):
-           print(f"{settings.Colors.YELLOW}The student's last name will be set to 'none'{settings.Colors.RESET}")
-           Student.LastName = "none"
-        else:
-           Student.LastName = userInput
-    # Get the ID 
+      else:
+        if(hasNonSpaceChar == False):
+          print(f"{settings.Colors.RED}The student's last name cannot be empty, if the student doesn't have a last please enter 'none'.{settings.Colors.RESET}")
+          time.sleep(3)
+          print("Please try again.")
+          utils.clear()
+          get_student_information("last name")
+        elif (hasNonSpaceChar == True):
+          if userInput == "cancel":
+            utils.__utils_operation_cancelled("get_student_information")
+            exit()
+          if(userInput == "none"):
+             print(f"{settings.Colors.YELLOW}The student's last name will be set to 'none'{settings.Colors.RESET}")
+             Student.LastName = "none"
+          else:
+             if(len(userInput) > 10):
+                Student.TruncatedLastName = truncate_last_name(userInput)
+                print(f"{settings.Colors.YELLOW}Entered last name {utils.Font.BOLD}{settings.Colors.YELLOW}{userInput}{settings.Colors.RESET}{settings.Colors.YELLOW} longer than 10 characters, this will be shortened to {utils.Font.BOLD}{Student.TruncatedLastName}{settings.Colors.RESET}{settings.Colors.YELLOW} in the student ID.{settings.Colors.RESET}")
+                print("Are you sure you want to continue with this students last name?[y/n]")
+                confirmation = input()
+                if confirmation == "y" or confirmation == "Y": 
+                   print(f"{settings.Colors.GREEN}The student's last name has been set to {Student.TruncatedLastName}{settings.Colors.RESET}")
+                   Student.LastName = Student.TruncatedLastName.capitalize()
+                elif confirmation == "n" or confirmation == "N":
+                  print("Re-enter the student's last name")
+                  time.sleep(2)
+                  utils.clear()
+                  print(f"First Name: {Student.FirstName}")
+                  get_student_information("last name")
+             else:
+                Student.LastName = userInput.capitalize()  
+    # Get and set the ID 
     #todo unfortunately I get the automatic generation of the student id is done in the C code so I will have to basically create a new function in Python to generate the student id....  or I can store the student id from the c code in a memory address and then retrieve it from the python code
     elif type == "student id":
       utils.clear()
       print(f"First Name: {Student.FirstName}")
       print(f"Last Name: {Student.LastName}")
-      userInput = input(f"Enter the student's {type}: \n")
-      hasNonSpaceChar = utils.has_one_non_space_char(userInput)
-      if(hasNonSpaceChar == False):
-        print(f"{settings.Colors.RED}The student's id cannot be empty{settings.Colors.RESET}")
+      print("Checking status of auto student id generation in settings...")
+      time.sleep(1)
+      if(settings.GlobalSettings.AutoStudentIDGenerationEnabled == 1):
+        print(f"{settings.Colors.GREEN}Auto student id generation is enabled{settings.Colors.RESET}")
+        print(f"{settings.Colors.YELLOW}Automatically generating student ID{settings.Colors.RESET}")
         time.sleep(2)
-        utils.clear()
-        get_student_information("student id")
-      elif (hasNonSpaceChar == True):
-        if userInput == "cancel":
-          utils.__utils_operation_cancelled("get_student_information")
-        Student.StudentID = userInput
-    
+        Student.StudentID = auto_generate_student_id(Student.FirstName, Student.LastName)
+      else:
+        print(f"{settings.Colors.RED}Auto student id generation is disabled{settings.Colors.RESET}")
+        userInput = input(f"Enter the student's {type}: \n")
+        hasNonSpaceChar = utils.has_one_non_space_char(userInput)
+        if(hasNonSpaceChar == False):
+          print(f"{settings.Colors.RED}The student's id cannot be empty{settings.Colors.RESET}")
+          time.sleep(2)
+          utils.clear()
+          get_student_information("student id")
+        elif (hasNonSpaceChar == True):
+          if userInput == "cancel":
+            utils.__utils_operation_cancelled("get_student_information")
+            exit()
+          elif(len(userInput) > 15):
+            print(f"{settings.Colors.YELLOW}The id you entered is too long. Please try again.{settings.Colors.RESET}")
+            time.sleep(2)
+            utils.clear()
+            get_student_information("student id")
+          elif(len(userInput) < 2):
+            print(f"{settings.Colors.YELLOW}The id you entered is too short. Please try again.{settings.Colors.RESET}")
+            time.sleep(2)
+            utils.clear()
+            get_student_information("student id")
+
+
+
+  ######################################################################
+  # truncate_last_name(): Truncates the last name to 10 characters
+  #
+  # see usage in get_student_information()
+  ######################################################################          
+  def truncate_last_name(lastName):
+    truncatedLastName = lastName[0:10]
+    truncatedLastName = truncatedLastName.capitalize()
+    return truncatedLastName
+  
+
+  ######################################################################
+  # take_first_two_letters(): Takes the first two letters of the first
+  #                           name and returns them in uppercase
+  #
+  # see usage in auto_generate_student_id()
+  ######################################################################  
+  def take_first_two_letters(firstName):
+    firstTwoLettersFirstName = firstName[0:2]
+    firstTwoLettersFirstName = firstTwoLettersFirstName.upper()
+    return str(firstTwoLettersFirstName)
+
+
+  ######################################################################
+  # auto_generate_student_id(): Automatically generates a student ID
+  #                             based on the student's first and last name
+  #
+  # see usage in get_student_information()
+  ######################################################################
+  def auto_generate_student_id(firstName, lastName):
+    nums = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    studentIDPrefix = take_first_two_letters(firstName) + str(lastName)
+  
+    studentIDSuffix = random.choice(nums)
+    studentID = studentIDPrefix + str(studentIDSuffix)
+    studentID += str(studentIDSuffix)
+    print(studentID) 
+    return studentID
+
 
 ######################################################################
 # confirm_student_information(): Confirms the student information with
@@ -115,8 +213,9 @@ def main():
       print(f"Student ID: {studentId}")
       confirmation = input()
       if confirmation == "y" or confirmation == "Y":
-        #  todo insert the data into json
+       utils.clear()
        print(f"{settings.Colors.GREEN}Adding student to bulk data loader{settings.Colors.RESET}")
+      #TODO  actually insert the data into the json file here
        utils.increment_stat_value("TotalStudentsProcessed")
        utils.increment_stat_value("studentsProcessedInCurrentSession")
       elif confirmation == "n" or confirmation == "N":
@@ -143,7 +242,7 @@ def main():
   ######################################################################
   def handle_non_confirmation():
     utils.clear()
-    print(f"{settings.Colors.YELLOW}You have chosen not to process the following student information:{settings.Colors.RESET}")
+    print(f"{settings.Colors.YELLOW}You have chosen not to process the following student information:{settings.ColorsRESET}")
     print(f"First Name: {Student.FirstName}")
     print(f"Last Name: {Student.LastName}")
     print(f"Student ID: {Student.StudentID}")
