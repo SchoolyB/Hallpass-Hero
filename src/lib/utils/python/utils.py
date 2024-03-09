@@ -10,11 +10,11 @@
 
 import os
 import time
-import json
+import csv
 import sys
 from enum import Enum
 
-dataFilePath = "../build/data/active_data.json"
+dataFilePath = "../build/data/active_data.csv"
 settingsConfigPath = "../../build/settings.config"
 statsLogFilePath = "../../logs/stats.log"
 errorLogFilePath = "../../logs/errors.log"
@@ -299,40 +299,25 @@ def increment_stat_value(keyName):
         return -1
    
 ######################################################################
-# check_file_for_valid_json(): Helper function to make sure the passed
-#                              in file contains valid json
+# check_file_for_valid_csv(): Helper function to make sure the passed
+#                              in file contains valid csv
 #
 # see usage in 
 ######################################################################
-def check_file_for_valid_json(filePath):
-    # try to open the file and load the JSON data
+def check_file_for_valid_csv(filePath):
     try:
-        with open(dataFilePath, "r") as file:
-            jsonData = json.load(file)
-        return True
-    # if there is an error, print the error and return False
-    except json.JSONDecodeError as error:
-        print(f"Error Decoding JSON in {dataFilePath}: {error}")
-        return False
-    # if the file is not found, print the error and return False
+        with open(filePath, "r") as file:
+            csvFile = csv.reader(file)
+            for row in csvFile:
+                if len(row) == 0:
+                    return False
+                else:
+                    return True
     except FileNotFoundError as error:
         print(f"File Not Found: {dataFilePath}")
         return False
 
-######################################################################
-# insert_json_array: simply inserts a blank json array into the passed
-#                    in file  
-#
-# see usage in 
-######################################################################
-def insert_json_array(filePath):
-  try:
-    with open(filePath, "w") as file:
-       json.dump([], file)
-  except FileNotFoundError as error:
-    print(f"File Not Found: {dataFilePath}")
-    return False
-     
+
 ######################################################################
 # __utils_error_logger(): Used to log error messages to the error log
 #                        file

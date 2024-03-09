@@ -10,7 +10,7 @@
 
 import sys
 import os
-import json
+import csv
 import time
 from enum import Enum
 import time
@@ -21,7 +21,7 @@ import random
 sys.path.append("../lib/utils/python")
 import utils
 
-bulkLoaderDataFilePath = "../../build/data/active_data.json"
+bulkLoaderDataFilePath = "../../build/data/active_data.csv"
      
 class Student:
   FirstName = None
@@ -206,7 +206,9 @@ def main():
   def confirm_student_information(firstName, lastName, studentId):
     utils.clear()
     # If the setting to skip the confirmation is disabled
+    print(f"Checking status of skip bulk loader info confirmation in settings...")
     if(settings.GlobalSettings.SkipBulkLoaderInfoConfirmation == 0):
+      print(f"{settings.Colors.RED}Skip bulk loader info confirmation is disabled{settings.Colors.RESET}")
       print(f"{settings.Colors.YELLOW}Are you sure you want to process the following student information?[y/n]{settings.Colors.RESET}")
       print(f"First Name: {firstName}")
       print(f"Last Name: {lastName}")
@@ -215,7 +217,10 @@ def main():
       if confirmation == "y" or confirmation == "Y":
        utils.clear()
        print(f"{settings.Colors.GREEN}Adding student to bulk data loader{settings.Colors.RESET}")
-      #TODO  actually insert the data into the json file here
+       insert_data_into_csv(Student.FirstName, Student.LastName, Student.StudentID)
+       time.sleep(.5)
+       print(f"{settings.Colors.GREEN}Student successfully added to bulk data loader{settings.Colors.RESET}")
+       utils.clear()
        utils.increment_stat_value("TotalStudentsProcessed")
        utils.increment_stat_value("studentsProcessedInCurrentSession")
       elif confirmation == "n" or confirmation == "N":
@@ -228,7 +233,8 @@ def main():
         
         #If the setting to skip the confirmation is enabled 
     elif(settings.GlobalSettings.SkipBulkLoaderInfoConfirmation == 1):
-      #  insert the data into json
+      #  insert the data into csv
+        print(f"{settings.Colors.GREEN}Skip bulk loader info confirmation is enabled{settings.Colors.RESET}")
         print(f"{settings.Colors.GREEN}Adding student to bulk data loader{settings.Colors.RESET}")
         utils.increment_stat_value("TotalStudentsProcessed")
         utils.increment_stat_value("studentsProcessedInCurrentSession")
@@ -242,7 +248,7 @@ def main():
   ######################################################################
   def handle_non_confirmation():
     utils.clear()
-    print(f"{settings.Colors.YELLOW}You have chosen not to process the following student information:{settings.ColorsRESET}")
+    print(f"{settings.Colors.YELLOW}You have chosen not to process the following student information:{settings.Colors.RESET}")
     print(f"First Name: {Student.FirstName}")
     print(f"Last Name: {Student.LastName}")
     print(f"Student ID: {Student.StudentID}")
@@ -295,6 +301,17 @@ def main():
 
 
   ######################################################################
+  # insert_data_into_csv(): Inserts the passed in data into the csv file
+  #
+  # see usage in confirm_student_information()
+  ######################################################################
+  def insert_data_into_csv(firstName,lastName,studentID):
+    with open(bulkLoaderDataFilePath, "a") as file:
+      writer = csv.writer(file)
+      writer.writerow([firstName, lastName, studentID])
+
+
+  ######################################################################
   # handle_main_loop(): Handles the main function loop for the bulk data loader
   #
   ######################################################################
@@ -307,7 +324,7 @@ def main():
     
     
 # Todo so the problem is that I will only need to insert the objects and arrays only once. Any time after that I will only need to insert the data inside the "students" array. need to find a way to check for the existence of "data" object and all of its contents then insert the new student data into the "students" array
-  # def insert_student_into_json(studentSessionNumAsStr, studentFirstName, studentLastName, studentID):
+  # def insert_student_into_csv(studentSessionNumAsStr, studentFirstName, studentLastName, studentID):
   #   try:
   #     with open(bulkLoaderDataFilePath, "a") as file:
   #       data = {"data": {
@@ -319,23 +336,27 @@ def main():
   # This var is used to trigger the while loop allowing constant input from the user until the user decides to exit the bulk data loader
   bulkDataLoadingCompleted = False
   while(bulkDataLoadingCompleted == False):
-    print("To add another student enter 'next' or to finalize and load all data enter 'done'")
-    userInput = input()
-    if userInput == "next":
-      utils.clear()
-      handle_main_loop()  
-    elif userInput == "done":
-      bulkDataLoadingCompleted = True
-      utils.clear()
-      print(f"{settings.Colors.GREEN}Bulk data loading completed{settings.Colors.RESET}")
-      utils.increment_stat_value("TotalSessionsCompleted")
-      time.sleep(2)
-      utils.clear()
-    else:
-      utils.clear()
-      print("Invalid input. Please try again")
-      time.sleep(1)
-      bulkDataLoadingCompleted = False
-
+    if(settings.GlobalSettings.SkipBulkLoaderPostEntryMenu == 0):
+      print("To add another student enter 'next' or to finalize and load all data enter 'done'")
+      userInput = input()
+      if userInput == "next":
+        utils.clear()
+        handle_main_loop()  
+      elif userInput == "done":
+        bulkDataLoadingCompleted = True
+        utils.clear()
+        print(f"{settings.Colors.GREEN}Bulk data loading completed{settings.Colors.RESET}")
+        utils.increment_stat_value("TotalSessionsCompleted")
+        time.sleep(2)
+        utils.clear()
+      else:
+        utils.clear()
+        print("Invalid input. Please try again")
+        time.sleep(1)
+        bulkDataLoadingCompleted = False
+    elif(settings.GlobalSettings.SkipBulkLoaderPostEntryMenu == 1):
+      print("Checking status of skip bulk loader post entry menu in settings...")
+      print(f"{settings.Colors.GREEN}Skip bulk loader post entry menu is enabled{settings.Colors.RESET}")
+      handle_main_loop()
 if __name__ == "__main__":
   main()

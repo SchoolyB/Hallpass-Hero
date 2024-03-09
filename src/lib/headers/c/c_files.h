@@ -201,7 +201,7 @@ typedef struct
   char FileName[32];
   char FilePath[32];
   char FileSizeInBytes[20]; // may not need this
-} JSONDataFile;
+} CSVDataFile;
 
 typedef struct
 {
@@ -222,7 +222,7 @@ typedef struct
   int studentCreationInterrupted;
   int isAddingToStudentsTable; // modifies functions depending on if the user is adding students directly to the "students" table or to a roster
 
-  int isUsingBulkLoader;                // this trigger only affects what information from a directory is stored into the JSONDataFile the programSettings.databaseInfo struct respectively
+  int isUsingBulkLoader;                // this trigger only affects what information from a directory is stored into the CSVDataFile the programSettings.databaseInfo struct respectively
   int isBulkLoadingDataToStudentsTable; // will modify functions to handle bulk data loading. allowing me to use the same functions for both bulk data loading to a roster and to the students table
 } GlobalTrigger;
 
@@ -246,7 +246,7 @@ typedef struct
   DatabaseInfo databaseInfo;
 } ProgramSettings;
 
-extern JSONDataFile jsonDataFile;       // initialized in main.c
+extern CSVDataFile csvDataFile;         // initialized in main.c
 extern Roster roster;                   // initialized in main.c
 extern ThrowAways throwAways;           // initialized in main.c
 extern UserInput userInput;             // initialized in main.c

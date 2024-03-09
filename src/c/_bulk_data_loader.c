@@ -53,8 +53,7 @@ int handle_bulk_data_loader_menu(void)
           switch (resultOfSearch)
           {
           case 0:
-            printf("%sData file: " BOLD "%s %s%sfound%s\n", green.colorCode, jsonDataFile.FileName, reset.colorCode, green.colorCode, reset.colorCode);
-            sleep(2);
+            printf("%sData file: " BOLD "%s %s%sfound%s\n", green.colorCode, csvDataFile.FileName, reset.colorCode, green.colorCode, reset.colorCode);
             int fileIsEmpty = check_if_data_file_is_empty();
             if (fileIsEmpty == FALSE)
             {
@@ -63,7 +62,7 @@ int handle_bulk_data_loader_menu(void)
             }
             else
             {
-              printf("%sData file: " BOLD "%s%s%s is empty%s\n", green.colorCode, jsonDataFile.FileName, reset.colorCode, green.colorCode, reset.colorCode);
+              printf("%sData file: " BOLD "%s%s%s is empty%s\n", green.colorCode, csvDataFile.FileName, reset.colorCode, green.colorCode, reset.colorCode);
               sleep(2);
               system("clear");
               __bulk_handle_data_entry();
@@ -100,7 +99,7 @@ int handle_bulk_data_loader_menu(void)
 }
 
 /************************************************************************************
- * generate_bulk_data_loader_file(): Generates a new bulk data loader .json file
+ * generate_bulk_data_loader_file(): Generates a new bulk data loader .csv file
  *                                   with the file name and status passed as arguments.
  *                                    - fileStatus: "active" or "inactive"
  *
@@ -114,48 +113,48 @@ void generate_bulk_data_loader_file(const char *fileName, const char *fileStatus
   FILE *file = fopen(filePath, "a");
   if (file == NULL)
   {
-    __utils_error_logger("Failed to create bulk data loader json file", "generate_bulk_data_loader_file", CRITICAL);
+    __utils_error_logger("Failed to create bulk data loader csv file", "generate_bulk_data_loader_file", CRITICAL);
     return -1;
   }
 
-  __utils_runtime_logger("Created bulk data loader json file", "generate_bulk_data_loader_file");
+  __utils_runtime_logger("Created bulk data loader csv file", "generate_bulk_data_loader_file");
 
-  // storing the file name and path in the jsonDataFile struct on file generation
-  snprintf(jsonDataFile.FileName, sizeof(jsonDataFile.FileName), "%s_%s", fileStatus, fileName);
-  sprintf(jsonDataFile.FilePath, "%s", filePath);
+  // storing the file name and path in the csvDataFile struct on file generation
+  snprintf(csvDataFile.FileName, sizeof(csvDataFile.FileName), "%s_%s", fileStatus, fileName);
+  sprintf(csvDataFile.FilePath, "%s", filePath);
 
   fclose(file);
 }
 /************************************************************************************
- * check_if_data_file_is_empty(): Checks if the bulk data loader .json file is empty
+ * check_if_data_file_is_empty(): Checks if the bulk data loader .csv file is empty
  *                                or not and return TRUE or FALSE accordingly.
  *
  * See usage in handle_bulk_data_loader_menu()
  ************************************************************************************/
 int check_if_data_file_is_empty(void)
 {
-  __utils_runtime_logger("checking if bulk data loader json file is empty", "check_if_data_file_is_empty");
-  FILE *file = fopen(jsonDataFile.FilePath, "r");
+  __utils_runtime_logger("checking if bulk data loader csv file is empty", "check_if_data_file_is_empty");
+  FILE *file = fopen(csvDataFile.FilePath, "r");
   if (file == NULL)
   {
-    __utils_error_logger("failed to open bulk data loader json file", "check_if_data_file_is_empty", CRITICAL);
+    __utils_error_logger("failed to open bulk data loader csv file", "check_if_data_file_is_empty", CRITICAL);
     fclose(file);
   }
   else
   {
-    __utils_runtime_logger("opened bulk data loader json file", "check_if_data_file_is_empty");
+    __utils_runtime_logger("opened bulk data loader csv file", "check_if_data_file_is_empty");
   }
 
   fseek(file, 0, SEEK_END);
   long fileSize = ftell(file);
   if (fileSize == 0)
   {
-    __utils_runtime_logger("bulk data loader json file is empty", "check_if_data_file_is_empty");
+    __utils_runtime_logger("bulk data loader csv file is empty", "check_if_data_file_is_empty");
     return TRUE;
   }
   else
   {
-    __utils_runtime_logger("bulk data loader json file is NOT empty", "check_if_data_file_is_empty");
+    __utils_runtime_logger("bulk data loader csv file is NOT empty", "check_if_data_file_is_empty");
     fclose(file);
     return FALSE;
   }
@@ -163,7 +162,7 @@ int check_if_data_file_is_empty(void)
 
 /************************************************************************************
  * handle_non_empty_data_file(): This function handles the menu that appears in
- *                               the event that the bulk data loader .json file is
+ *                               the event that the bulk data loader .csv file is
  *                               not empty.
  *
  * See usage in handle_bulk_data_loader_menu()
@@ -172,7 +171,7 @@ int handle_non_empty_data_file(void)
 {
   system("clear");
   __utils_runtime_logger("entered handle non empty data file menu", "handle_non_empty_data_file");
-  printf("%sWARNING: The data file" BOLD " %s%s%s is not empty. What would you like to do?%s\n", red.colorCode, jsonDataFile.FileName, reset.colorCode, red.colorCode, reset.colorCode);
+  printf("%sWARNING: The data file" BOLD " %s%s%s is not empty. What would you like to do?%s\n", red.colorCode, csvDataFile.FileName, reset.colorCode, red.colorCode, reset.colorCode);
   printf("Enter the corresponding number to the action you would like to take.\n");
   printf("%sTo cancel this operation enter 'cancel'%s\n\n", yellow.colorCode, reset.colorCode);
   printf("1. Create a new file\n");
@@ -194,8 +193,8 @@ int handle_non_empty_data_file(void)
     if (fileExists == TRUE)
     {
       // need to change the name of the already existing file to inactive
-      rename(jsonDataFile.FilePath, "../build/data/inactive_data.json");
-      generate_bulk_data_loader_file("data.json", "active");
+      rename(csvDataFile.FilePath, "../build/data/inactive_data.csv");
+      generate_bulk_data_loader_file("data.csv", "active");
       printf("%sNew file successfully generated%s\n", green.colorCode, reset.colorCode);
       sleep(2);
       system("clear");
@@ -203,12 +202,30 @@ int handle_non_empty_data_file(void)
     }
     break;
   case 2:
-    system("clear");
-    // todo add to the existing file
+    printf("%sWARNING Adding to an existing could result in a loss of data or data corruption.\n%s", red.colorCode, reset.colorCode);
+    printf("Are you sure you want to add to the existing file? [y/n]\n");
+    __utils_fgets_and_remove_newline(userInput.StrInput);
+    if (INPUT_IS_YES(userInput.StrInput))
+    {
+      system("clear");
+      __bulk_handle_data_entry();
+    }
+    else if (INPUT_IS_NO(userInput.StrInput))
+    {
+      system("clear");
+      __utils_operation_cancelled("handle_non_empty_data_file");
+      handle_non_empty_data_file();
+    }
+    else
+    {
+      __utils_error_logger("invalid input", "handle_non_empty_data_file", MINOR);
+      printf("Invalid input. Please try again.\n");
+      handle_non_empty_data_file();
+    }
     break;
   case 3:
     system("clear");
-    overwrite_existing_data_file(jsonDataFile.FilePath);
+    overwrite_existing_data_file(csvDataFile.FilePath);
     handle_bulk_data_loader_menu();
     break;
   }
@@ -217,14 +234,14 @@ int handle_non_empty_data_file(void)
 /************************************************************************************
  * overwrite_existing_data_file(): This function handles the menu that appears in
  *                                 the event that the user wants to overwrite the
- *                                 active bulk data loader .json file.
+ *                                 active bulk data loader .csv file.
  *
  * See usage in handle_non_empty_data_file()
  ************************************************************************************/
 int overwrite_existing_data_file(const char *filePath)
 {
   system("clear");
-  printf("%sWARNING: You are about to delete all data in the file: " BOLD "%s %s\n", red.colorCode, jsonDataFile.FileName, reset.colorCode);
+  printf("%sWARNING: You are about to delete all data in the file: " BOLD "%s %s\n", red.colorCode, csvDataFile.FileName, reset.colorCode);
   printf("Are you sure you want to continue?[y/n]\n");
   __utils_fgets_and_remove_newline(userInput.StrInput);
   if (INPUT_IS_YES(userInput.StrInput))
@@ -234,22 +251,22 @@ int overwrite_existing_data_file(const char *filePath)
     {
     case 0:
       system("clear");
-      printf("%sAll data in file: " BOLD "%s %s%shas been cleared%s\n", green.colorCode, jsonDataFile.FileName, reset.colorCode, green.colorCode, reset.colorCode);
+      printf("%sAll data in file: " BOLD "%s %s%shas been cleared%s\n", green.colorCode, csvDataFile.FileName, reset.colorCode, green.colorCode, reset.colorCode);
       sleep(2);
       printf("Returning to the bulk data loader menu...\n");
       sleep(1);
       system("clear");
-      __utils_runtime_logger("cleared bulk data loader json file", "overwrite_existing_data_file");
+      __utils_runtime_logger("cleared bulk data loader csv file", "overwrite_existing_data_file");
       return 0;
     default:
-      __utils_error_logger("failed to clear bulk data loader json file", "overwrite_existing_data_file", MINOR);
+      __utils_error_logger("failed to clear bulk data loader csv file", "overwrite_existing_data_file", MINOR);
       return -1;
     }
   }
   else if (INPUT_IS_NO(userInput.StrInput))
   {
     system("clear");
-    __utils_runtime_logger("chose not to overwrite bulk data loader json file", "overwrite_existing_data_file");
+    __utils_runtime_logger("chose not to overwrite bulk data loader csv file", "overwrite_existing_data_file");
     printf("Returning to the bulk data loader menu...\n");
     sleep(2);
     system("clear");
@@ -264,7 +281,7 @@ int overwrite_existing_data_file(const char *filePath)
 }
 
 /************************************************************************************
- * clear_data_file(): Clears the passed in  bulk data loader .json file.
+ * clear_data_file(): Clears the passed in  bulk data loader .csv file.
  *
  * See usage in overwrite_existing_data_file()
  ************************************************************************************/
@@ -273,7 +290,7 @@ int clear_data_file(const char *filePath)
   FILE *file = fopen(filePath, "w");
   if (file == NULL)
   {
-    __utils_error_logger("failed to open bulk data loader json file", "clear_data_file", MINOR);
+    __utils_error_logger("failed to open bulk data loader csv file", "clear_data_file", MINOR);
     fclose(file);
   }
   else
@@ -292,7 +309,7 @@ int __bulk_handle_data_entry()
 {
   system("clear");
   show_bulk_loader_current_status("Adding students to database");
-  printf("%sPlease read the following steps carefully%s\n", yellow.colorCode, reset.colorCode);
+  printf("Please read the following steps carefully\n");
   printf("%sTo cancel this operation enter 'cancel'%s\n\n", yellow.colorCode, reset.colorCode);
 
   printf("1.Enter the desired first name of the student\n");
@@ -308,7 +325,7 @@ int __bulk_handle_data_entry()
     printf("5.Enter and confirm the desired ID for the student\n");
   }
   printf("6.Enter the word " BOLD "'next'%sto move on to the next student entry\n", reset.colorCode);
-  printf("7.If you are completely finished adding students enter the word " BOLD "'complete'.%s\n", reset.colorCode);
+  printf("7.If you are completely finished adding students enter the word " BOLD "'done'.%s\n", reset.colorCode);
   printf("Doing so will insert the entered data into the data file.\n");
   printf("\n");
   printf("\n");
