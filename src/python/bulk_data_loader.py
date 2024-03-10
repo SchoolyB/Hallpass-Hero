@@ -16,6 +16,7 @@ from enum import Enum
 import time
 import settings
 import random
+import sqlite3
 
 # Import the utils module from the lib/utils/python directory 
 sys.path.append("../lib/utils/python")
@@ -323,14 +324,135 @@ def main():
     confirm_student_information(Student.FirstName, Student.LastName, Student.StudentID) 
     
     
-# Todo so the problem is that I will only need to insert the objects and arrays only once. Any time after that I will only need to insert the data inside the "students" array. need to find a way to check for the existence of "data" object and all of its contents then insert the new student data into the "students" array
-  # def insert_student_into_csv(studentSessionNumAsStr, studentFirstName, studentLastName, studentID):
-  #   try:
-  #     with open(bulkLoaderDataFilePath, "a") as file:
-  #       data = {"data": {
-  #         "columns": ["FirstName", "LastName", "StudentID"],
-  #         "students": {
-  #           {studentSessionNumAsStr}: [{studentFirstName}, {studentLastName}, {studentID}]}}}
+
+  ######################################################################
+  # bulk_load_students_into_db(): Loads all student data in active_data.csv
+  #                               into the sqlite.db
+  #
+  ######################################################################
+  def bulk_load_students_into_db():
+    connection = sqlite3.connect("../../build/db.sqlite")
+    cursor = connection.cursor()
+    with open(bulkLoaderDataFilePath, "r") as file:
+      reader = csv.reader(file)
+      for row in reader:
+        cursor.execute("INSERT INTO students (FirstName, LastName, StudentID) VALUES (?, ?, ?)", (row[0], row[1], row[2]))
+    connection.commit()
+    connection.close()
+    
+
+  ######################################################################
+  # check_csv_column_in_table(): Checks if the student ID in the csv file
+  #                              is already in the database, if it is remove
+  #                              the duplicate from the csv file
+  # 
+  # see usage in check_and_handle_duplicate_id()
+  ######################################################################
+  def check_csv_column_in_table():
+    conn = sqlite3.connect("../../build/db.sqlite")
+    cursor = conn.cursor()
+    with open("../../build/data/active_data.csv", 'r') as csvFile:
+        csvReader = csv.reader(csvFile)
+        header = next(csvReader)  # Skip the header row
+
+        # Find the index of the column to check
+        columnIndex = header.index("StudentID")
+
+        # Iterate through rows in the CSV file
+        for row in csvReader:
+            query = f"SELECT * FROM students WHERE StudentID = ?"
+            # Execute query
+            cursor.execute(query, (row[columnIndex],))
+
+            # Check if the data is present in the SQLite table
+            result = cursor.fetchone()
+            if result:
+              # if the data is present in the SQLite table, remove the row from the CSV file
+              remove_duplicates_from_csv()
+              return True
+            else:
+              return False
+    conn.close()
+
+
+  ######################################################################
+  # check_and_handle_duplicate_id(): Handles the logic for checking for
+  #                                  duplicate student IDs in the csv file
+  #
+  #                                  
+  ######################################################################
+  def check_and_handle_duplicate_id():
+    utils.clear()
+    if(check_csv_column_in_table() == True):
+          print("Please update or regenerate the students ID.")
+          print("Enter 'ok' to continue")
+          print(f"{settings.Colors.YELLOW}Enter 'cancel' to cancel this operation{settings.Colors.RESET}")
+          userInput = input()
+          if userInput == "ok":
+            remove_duplicates_from_csv()
+          elif userInput == "cancel":
+            utils.__utils_operation_cancelled("bulk_data_loader")
+            exit()
+          else:
+            utils.clear()
+            print("Invalid input. Please try again")
+            time.sleep(1)
+            check_and_handle_duplicate_id()
+
+  ######################################################################
+  # remove_duplicates_from_csv(): Deletes all duplicate student IDs from the
+  #                               csv file
+  #
+  # see usage in check_and_handle_duplicate_id()
+  ######################################################################
+  def remove_duplicates_from_csv():
+    conn = sqlite3.connect("../../build/db.sqlite")
+    cursor = conn.cursor()
+
+    # Read the CSV file into a list of dictionaries
+    with open("../../build/data/active_data.csv", 'r') as csvFile:
+        csvReader = csv.DictReader(csvFile)
+        csvData = list(csvReader)
+
+    # Check if the specified column exists in the CSV file
+    if "StudentID" not in csvData[0]:
+        print(f"Error: Column 'StudentID' not found in the CSV file.")
+        return
+
+    # Find the index of the column to check
+    columnIndex = csvData[0]["StudentID"]
+
+    # Create a set to store unique values of the specified column from the CSV file
+    csvValueSet = set()
+
+    # Iterate through rows in the CSV file
+    for row in csvData:
+        csvValue = row["StudentID"]
+
+        # Check if the value is already in the set (duplicate found)
+        if csvValue in csvValueSet:
+            print(f"Duplicate found in the CSV: {row}")
+        else:
+            csvValueSet.add(csvValue)
+
+        # Execute a query to check if the value is present in the database
+        query = f"SELECT 1 FROM students WHERE StudentID = ?"
+        cursor.execute(query, (csvValue,))
+        db_result = cursor.fetchone()
+
+        # If the value is found in the database, remove the row from the CSV list
+        if db_result:
+            print(f"{settings.Colors.RED}Data also found in the database. Removing the line from the CSV: {row}{settings.Colors.RESET}")
+            csvData.remove(row)
+
+    # Write the updated data back to the CSV file
+    with open("../../build/data/active_data.csv", 'w', newline='') as csvFile:
+        csv_writer = csv.DictWriter(csvFile, fieldnames=csvData[0])
+        csv_writer.writeheader()
+        csv_writer.writerows(csvData)
+    conn.close()
+
+
 
   handle_main_loop()
   # This var is used to trigger the while loop allowing constant input from the user until the user decides to exit the bulk data loader
@@ -345,6 +467,8 @@ def main():
       elif userInput == "done":
         bulkDataLoadingCompleted = True
         utils.clear()
+        check_and_handle_duplicate_id() 
+        bulk_load_students_into_db()
         print(f"{settings.Colors.GREEN}Bulk data loading completed{settings.Colors.RESET}")
         utils.increment_stat_value("TotalSessionsCompleted")
         time.sleep(2)
