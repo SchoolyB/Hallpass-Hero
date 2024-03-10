@@ -114,21 +114,21 @@ int __utils_check_for_sqlite_db(void)
 /************************************************************************************
  * __utils_check_for_bulk_loader_data_file(): Checks if a bulk data loader file exists
  *                                            in the build/data directory. If it does not
- *                                            then it creates the default active_data.json
+ *                                            then it creates the default active_data.csv
  *                                            file.
  *
  * See usage in main.c
  ************************************************************************************/
 int __utils_check_for_bulk_loader_data_file(void)
 {
-  int dataFileFound = read_from_dir_and_check_extension("../build/data", ".json");
+  int dataFileFound = read_from_dir_and_check_extension("../build/data", ".csv");
 
   if (dataFileFound == FALSE)
   {
     __utils_error_logger("Could not find bulk data loader directory", "check_for_bulk_loader_data_file", MINOR);
     __utils_runtime_logger("Creating bulk data loader directory", "check_for_bulk_loader_data_file");
-    jsonDataFile.fileNumIota = 0;
-    generate_bulk_data_loader_file("data.json", "active");
+    csvDataFile.fileNumIota = 0;
+    generate_bulk_data_loader_file("data.csv", "active");
     return FALSE;
   }
 
@@ -180,9 +180,9 @@ int read_from_dir_and_check_extension(const char *directoryPath, const char *ext
       }
       else if (globalTrigger.isUsingBulkLoader == TRUE)
       {
-        // storing the string value of the found file and file path in the jsonDataFile struct whenever the function is called
-        strcpy(jsonDataFile.FileName, entry->d_name);
-        strcpy(jsonDataFile.FilePath, filePath);
+        // storing the string value of the found file and file path in the csvDataFile struct whenever the function is called
+        strcpy(csvDataFile.FileName, entry->d_name);
+        strcpy(csvDataFile.FilePath, filePath);
         return 1;
       }
     }
@@ -218,9 +218,9 @@ int search_for_prefix_in_file_name(const char *targetWord)
       char filePath[256];
       // copy the name of the entry into the fileName variable
       strcpy(fileName, entry->d_name);
-      // store the value of the fileName and filePath variables in the jsonDataFile struct
-      sprintf(jsonDataFile.FileName, "%s", fileName);
-      sprintf(jsonDataFile.FilePath, "../build/data/%s", fileName);
+      // store the value of the fileName and filePath variables in the csvDataFile struct
+      sprintf(csvDataFile.FileName, "%s", fileName);
+      sprintf(csvDataFile.FilePath, "../build/data/%s", fileName);
       break;
     }
   }
@@ -284,7 +284,7 @@ void __utils_clear_input_buffer()
 int list_all_students(void)
 {
 
-  int result = show_all_students_in_student_db(databaseInfo.dbPath);
+  int result = show_all_students_in_student_db(programSettings.databaseInfo.dbPath);
   if (result == 0)
   {
     int showingStudents = TRUE;

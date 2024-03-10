@@ -112,7 +112,6 @@ int manage_student_db(void)
     {
       system("clear");
       manageStudentDBMenuIsRunning = FALSE;
-      // Not going to lie... I dont remember how this works but it does.
       mainMenuProccess = TRUE;
     }
     else
