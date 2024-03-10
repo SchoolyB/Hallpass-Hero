@@ -133,7 +133,9 @@ void ask_how_to_add_student()
       break;
     case 2:
       system("clear");
-      globalTrigger.isAddingToStudentsTable = FALSE;
+
+      // TODO this was breaking the program, need to triage at some point for now I will just comment it out
+      // globalTrigger.isAddingToStudentsTable = FALSE;
       get_student_first_name();
 
       break;

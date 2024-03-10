@@ -284,7 +284,7 @@ void __utils_clear_input_buffer()
 int list_all_students(void)
 {
 
-  int result = show_all_students_in_student_db(databaseInfo.dbPath);
+  int result = show_all_students_in_student_db(programSettings.databaseInfo.dbPath);
   if (result == 0)
   {
     int showingStudents = TRUE;

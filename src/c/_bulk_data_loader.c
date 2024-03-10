@@ -24,7 +24,7 @@ int handle_bulk_data_loader_menu(void)
       if (INPUT_IS_CANCEL(userInput.StrInput))
       {
         __utils_operation_cancelled("Bulk Data Loader: Student Database");
-        handle_bulk_data_loader_menu();
+        return 0;
       }
       switch (userInput.NumInput)
       {
@@ -177,7 +177,6 @@ int handle_non_empty_data_file(void)
   printf("1. Create a new file\n");
   printf("2. Add to the existing file\n");
   printf("3. Overwrite the existing file\n");
-
   __utils_fgets_and_remove_newline(userInput.StrInput);
   userInput.NumInput = atoi(userInput.StrInput);
   if (INPUT_IS_CANCEL(userInput.StrInput))
@@ -202,7 +201,8 @@ int handle_non_empty_data_file(void)
     }
     break;
   case 2:
-    printf("%sWARNING Adding to an existing could result in a loss of data or data corruption.\n%s", red.colorCode, reset.colorCode);
+    system("clear");
+    printf("%sWARNING: Adding to an existing could result in a loss of data or data corruption.\n%s", red.colorCode, reset.colorCode);
     printf("Are you sure you want to add to the existing file? [y/n]\n");
     __utils_fgets_and_remove_newline(userInput.StrInput);
     if (INPUT_IS_YES(userInput.StrInput))
@@ -326,8 +326,16 @@ int __bulk_handle_data_entry()
   }
   printf("6.Enter the word " BOLD "'next'%sto move on to the next student entry\n", reset.colorCode);
   printf("7.If you are completely finished adding students enter the word " BOLD "'done'.%s\n", reset.colorCode);
-  printf("Doing so will insert the entered data into the data file.\n");
   printf("\n");
+  printf("Following these steps will store all entered data into the data file\n");
+  if (globalTrigger.isBulkLoadingDataToStudentsTable == TRUE)
+  {
+    printf("and then load the data into the student database\n");
+  }
+  else
+  {
+    printf("and then load the data into the roster\n");
+  }
   printf("\n");
 
   printf("When you are ready to begin enter the word 'start'\n");

@@ -155,6 +155,9 @@ def main():
             time.sleep(2)
             utils.clear()
             get_student_information("student id")
+          else:
+            Student.StudentID = userInput
+
 
 
 

@@ -33,11 +33,65 @@ int show_settings_menu(void)
     show_current_menu("Settings Menu");
     printf("Enter the number of the option you would like to select:\n");
     printf("1. Rename Database\n");
-    printf("2. Enable/Disable Runtime Logging\n");
-    printf("3. Enable/Disable Color\n");
-    printf("4. Enable/Disable Student ID Generation\n");
-    printf("5. Enable/Disable Skipping Bulk Data Loader Confirmation\n");
-    printf("6. Enable/Disable Skipping Bulk Data Loader Entry Prompt\n"); // TODO might delete this option from both UI and python script
+    switch (programSettings.runtimeLoggingEnabled)
+    {
+    case TRUE:
+      printf("2. Disable Runtime Logging\n");
+      break;
+    case FALSE:
+      printf("2. Enable Runtime Logging\n");
+      break;
+    default:
+      break;
+    }
+
+    switch (programSettings.colorEnabled)
+    {
+    case TRUE:
+      printf("3. Disable Color\n");
+      break;
+    case FALSE:
+      printf("3. Enable Color\n");
+      break;
+    default:
+      break;
+    }
+
+    switch (programSettings.autoStudentIDGenerationEnabled)
+    {
+    case TRUE:
+      printf("4. Disable Student ID Generation\n");
+      break;
+    case FALSE:
+      printf("4. Enable Student ID Generation\n");
+      break;
+    default:
+      break;
+    }
+
+    switch (programSettings.skipBulkLoaderInfoConfirmation)
+    {
+    case TRUE:
+      printf("5. Disable Skipping Bulk Data Loader Confirmation\n");
+      break;
+    case FALSE:
+      printf("5. Enable Skipping Bulk Data Loader Confirmation\n");
+      break;
+    default:
+      break;
+    }
+
+    switch (programSettings.skipBulkDataLoaderEntryPrompt)
+    {
+    case TRUE:
+      printf("6. Disable Skipping Bulk Data Loader Entry Prompt\n");
+      break;
+    case FALSE:
+      printf("6. Enable Skipping Bulk Data Loader Entry Prompt\n");
+      break;
+    default:
+      break;
+    }
     printf("7. Main Menu\n");
     __utils_fgets_and_remove_newline(userInput.StrInput);
     userInput.NumInput = atoi(userInput.StrInput);
