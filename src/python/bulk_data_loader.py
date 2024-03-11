@@ -120,7 +120,6 @@ def main():
              else:
                 Student.LastName = userInput.capitalize()  
     # Get and set the ID 
-    #todo unfortunately I get the automatic generation of the student id is done in the C code so I will have to basically create a new function in Python to generate the student id....  or I can store the student id from the c code in a memory address and then retrieve it from the python code
     elif type == "student id":
       utils.clear()
       print(f"First Name: {Student.FirstName}")
@@ -194,10 +193,10 @@ def main():
     nums = [1, 2, 3, 4, 5, 6, 7, 8, 9]
     studentIDPrefix = take_first_two_letters(firstName) + str(lastName)
   
-    studentIDSuffix = random.choice(nums)
-    studentID = studentIDPrefix + str(studentIDSuffix)
-    studentID += str(studentIDSuffix)
-    print(studentID) 
+    studentIDSuffix = ''.join(map(str, random.sample(nums, 3)))
+    studentID = studentIDPrefix + studentIDSuffix
+    
+    print(studentID)
     return studentID
 
 
