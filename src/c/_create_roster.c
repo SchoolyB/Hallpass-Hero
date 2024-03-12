@@ -135,10 +135,10 @@ int create_new_roster(void)
     else if (userInput.NumInput == 3 || strcmp(userInput.StrInput, "help") == 0)
     {
       __utils_runtime_logger("Selected to view create roster help menu", "create_new_roster");
-      printf("You selected to get help.\n");
       newRosterMenuIsRunning = FALSE;
       system("clear");
-      // show_help_menu();
+      read_and_display_help_docs("../src/docs/help/_help_create_new_roster.txt");
+      create_new_roster();
     }
     else if (userInput.NumInput == 4 || strcmp(userInput.StrInput, "main") == 0 || strcmp(userInput.StrInput, "main menu") == 0)
     {

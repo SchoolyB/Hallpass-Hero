@@ -29,7 +29,7 @@ This menu allows you to search for students in the student database by their stu
 
 
 Option 6: Main menu help documentation
-Entering the number '6' then clicking your 'enter' key will take you to the 'Main Menu Help Documentation' which is what you are reading now.
+Entering the number '6' then clicking your 'enter' key will take you to the 'Main Menu Help Documentation' which is what you are currently reading.
 
 
 Option 7: Settings 
