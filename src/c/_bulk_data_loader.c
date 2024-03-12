@@ -1,3 +1,13 @@
+/*
+===============================================================================
+File Name   : _bulk_data_loader.c
+-------------------------------------------------------------------------------
+Author      : Marshall Burns a.k.a. Schooly
+-------------------------------------------------------------------------------
+Description : This source file contains the function used
+              to handle the bulk data loader menu.
+===============================================================================
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include "../lib/headers/c/c_files.h"
@@ -14,9 +24,9 @@ int handle_bulk_data_loader_menu(void)
       printf("How would you like to load the data to the student database?\n");
       printf("Please enter the corresponding number to the action you would like to take.\n");
       printf("%sTo cancel this operation enter 'cancel'%s\n\n", yellow.colorCode, reset.colorCode);
-      printf("1.Bulk load data from existing file\n");
-      printf("2.Enter bulk data manually, then load it\n");
-
+      printf("1. Bulk load data from existing file\n");
+      printf("2. Enter bulk data manually, then load it\n");
+      printf("3. Main Menu\n");
       __utils_fgets_and_remove_newline(userInput.StrInput);
       bulkDataLoaderMenuProccess = FALSE;
 
@@ -26,6 +36,16 @@ int handle_bulk_data_loader_menu(void)
         __utils_operation_cancelled("Bulk Data Loader: Student Database");
         return 0;
       }
+      else if (strcmp(userInput.StrInput, "main menu") == 0 || strcmp(userInput.StrInput, "main") == 0)
+      {
+        __utils_runtime_logger("chose to return to main menu", "handle_bulk_data_loader_menu");
+        system("clear");
+        printf("Returning to main menu.\n");
+        sleep(1);
+        system("clear");
+        handle_main_menu();
+      }
+
       switch (userInput.NumInput)
       {
       case 1:
@@ -76,9 +96,14 @@ int handle_bulk_data_loader_menu(void)
           }
           break;
         }
-        // 1.generate a new file DONE
-        // 2. allow the user to enter as much data as they want from the ui
-        // 3. store that data into a file
+        break;
+      case 3:
+        __utils_runtime_logger("chose to return to main menu", "handle_bulk_data_loader_menu");
+        system("clear");
+        printf("Returning to main menu.\n");
+        sleep(1);
+        system("clear");
+        handle_main_menu();
         break;
       default:
         __utils_error_logger("invalid input", "handle_bulk_data_loader_menu", MINOR);
@@ -122,7 +147,7 @@ void generate_bulk_data_loader_file(const char *fileName, const char *fileStatus
   // storing the file name and path in the csvDataFile struct on file generation
   snprintf(csvDataFile.FileName, sizeof(csvDataFile.FileName), "%s_%s", fileStatus, fileName);
   sprintf(csvDataFile.FilePath, "%s", filePath);
-
+  fprintf(file, "FirstName,LastName,StudentID\n");
   fclose(file);
 }
 /************************************************************************************
@@ -172,17 +197,29 @@ int handle_non_empty_data_file(void)
   system("clear");
   __utils_runtime_logger("entered handle non empty data file menu", "handle_non_empty_data_file");
   printf("%sWARNING: The data file" BOLD " %s%s%s is not empty. What would you like to do?%s\n", red.colorCode, csvDataFile.FileName, reset.colorCode, red.colorCode, reset.colorCode);
+  printf("The data file " BOLD "%s" RESET " contains the following data:\n", csvDataFile.FileName, reset.colorCode);
+  display_data_in_non_empty_file();
   printf("Enter the corresponding number to the action you would like to take.\n");
   printf("%sTo cancel this operation enter 'cancel'%s\n\n", yellow.colorCode, reset.colorCode);
   printf("1. Create a new file\n");
   printf("2. Add to the existing file\n");
   printf("3. Overwrite the existing file\n");
+  printf("4: Main Menu\n");
   __utils_fgets_and_remove_newline(userInput.StrInput);
   userInput.NumInput = atoi(userInput.StrInput);
   if (INPUT_IS_CANCEL(userInput.StrInput))
   {
     __utils_operation_cancelled("handle_non_empty_data_file");
     return 0;
+  }
+  else if (strcmp(userInput.StrInput, "main menu") == 0 || strcmp(userInput.StrInput, "main") == 0)
+  {
+    __utils_runtime_logger("chose to return to main menu", "handle_non_empty_data_file");
+    system("clear");
+    printf("Returning to main menu.\n");
+    sleep(1);
+    system("clear");
+    handle_main_menu();
   }
   switch (userInput.NumInput)
   {
@@ -228,6 +265,17 @@ int handle_non_empty_data_file(void)
     overwrite_existing_data_file(csvDataFile.FilePath);
     handle_bulk_data_loader_menu();
     break;
+  case 4:
+    system("clear");
+    printf("Returning to main menu.\n");
+    sleep(1);
+    system("clear");
+    handle_main_menu();
+    break;
+  default:
+    __utils_error_logger("invalid input", "handle_non_empty_data_file", MINOR);
+    printf("Invalid input. Please try again.\n");
+    handle_non_empty_data_file();
   }
 }
 
@@ -356,4 +404,48 @@ int __bulk_handle_data_entry()
     sleep(1);
     __bulk_handle_data_entry();
   }
+}
+
+/************************************************************************************
+ * display_data_in_non_empty_file(): Displays the data in the bulk data loader .csv
+ *                                   file if the file is not empty.
+ *
+ * See usage in handle_non_empty_data_file()
+ ************************************************************************************/
+int display_data_in_non_empty_file(void)
+{
+  __utils_runtime_logger("displaying data in non empty data file", "display_data_in_non_empty_file");
+  FILE *file = fopen(csvDataFile.FilePath, "r");
+  if (file == NULL)
+  {
+    __utils_error_logger("failed to open bulk data loader csv file", "display_data_in_non_empty_file", MINOR);
+    fclose(file);
+    return 1;
+  }
+  else
+  {
+    __utils_runtime_logger("opened bulk data loader csv file", "display_data_in_non_empty_file");
+  }
+
+  char line[1024];
+  int lineNumber = 0;
+
+  while (fgets(line, 1024, file))
+  {
+    lineNumber++;
+
+    char *token;
+    token = strtok(line, ",");
+    printf("Line %d: ", lineNumber);
+    while (token != NULL)
+    {
+      printf("%s ", token);
+      token = strtok(NULL, ",");
+    }
+    printf("\n");
+    printf("\n");
+  }
+  fclose(file);
+
+  return 0;
 }

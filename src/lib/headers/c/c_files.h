@@ -92,6 +92,7 @@ int handle_non_empty_data_file(void);
 int overwrite_existing_data_file(const char *filePath);
 int clear_data_file(const char *filePath);
 int __bulk_handle_data_entry();
+int display_data_in_non_empty_file(void);
 
 /*_create_roster.c*/
 int create_new_roster(void);

@@ -34,7 +34,7 @@ int add_student_to_student_table(void)
   while (addStudentMenuIsRunning == TRUE)
   {
     char addStudentOptions[4][50] = {
-        "1. Add a student",
+        "1. Add students",
         "2. View students",
         "3. Help",
         "4. Main Menu"};
@@ -116,6 +116,7 @@ void ask_how_to_add_student()
     printf("1. Search the student database for a student\n");
     printf("2. Manually add a student\n");
     printf("3. Use the bulk data loader to add multiple students\n");
+    printf("4. Main Menu\n");
     __utils_fgets_and_remove_newline(userInput.StrInput);
     userInput.NumInput = atoi(userInput.StrInput);
     if (INPUT_IS_CANCEL(userInput.StrInput))
@@ -125,6 +126,14 @@ void ask_how_to_add_student()
       sleep(1);
       system("clear");
       add_student_to_student_table();
+    }
+    else if (strcmp(userInput.StrInput, "main") == 0)
+    {
+      system("clear");
+      printf("Returning to main menu.\n");
+      sleep(1);
+      system("clear");
+      handle_main_menu();
     }
     switch (userInput.NumInput)
     {
@@ -151,6 +160,13 @@ void ask_how_to_add_student()
       }
       handle_bulk_data_loader_menu();
       break;
+    case 4:
+      system("clear");
+      printf("Returning to main menu.\n");
+      sleep(1);
+      system("clear");
+      handle_main_menu();
+      break;
     default:
       system("clear");
       printf("Invalid decision. Please try again.\n");
@@ -162,7 +178,6 @@ void ask_how_to_add_student()
     showingHowToAddStudentMenu == FALSE;
   }
 }
-
 /************************************************************************************
  * get_student_first_name():  . Gets and confirms the students first name.
  * Note: see usage add_student_to_student_table()
