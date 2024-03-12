@@ -33,7 +33,7 @@ int handle_main_menu(void);
 char MainMenuOptions[8][50] = {
     "1. Create a new roster",
     "2. View and manage an existing roster",
-    "3. Add a student to the student database",
+    "3. Add students to the student database",
     "4. View and manage the student database",
     "5. Search for a student",
     "6. Help",
@@ -157,7 +157,7 @@ int handle_main_menu(void)
   {
     __utils_runtime_logger("entered the main menu's help menu", "main");
     system("clear");
-    read_and_display_help_docs("../src/help/_help_main_menu.txt");
+    read_and_display_help_docs("../src/docs/help/_help_main_menu.txt");
     // do stuff
   }
   // to enter the settings menu
