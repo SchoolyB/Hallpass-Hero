@@ -155,7 +155,7 @@ int handle_main_menu(void)
   }
   else if (userInput.NumInput == 6 || strcmp(userInput.StrInput, "help") == 0)
   {
-    __utils_runtime_logger("entered the main menu's help menu", "main");
+    __utils_runtime_logger("chose to view the main menus help documentation", "main");
     system("clear");
     read_and_display_help_docs("../src/docs/help/_help_main_menu.txt");
     // do stuff

@@ -92,7 +92,8 @@ int show_settings_menu(void)
     default:
       break;
     }
-    printf("7. Main Menu\n");
+    printf("7. Help\n");
+    printf("8. Main Menu\n");
     __utils_fgets_and_remove_newline(userInput.StrInput);
     userInput.NumInput = atoi(userInput.StrInput);
     settingsMenuRunning = FALSE;
@@ -137,6 +138,10 @@ int show_settings_menu(void)
     toggle_skip_bulk_data_loader_entry_prompt();
     break;
   case 7:
+    __utils_runtime_logger("entered the main menu's help menu", "main");
+    system("clear");
+    read_and_display_help_docs("../src/docs/help/_help_settings.txt");
+  case 8:
     system("clear");
     printf("Returning to main menu...\n");
     sleep(1);

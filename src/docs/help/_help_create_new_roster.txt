@@ -1,6 +1,7 @@
-Welcome to the Hallpass Hero Create New Roster help documentation!
+Welcome to the Hallpass Hero Create New Roster menu help documentation!
 
 From the create new roster menu you can choose several options. To learn more about these options continue reading below.
+====================================================================================
 
 Option 1: Create a new roster
 Entering the number '1' and clicking 'enter' will initiate the roster creation process. This process contains 2 steps. The first step is to enter the desired name of the roster you are creating. The second step is to confirm the name that you entered. There are  several rules that must be followed when creating a new roster. The rules are as follows:
@@ -10,11 +11,17 @@ Entering the number '1' and clicking 'enter' will initiate the roster creation p
 
 You can also cancel the roster creation process at any time by entering the word 'cancel' when prompted to enter the name of the roster. Doing so will cancel the roster creation process and return you to the Create New Roster menu.
 
+------------------------------------------------------------------------------------
+
 Option 2: View created rosters
 Entering the number '2' and clicking 'enter' will display a list of all the roster names that have been created and are still stored in the system. From this screen you are given 2 options. The first option go back to the Create New Roster menu. The second option is to return to the main menu. 
 
-Option 3: Create new roster help documentation
+------------------------------------------------------------------------------------
+
+Option 3: Create new roster menu help documentation
 Entering the number '3' and clicking 'enter' will display the help documentation for the Create New Roster menu. Which is what are currently reading.
+
+------------------------------------------------------------------------------------
 
 Option 4: Return to the main menu
 Entering the number '4' then clicking your 'enter' key you will safely exit the program.
