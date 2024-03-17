@@ -123,8 +123,9 @@ int show_manage_roster_menu(void)
               puts("What would you like to do?");
               printf("Enter the corresponding number.\n\n");
               puts("1.Sort Roster");
-              puts("2.Go Back");
-              puts("3.Main Menu");
+              puts("2. Update a student's information");
+              puts("3.Go Back");
+              puts("4.Main Menu");
               __utils_fgets_and_remove_newline(userInput.StrInput);
               userInput.NumInput = atoi(userInput.StrInput);
               switch (userInput.NumInput)
@@ -137,11 +138,179 @@ int show_manage_roster_menu(void)
               case 2:
                 showingRosterData = FALSE;
                 system("clear");
+                show_current_step("Update a student's information", 1, 2);
+                printf("Enter the Sequence Number of the student whose information you would like to update.\n");
+                puts(YELLOW "To cancel this operation enter 'cancel'" RESET);
+                __utils_fgets_and_remove_newline(userInput.StrInput);
+                if (INPUT_IS_CANCEL(userInput.StrInput))
+                {
+                  __utils_operation_cancelled("show_manage_roster_menu");
+                  show_manage_roster_menu();
+                }
+                int sequenceNumber = atoi(userInput.StrInput);
+                int sequenceNumberExists = check_if_sequence_number_exists(sequenceNumber);
+                if (sequenceNumberExists == FALSE)
+                {
+                  system("clear");
+                  printf(YELLOW "The entered sequence number: " BOLD "%d" RESET YELLOW " does not exist please try again. \n" RESET, sequenceNumber);
+                  sleep(2);
+                  system("clear");
+                  showingRosterData = TRUE;
+                }
+                else if (sequenceNumberExists == TRUE)
+                {
+                  system("clear");
+                  show_current_step("Update a student's information", 2, 2);
+                  printf("Which column would you like to update?\n");
+                  puts(YELLOW "To cancel this operation enter 'cancel'" RESET);
+                  __utils_fgets_and_remove_newline(userInput.StrInput);
+                  if (INPUT_IS_CANCEL(userInput.StrInput))
+                  {
+                    __utils_operation_cancelled("show_manage_roster_menu");
+                    show_manage_roster_menu();
+                  }
+                  else
+                  {
+                    const char *colName = userInput.StrInput;
+                    strcpy(rosterColumn.ColumnName, colName);
+                    int colExists = check_if_col_exists(roster.rosterNameWithPrefix, rosterColumn.ColumnName);
+                    if (colExists == FALSE)
+                    {
+                      printf(YELLOW "The entered column: " BOLD "%s" RESET YELLOW " does not exist please try again.\n" RESET, rosterColumn.ColumnName);
+                      sleep(2);
+                      system("clear");
+                      showingRosterData = TRUE;
+                    }
+                    else if (colExists == TRUE)
+                    {
+                      int getColDataType = check_col_type(roster.rosterNameWithPrefix, rosterColumn.ColumnName);
+                      const char *newData;
+                      int retValue;
+                      switch (getColDataType)
+                      {
+                      case 5:
+                        printf("Column: %s is of type: %s\n", rosterColumn.ColumnName, "TEXT");
+                        printf("This means that you can only enter text into this column.\n");
+                        printf("Enter the new value for the column: %s\n", rosterColumn.ColumnName);
+                        __utils_fgets_and_remove_newline(userInput.StrInput);
+                        newData = userInput.StrInput;
+                        retValue = update_row_data(roster.rosterNameWithPrefix, rosterColumn.ColumnName, newData, sequenceNumber);
+                        if (retValue == 0)
+                        {
+                          system("clear");
+                          printf(GREEN "Successfully updated column: " BOLD "%s" RESET GREEN " for student: " BOLD "%d\n" RESET, rosterColumn.ColumnName, sequenceNumber);
+                          sleep(2);
+                          system("clear");
+                        }
+                        else
+                        {
+                          system("clear");
+                          printf(RED "Failed to update column: " BOLD "%s" RESET RED "for student: " BOLD "%d\n" RESET, rosterColumn.ColumnName, sequenceNumber);
+                          sleep(2);
+                          system("clear");
+                        }
+                        break;
+                      case 6:
+                        printf("Column: %s is of type: %s\n", rosterColumn.ColumnName, "INTEGER");
+                        printf("This means that you can only enter numbers into this column.\n");
+                        printf("Enter the new value for the column: %s\n", rosterColumn.ColumnName);
+                        __utils_fgets_and_remove_newline(userInput.StrInput);
+                        newData = userInput.StrInput;
+                        retValue = update_row_data(roster.rosterNameWithPrefix, rosterColumn.ColumnName, newData, sequenceNumber);
+                        if (retValue == 0)
+                        {
+                          system("clear");
+                          printf(GREEN "Successfully updated column: " BOLD "%s" RESET GREEN " for student: " BOLD "%d\n" RESET, rosterColumn.ColumnName, sequenceNumber);
+                          sleep(2);
+                          system("clear");
+                        }
+                        else
+                        {
+                          system("clear");
+                          printf(RED "Failed to update column: " BOLD "%s" RESET RED "for student: " BOLD "%d\n" RESET, rosterColumn.ColumnName, sequenceNumber);
+                          sleep(2);
+                          system("clear");
+                        }
+                        break;
+                      case 7:
+                        printf("Column: %s is of type: %s\n", rosterColumn.ColumnName, "REAL");
+                        printf("This means that you can only enter numbers with decimal points into this column.\n");
+                        printf("Enter the new value for the column: %s\n", rosterColumn.ColumnName);
+                        __utils_fgets_and_remove_newline(userInput.StrInput);
+                        newData = userInput.StrInput;
+                        retValue = update_row_data(roster.rosterNameWithPrefix, rosterColumn.ColumnName, newData, sequenceNumber);
+                        if (retValue == 0)
+                        {
+                          system("clear");
+                          printf(GREEN "Successfully updated column: " BOLD "%s" RESET GREEN " for student: " BOLD "%d\n" RESET, rosterColumn.ColumnName, sequenceNumber);
+                          sleep(2);
+                          system("clear");
+                        }
+                        else
+                        {
+                          system("clear");
+                          printf(RED "Failed to update column: " BOLD "%s" RESET RED "for student: " BOLD "%d\n" RESET, rosterColumn.ColumnName, sequenceNumber);
+                          sleep(2);
+                          system("clear");
+                        }
+                        break;
+                      case 8:
+                        printf("Column: %s is of type: %s\n", rosterColumn.ColumnName, "BOOLEAN");
+                        printf("Boolean columns can be entered as 1 for true or 0 for false.\n");
+                        printf("You can also enter true or false.\n");
+                        __utils_fgets_and_remove_newline(userInput.StrInput);
+                        retValue = update_row_data(roster.rosterNameWithPrefix, rosterColumn.ColumnName, newData, sequenceNumber);
+                        if (retValue == 0)
+                        {
+                          system("clear");
+                          printf(GREEN "Successfully updated column: " BOLD "%s" RESET GREEN " for student: " BOLD "%d\n" RESET, rosterColumn.ColumnName, sequenceNumber);
+                          sleep(2);
+                          system("clear");
+                        }
+                        else
+                        {
+                          system("clear");
+                          printf(RED "Failed to update column: " BOLD "%s" RESET RED "for student: " BOLD "%d\n" RESET, rosterColumn.ColumnName, sequenceNumber);
+                          sleep(2);
+                          system("clear");
+                        }
+                        break;
+                      case 9:
+                        printf("Column: %s is of type: %s\n", rosterColumn.ColumnName, "DATE");
+                        printf("This means that you can only enter dates into this column.\n");
+                        printf("Dates can be entered in the following formats: YYYY-MM-DD, MM-DD-YYYY, DD-MM-YYYY\n");
+                        printf("Enter the new value for the column: %s\n", rosterColumn.ColumnName);
+                        __utils_fgets_and_remove_newline(userInput.StrInput);
+                        newData = userInput.StrInput;
+                        retValue = update_row_data(roster.rosterNameWithPrefix, rosterColumn.ColumnName, newData, sequenceNumber);
+                        if (retValue == 0)
+                        {
+                          system("clear");
+                          printf(GREEN "Successfully updated column: " BOLD "%s" RESET GREEN " for student: " BOLD "%d\n" RESET, rosterColumn.ColumnName, sequenceNumber);
+                          sleep(2);
+                          system("clear");
+                        }
+                        else
+                        {
+                          system("clear");
+                          printf(RED "Failed to update column: " BOLD "%s" RESET RED "for student: " BOLD "%d\n" RESET, rosterColumn.ColumnName, sequenceNumber);
+                          sleep(2);
+                          system("clear");
+                        }
+                        break;
+                      }
+                    }
+                  }
+                }
+              // todo do stuff
+              case 3:
+                showingRosterData = FALSE;
+                system("clear");
                 puts("Returning to previous menu");
                 sleep(1);
                 system("clear");
                 show_manage_roster_menu();
-              case 3:
+              case 4:
                 showingRosterData = FALSE;
                 system("clear");
                 puts("Returning to main menu");
@@ -1290,3 +1459,9 @@ int confirm_action(const char *action, ...)
     confirm_action(action);
   }
 }
+
+// // sequence number refers to the chronological id numbers of the rows in the table
+// int update_row_value(int sequenceNumber, const char *colName, const char *colType)
+// {
+//   __utils_fgets_and_remove_newline(userInput.StrInput);
+// }
