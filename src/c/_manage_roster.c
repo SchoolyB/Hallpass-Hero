@@ -550,6 +550,7 @@ int show_manage_roster_menu(void)
       __utils_runtime_logger("chose to view the manage roster menus help documentation", "show_manage_roster_menu");
       system("clear");
       read_and_display_help_docs("../src/docs/help/_help_manage_roster.txt");
+      show_manage_roster_menu();
     }
     else if (userInput.NumInput == 9 || strcmp(userInput.StrInput, "main menu") == 0 || strcmp(userInput.StrInput, "main") == 0)
     {
@@ -827,7 +828,6 @@ int ask_which_roster_and_preform_action(char *action)
     {
       system("clear");
       sleep(1);
-      // do stuff
       globalTrigger.isAddingToStudentsTable = TRUE;
 
       show_current_step("Remove student from roster", 2, 2);

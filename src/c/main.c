@@ -151,14 +151,13 @@ int handle_main_menu(void)
   {
     __utils_runtime_logger("entered the search student menu", "main");
     system("clear");
-    // do stuff
   }
   else if (userInput.NumInput == 6 || strcmp(userInput.StrInput, "help") == 0)
   {
     __utils_runtime_logger("chose to view the main menus help documentation", "main");
     system("clear");
     read_and_display_help_docs("../src/docs/help/_help_main_menu.txt");
-    // do stuff
+    handle_main_menu();
   }
   // to enter the settings menu
   else if (userInput.NumInput == 7 || strcmp(userInput.StrInput, "settings") == 0)

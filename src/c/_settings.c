@@ -141,6 +141,8 @@ int show_settings_menu(void)
     __utils_runtime_logger("entered the main menu's help menu", "main");
     system("clear");
     read_and_display_help_docs("../src/docs/help/_help_settings.txt");
+    show_settings_menu();
+    break;
   case 8:
     system("clear");
     printf("Returning to main menu...\n");
