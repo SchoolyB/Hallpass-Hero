@@ -54,3 +54,4 @@ Entering the number '7' and clicking 'enter' will display the help documentation
 
 Option 8: Return to main menu
 Entering the number '8' and clicking 'enter' will return you to the main menu.
+

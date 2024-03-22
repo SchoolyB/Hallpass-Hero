@@ -68,3 +68,4 @@ Entering the number '8' and clicking 'enter' will display the help documentation
 
 Option 9: Return to main menu
 Entering the number '9' and clicking 'enter' will take you back to the main menu.
+
