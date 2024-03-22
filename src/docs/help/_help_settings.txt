@@ -1,0 +1,57 @@
+Welcome to the Hallpass Hero Settings menu help documentation!
+
+From the settings menu you can choose several options to customize your Hallpass Hero experience. To learn more about these options continue reading below.
+====================================================================================
+
+Option 1: Rename database
+Entering the number '1' and clicking 'enter' will prompt you to enter a new name for your database. By default the database is named 'db.sqlite'. You be asked if you want to rename the database. If you choose 'yes' you will be prompted to enter a new name for the database. If you choose 'no' you will be returned to the settings menu. After you enter a new name for the database you will be asked to confirm the new name. If you choose 'yes' the database will be renamed and you will be returned to the settings menu. If you choose 'no' you will be returned to the settings menu without renaming the database.
+
+------------------------------------------------------------------------------------
+
+Option 2: Enable/Disable runtime logging
+Entering the number '2' and clicking 'enter' will prompt you to enable or disable runtime logging depending on the current state of this settings. If runtime logging is currently enabled you will be asked if you want to disable it. If you choose 'yes' runtime logging will be disabled and you will be returned to the settings menu. If you choose 'no' you will be returned to the settings menu without disabling runtime logging. If runtime logging is currently disabled you will be asked if you want to enable it. If you choose 'yes' runtime logging will be enabled and you will be returned to the settings menu. If you choose 'no' you will be returned to the settings menu without enabling runtime logging.
+
+Runtime logging can help you keep track of what is happening in the background of Hallpass Hero, as well as help you troubleshoot any issues you may encounter. However, runtime logging can also take up a lot of space on your hard drive, so it is recommended to only enable runtime logging when you are actively troubleshooting an issue.
+
+------------------------------------------------------------------------------------
+
+Option 3: Enable/Disable colors
+Entering the number '3' and clicking 'enter' will prompt you to enable or disable colors depending on the current state of this settings. If colors are currently enabled you will be asked if you want to disable them. If you choose 'yes' colors will be disabled and you will be returned to the settings menu. If you choose 'no' you will be returned to the settings menu without disabling colors. If colors are currently disabled you will be asked if you want to enable them. If you choose 'yes' colors will be enabled and you will be returned to the settings menu. If you choose 'no' you will be returned to the settings menu without enabling colors.
+
+Colors can help you differentiate between different types of information in Hallpass Hero, as well as make the program more visually appealing. However, some terminals may not support colors, so it is recommended to only enable colors if you are sure your terminal supports them.
+
+------------------------------------------------------------------------------------
+
+Option 4: Enable/Disable student ID generation
+Entering the number '4' and clicking 'enter' will prompt you to enable or disable student ID generation depending on the current state of this settings. If student ID generation is currently enabled you will be asked if you want to disable it. If you choose 'yes' student ID generation will be disabled and you will be returned to the settings menu. If you choose 'no' you will be returned to the settings menu without disabling student ID generation. If student ID generation is currently disabled you will be asked if you want to enable it. If you choose 'yes' student ID generation will be enabled and you will be returned to the settings menu. If you choose 'no' you will be returned to the settings menu without enabling student ID generation.
+
+Student ID generation is a feature of Hallpass Hero that allows you the program to automatically generate student IDs for you. This can save you time and effort.
+
+------------------------------------------------------------------------------------
+
+Option 5: Enable/Disable skipping bulk data loader confirmation
+Entering the number '5' and clicking 'enter' will prompt you to enable or disable skipping the bulk data loader confirmation depending on the current state of this settings. If skipping the bulk data loader confirmation is currently enabled you will be asked if you want to disable it. If you choose 'yes' skipping the bulk data loader confirmation will be disabled and you will be returned to the settings menu. If you choose 'no' you will be returned to the settings menu without disabling skipping the bulk data loader confirmation. If skipping the bulk data loader confirmation is currently disabled you will be asked if you want to enable it. If you choose 'yes' skipping the bulk data loader confirmation will be enabled and you will be returned to the settings menu. If you choose 'no' you will be returned to the settings menu without enabling skipping the bulk data loader confirmation.
+
+Skipping the bulk data loader confirmation can save you time and effort when you are loading a large amount of data into Hallpass Hero. If enabled you will not need to confirm all the entered information of each student after its entered while using the bulk data loader. If disabled you will need to confirm all the entered information of each student every single time. This can be very time consuming if you are loading a large amount of data. If you are confident in the accuracy of the data you are entering it is recommended to enable this setting.
+
+------------------------------------------------------------------------------------
+
+Option 6: Enable/Disable skipping bulk data post entry prompt
+Entering the number '6' and clicking 'enter' will prompt you to enable or disable skipping the bulk data post entry prompt depending on the current state of this settings. If skipping the bulk data post entry prompt is currently enabled you will be asked if you want to disable it. If you choose 'yes' skipping the bulk data post entry prompt will be disabled and you will be returned to the settings menu. If you choose 'no' you will be returned to the settings menu without disabling skipping the bulk data post entry prompt. If skipping the bulk data post entry prompt is currently disabled you will be asked if you want to enable it. If you choose 'yes' skipping the bulk data post entry prompt will be enabled and you will be returned to the settings menu. If you choose 'no' you will be returned to the settings menu without enabling skipping the bulk data post entry prompt.
+
+The bulk data post entry prompt provides 2 options.
+ - 1. Next
+ - 2. Done
+
+If you choose 'Next' you will automatically be prompted to enter the next student's information. If you choose 'Done' the bulk data loader process will run, all entered data will be store into the database, and you will be returned to the add student menu. If you are confident in the accuracy of the data you are entering it is recommended to enable this setting.
+
+------------------------------------------------------------------------------------  
+
+Option 7: Settings menu help documentation
+Entering the number '7' and clicking 'enter' will display the help documentation for the settings menu. Which is what are currently reading.
+
+------------------------------------------------------------------------------------
+
+Option 8: Return to main menu
+Entering the number '8' and clicking 'enter' will return you to the main menu.
+

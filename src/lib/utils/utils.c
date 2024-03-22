@@ -14,6 +14,7 @@ Description : This source file contains several utility functions that are used
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
+#include <unistd.h>
 #include <sys/stat.h>
 #include "../headers/c/c_files.h"
 #include "../headers/cpp/cpp_files.hpp"
@@ -384,4 +385,10 @@ int read_and_display_help_docs(const char *helpFile)
   }
   fclose(f);
   wait_for_char_input();
+  system("clear");
+  usleep(500);
+  printf("Returning to previous menu\n");
+  sleep(1);
+  system("clear");
+  return 0;
 }

@@ -1,0 +1,71 @@
+Welcome to the Hallpass Hero Manage Roster menu help documentation!
+
+From the manage roster menu you can choose several options to manage your rosters. To learn more about these options continue reading below.
+====================================================================================
+
+Option 1: View roster
+Entering the number '1' and clicking 'enter' will initiate a  search function that queries your local database for all created rosters. Once the query is complete you will be presented with a list of all rosters that have been found. From here you can enter the name of the roster you would like to take a closer look at. Once you have entered the name of the roster you would like to view, you will be presented with a list of all students and their data that are currently on that roster. While viewing the roster you can choose to sort the roster by:
+ - Last Name
+ - First Name
+ - Student ID
+in ascending or descending order. You can also choose to go back to the previous menu or the main menu.
+
+------------------------------------------------------------------------------------
+
+Option 2: Rename roster
+Entering the number '2' and clicking 'enter' will initiate a search function that queries your local database for all created rosters. Once the query is complete you will be presented with a list of all rosters that have been found. From here you can enter the name of the roster you would like to rename. Once you have entered the name of the roster you would like to rename, you will be prompted to enter the new name for the roster. You will then confirm the new name and the roster will be renamed. You will then be taken back to the previous menu. 
+
+------------------------------------------------------------------------------------
+
+Option 3: Delete roster
+Entering the number '3' and clicking 'enter' will initiate a search function that queries your local database for all created rosters. Once the query is complete you will be presented with a list of all rosters that have been found. From here you can enter the name of the roster you would like to delete. Once you have entered the name of the roster you would like to delete, you will be prompted to confirm that you would like to delete the roster. Once you have confirmed that you would like to delete the roster, the roster will be deleted and you will be taken back to the previous menu.
+
+------------------------------------------------------------------------------------
+
+Option 4: Add student to roster
+Entering the number '4' and clicking 'enter' will initiate a search function that queries your local database for all created rosters. Once the query is complete you will be presented with a list of all rosters that have been found. From here you can enter the name of the roster you would like to add a student to. Once you have entered the name of the roster you would like to add a student to, you will be given several options to choose how you would like to add the student to the roster. You can choose to add a student by:
+  - Searching for the student in the student database
+  - Manually entering the student's information
+  - Using the bulk data loader feature to add multiple students at once
+
+If you choose to search for the student in the student database, you will be prompted to enter the student's ID. Once you have entered the student's ID, the student's information will be displayed and you will be prompted to confirm that you would like to add the student to the roster. Once you have confirmed that you would like to add the student to the roster, the student will be added and you will be taken back to the previous menu.
+
+If you choose to manually enter the student's information, you will be prompted to enter the student's first name, last name, and student ID. Once you have entered the student's information, you will be prompted to confirm that you would like to add the student to the roster. Once you have confirmed that you would like to add the student to the roster, the student will be added and you will be taken back to the previous menu.
+
+For information on how to use the bulk data loader feature, please see the help documentation for the bulk data loader.
+
+------------------------------------------------------------------------------------
+
+Option 5: Remove student from roster
+Entering the number '5' and clicking 'enter' will initiate a search function that queries your local database for all created rosters. Once the query is complete you will be presented with a list of all rosters that have been found. From here you can enter the name of the roster you would like to remove a student from. Once you have entered the name of the roster you would like to remove a student from, you will be prompted to enter the student's ID. Once you have entered the student's ID, you will be prompted to confirm that you would like to remove the student from the roster. Once confirmed, the student will be removed from the roster and you will be taken back to the previous menu.
+
+------------------------------------------------------------------------------------
+
+Option 6: Create a column
+Entering the number '6' and clicking 'enter' will initiate a search function that queries your local database for all created rosters. Once the query is complete you will be presented with a list of all rosters that have been found. From here you can enter the name of the roster you would like to create a column for. Columns are used to store additional data about students such as grades, attendance, or any other data you would like to store. Once you have entered the name of the roster you would like to create a column for, you will be prompted to choose the type of data you would like to store in the column. You can choose to store data as:
+  - 1. Text
+  - 2. Whole numbers
+  - 3. Decimal numbers
+  - 4. True or false
+  - 5. Dates
+If you are unsure of what data type the column will be you can choose option 6.
+
+Once you have chosen the type of data you would like to store in the column, you will be prompted to enter the name of the column. Once you have entered the name of the column, the column will be created and you will be taken back to the previous menu.
+
+------------------------------------------------------------------------------------
+
+Option 7: Delete a column
+Entering the number '7' and clicking 'enter' will initiate a search function that queries your local database for all created rosters. Once the query is complete you will be presented with a list of all rosters that have been found. From here you can enter the name of the roster you would like to delete a column from. Once you have entered the name of the roster you would like to delete a column from, you will be presented with a list of all columns that have been created for that roster. From here you can enter the name of the column you would like to delete. Once you have entered the name of the column you would like to delete, you will be prompted to confirm that you would like to delete the column. Once confirmed, the column will be deleted and you will be taken back to the previous menu. 
+
+NOTE: YOU CAN NOT DELETE THE DEFAULT COLUMNS (FirstName, LastName, StudentID)
+
+------------------------------------------------------------------------------------
+
+Option 8: Manage roster menu help documentation
+Entering the number '8' and clicking 'enter' will display the help documentation for the Manage Roster menu. Which is what are currently reading.
+
+------------------------------------------------------------------------------------
+
+Option 9: Return to main menu
+Entering the number '9' and clicking 'enter' will take you back to the main menu.
+

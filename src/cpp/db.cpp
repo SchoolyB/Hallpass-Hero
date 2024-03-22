@@ -114,9 +114,17 @@ int print_all_student_data_in_roster_callback(void *data, int argc, char **argv,
     // TODO need to handle this error better
     return -1; // No data, do nothing
   }
-
+  // display all column names in table
+  for (int i = 0; i < argc; i++)
+  {
+    if (colNames[i] != nullptr)
+    {
+      printf(BOLD "%-15s | " RESET, colNames[i]);
+    }
+  }
+  printf("\n");
+  printf("===============================================================================\n");
   // Display data
-  printf("-------------------------------------------------------------------------------\n");
   for (int i = 0; i < argc; i++)
   {
     if (argv[i] != nullptr)
@@ -856,6 +864,65 @@ extern "C"
     }
   }
 
+  int check_if_sequence_number_exists(int sequenceNumber)
+  {
+    sqlite3 *database;
+    int dbConnection = sqlite3_open(programSettings.databaseInfo.dbPath, &database);
+
+    if (dbConnection != SQLITE_OK)
+    {
+      __throw_error_opening_db("check_if_sequence_number_exists", database, dbConnection);
+      return -1;
+    }
+
+    string checkIfSequenceNumberExists = "SELECT * FROM students WHERE id = " + to_string(sequenceNumber);
+    dbConnection = sqlite3_exec(database, checkIfSequenceNumberExists.c_str(), student_id_exists_callback, &studentIDExists, nullptr);
+
+    if (dbConnection != SQLITE_OK)
+    {
+      __throw_error_exec_query("check_if_sequence_number_exists", database, dbConnection);
+      return -2;
+    }
+
+    if (studentIDExists)
+    {
+      return TRUE;
+    }
+    else
+    {
+      return FALSE;
+    }
+  }
+  // TODO THIS FUNCTION IS FAILING TO EXECUTE...CANNOT FIGURE OUT WHY. IT WORKED ON THE VERY FIRST TRY BUT AFTER THAT NEVER WORKED AGAIN
+  int update_row_data(const char *rosterName, const char *colName, const char *newData, int sequenceNumber)
+  {
+    cout << "rosterName: " << rosterName << endl;
+    cout << "colName: " << colName << endl;
+    cout << "newData: " << newData << endl;
+    cout << "sequenceNumber: " << sequenceNumber << endl;
+    sleep(5);
+    sqlite3 *database;
+    int dbConnection = sqlite3_open(programSettings.databaseInfo.dbPath, &database);
+
+    if (dbConnection != SQLITE_OK)
+    {
+      __throw_error_opening_db("update_row_data", database, dbConnection);
+      return -1;
+    }
+
+    string updateRowData = "UPDATE " + string(rosterName) + " SET " + string(colName) + " = '" + string(newData) + "' WHERE id = " + to_string(sequenceNumber);
+
+    dbConnection = sqlite3_exec(database, updateRowData.c_str(), nullptr, nullptr, nullptr);
+
+    if (dbConnection != SQLITE_OK)
+    {
+      __throw_error_exec_query("update_row_data", database, dbConnection);
+      return -2;
+    }
+
+    sqlite3_close(database);
+    return 0;
+  }
   /******************************!EVERYTHING BELOW HERE IS FOR THE STUDENTS DATABASE!******************************/
   /******************************!EVERYTHING BELOW HERE IS FOR THE STUDENTS DATABASE!******************************/
   /******************************!EVERYTHING BELOW HERE IS FOR THE STUDENTS DATABASE!******************************/
