@@ -125,8 +125,6 @@ int print_all_student_data_in_roster_callback(void *data, int argc, char **argv,
   printf("\n");
   printf("===============================================================================\n");
   // Display data
-  print_table_col_heading(roster.rosterNameWithPrefix);
-
   for (int i = 0; i < argc; i++)
   {
     if (argv[i] != nullptr)
