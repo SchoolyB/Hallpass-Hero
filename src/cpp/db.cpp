@@ -114,9 +114,19 @@ int print_all_student_data_in_roster_callback(void *data, int argc, char **argv,
     // TODO need to handle this error better
     return -1; // No data, do nothing
   }
-
+  // display all column names in table
+  for (int i = 0; i < argc; i++)
+  {
+    if (colNames[i] != nullptr)
+    {
+      printf(BOLD "%-15s | " RESET, colNames[i]);
+    }
+  }
+  printf("\n");
+  printf("===============================================================================\n");
   // Display data
-  printf("-------------------------------------------------------------------------------\n");
+  print_table_col_heading(roster.rosterNameWithPrefix);
+
   for (int i = 0; i < argc; i++)
   {
     if (argv[i] != nullptr)

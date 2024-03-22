@@ -123,7 +123,7 @@ int show_manage_roster_menu(void)
               puts("What would you like to do?");
               printf("Enter the corresponding number.\n\n");
               puts("1.Sort Roster");
-              puts("2. Update a student's information");
+              puts("2.Update a student's information");
               puts("3.Go Back");
               puts("4.Main Menu");
               __utils_fgets_and_remove_newline(userInput.StrInput);
