@@ -35,7 +35,7 @@ class Statistic:
   TotalStudentsProcessed = None
   TotalSessionsCompleted = None
   CurrentSessionNumber = None
-  studentsProcessedInCurrentSession = None
+  StudentsProcessedInCurrentSession = None
   CurrentSessionStartTime = None
   CurrentSessionEndTime = None
   PreviousSessionStartTime = None
@@ -225,7 +225,7 @@ def main():
        print(f"{settings.Colors.GREEN}Student successfully added to bulk data loader{settings.Colors.RESET}")
        utils.clear()
        utils.increment_stat_value("TotalStudentsProcessed")
-       utils.increment_stat_value("studentsProcessedInCurrentSession")
+       utils.increment_stat_value("StudentsProcessedInCurrentSession")
       elif confirmation == "n" or confirmation == "N":
        handle_non_confirmation()
       else:
@@ -240,7 +240,7 @@ def main():
         print(f"{settings.Colors.GREEN}Skip bulk loader info confirmation is enabled{settings.Colors.RESET}")
         print(f"{settings.Colors.GREEN}Adding student to bulk data loader{settings.Colors.RESET}")
         utils.increment_stat_value("TotalStudentsProcessed")
-        utils.increment_stat_value("studentsProcessedInCurrentSession")
+        utils.increment_stat_value("StudentsProcessedInCurrentSession")
        
 
   ######################################################################

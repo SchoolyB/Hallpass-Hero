@@ -80,9 +80,9 @@ def get_and_set_stat_value(keyName):
                     elif keyName == "CurrentSessionNumber":
                         bulk_data_loader.Statistic.CurrentSessionNumber = int(value)
                         return bulk_data_loader.Statistic.CurrentSessionNumber
-                    elif keyName == "studentsProcessedInCurrentSession":
-                        bulk_data_loader.Statistic.studentsProcessedInCurrentSession = int(value)
-                        return bulk_data_loader.Statistic.studentsProcessedInCurrentSession
+                    elif keyName == "StudentsProcessedInCurrentSession":
+                        bulk_data_loader.Statistic.StudentsProcessedInCurrentSession = int(value)
+                        return bulk_data_loader.Statistic.StudentsProcessedInCurrentSession
                     elif keyName == "CurrentSessionStartTime":
                         bulk_data_loader.Statistic.CurrentSessionStartTime = value
                         return bulk_data_loader.Statistic.CurrentSessionStartTime
@@ -227,7 +227,7 @@ def transfer_session_time_to_previous():
 #                                  - TotalStudentsProcessed
 #                                  - TotalSessionsCompleted
 #                                  - CurrentSessionNumber
-#                                  - studentsProcessedInCurrentSession
+#                                  - StudentsProcessedInCurrentSession
 #                                  - CurrentSessionStartTime
 #                                  - CurrentSessionEndTime
 #                                  - PreviousSessionStartTime
@@ -246,7 +246,7 @@ def check_and_populate_stats_file():
                 if ("TotalStudentsProcessed" in content 
                 and "TotalSessionsCompleted" in content 
                 and "CurrentSessionNumber" in content
-                and "studentsProcessedInCurrentSession" in content
+                and "StudentsProcessedInCurrentSession" in content
                 and "CurrentSessionStartTime" in content
                 and "CurrentSessionEndTime" in content
                 and "PreviousSessionStartTime" in content
@@ -258,7 +258,7 @@ def check_and_populate_stats_file():
                             file.write("TotalStudentsProcessed=0\n")
                             file.write("TotalSessionsCompleted=0\n")
                             file.write("CurrentSessionNumber=0\n")
-                            file.write("studentsProcessedInCurrentSession=0\n")
+                            file.write("StudentsProcessedInCurrentSession=0\n")
                             file.write("CurrentSessionStartTime=0\n")
                             file.write("CurrentSessionEndTime=0\n")
                             file.write("PreviousSessionStartTime=0\n")

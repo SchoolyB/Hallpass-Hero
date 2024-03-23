@@ -302,7 +302,6 @@ int show_manage_roster_menu(void)
                     }
                   }
                 }
-              // todo do stuff
               case 3:
                 showingRosterData = FALSE;
                 system("clear");
@@ -784,7 +783,7 @@ int ask_which_roster_and_preform_action(char *action)
     }
     else if (rosterExists == TRUE)
     {
-
+      // todo need to update this struct and its members with better names
       strcpy(throwAways.throwAwayStr, roster.rosterNameWithPrefix);
       system("clear");
       sleep(1);
@@ -990,14 +989,13 @@ int create_col(const char *rosterName, const char *colType)
  *
  * Note: see usage in ask_which_roster_and_preform_action()
  ************************************************************************************/
-// TODO need to build a function that lists all the columns in a roster except for the ones that cannot be deleted: FirstName, LastName, StudentID
 int delete_col(const char *rosterName)
 {
   char colName[20];
   system("clear");
   show_current_step("Delete a column", 2, 2);
   puts("Enter the name of the column that you would like to delete");
-  puts(YELLOW "You CANNOT delete the FirstName, LastName, or StudentID columns" RESET);
+  puts(RED "WARNING: You CANNOT delete the FirstName, LastName, or StudentID columns" RESET);
   puts(YELLOW "To cancel this operation enter" BOLD "'cancel'" RESET);
   __utils_fgets_and_remove_newline(userInput.StrInput);
   strcpy(colName, userInput.StrInput);
@@ -1006,6 +1004,14 @@ int delete_col(const char *rosterName)
   {
     __utils_operation_cancelled("delete_col");
     show_manage_roster_menu();
+  }
+  else if (strcmp(colName, "FirstName") == 0 || strcmp(colName, "LastName") == 0 || strcmp(colName, "StudentID") == 0)
+  {
+    system("clear");
+    printf(RED "You cannot delete the column: " BOLD "%s\n" RESET, colName);
+    sleep(2);
+    system("clear");
+    delete_col(rosterName);
   }
   else
   {
