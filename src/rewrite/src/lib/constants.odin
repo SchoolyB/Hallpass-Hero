@@ -1,0 +1,20 @@
+package lib
+
+
+DEFAULT_BUFFER_SIZE  :: 128
+
+
+// MANAGE_ROSTER :: 1
+// VIEW_ROSTER :: 2
+// ADD_STUDENT_TO_DB :: 3
+// VIEW_DB :: 4
+// SEARCH :: 5
+// GET_HELP :: 6
+// MODIFY_SETTINGS:: 7
+// EXIT_PROGRAM :: 8
+
+CREATE_ROSTER_MENU_WIDTH :: 70
+CREATE_ROSTER_MENU_HEIGHT :: 10
+
+
+INVALID_OPTION_CHOSEN :: "Invlaid option chosen. Please try again..."
